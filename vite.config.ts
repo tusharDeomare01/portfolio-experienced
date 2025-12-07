@@ -36,7 +36,11 @@ export default defineConfig(({ mode }) => ({
     mode === "development" ? vitePluginErrorOverlay() : null,
     seoPlugin({
       baseUrl: getBaseUrl(),
-      routes: ['/', '/marketjd', '/portfolio']
+      routes: [
+        { path: '/', priority: 1.0, changefreq: 'weekly' },
+        { path: '/marketjd', priority: 0.8, changefreq: 'monthly' },
+        { path: '/portfolio', priority: 0.8, changefreq: 'monthly' }
+      ]
     }),
   ].filter(Boolean),
   resolve: {

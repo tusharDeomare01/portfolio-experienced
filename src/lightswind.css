@@ -340,6 +340,11 @@
   /* Good practice for all elements */
 }
 
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Body Styling */
 body {
   background-color: hsl(var(--background));

@@ -14,8 +14,6 @@ import { EducationSection } from "./components/EducationSection/EducationSection
 import { CareerTimeline } from "./components/CareerSection/CareerTimeline";
 import { AchievementsSection } from "./components/AchievementsSection/AchievementsSection";
 import { ContactSection } from "./components/ContactSection/ContactSection";
-import ReactLenis from "lenis/react";
-import { useLenis } from "lenis/react";
 import Dock from "./components/lightswind/dock";
 import {
   Home,
@@ -47,15 +45,12 @@ const PageLoader = () => (
 function HomePage() {
   const [showDock, setShowDock] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const lenis = useLenis();
   const isMobile = useIsMobile();
 
-  // Track scroll direction - optimized for Lenis smooth scrolling
+  // Track scroll direction
   useEffect(() => {
-    if (!lenis) return;
-
-    const handleScroll = ({ scroll }: any) => {
-      const currentScrollY = scroll;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         // scrolling down -> show Dock
@@ -68,20 +63,23 @@ function HomePage() {
       setLastScrollY(currentScrollY);
     };
 
-    lenis.on("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      lenis.off("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, [lenis, lastScrollY]);
+  }, [lastScrollY]);
 
-  // Helper for smooth scroll using Lenis
+  // Helper for smooth scroll using native browser API
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
-    if (el && lenis) {
-      lenis.scrollTo(el, {
-        offset: -80,
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    if (el) {
+      const offset = 80;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
       });
     }
   };
@@ -127,64 +125,46 @@ function HomePage() {
   ];
   return (
     <div className="bg-background min-h-screen flex items-center justify-center">
-      <StripedBackground className={"fixed z-0 blur-xs"} />
-      <FallBeamBackground className="fixed z-0" />
+      <Header />
 
-      <ReactLenis
-        root
-        options={{
-          duration: 1.2,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          orientation: "vertical",
-          gestureOrientation: "vertical",
-          smoothWheel: true,
-          wheelMultiplier: 1,
-          touchMultiplier: 1.5,
-          infinite: false,
-          lerp: 0.1,
-        }}
+      <div
+        className="w-full bg-transparent max-w-5xl px-4 my-30
+        flex items-center justify-center 
+        lg:rounded-3xl backdrop-blur-xl border-gray-100 dark:border-gray-900"
       >
-        <Header />
-
-        <div
-          className="w-full bg-transparent max-w-5xl px-4 my-30
-          flex items-center justify-center 
-          lg:rounded-3xl backdrop-blur-xl border-gray-100 dark:border-gray-900"
-        >
-          <div className="z-10">
-            {/* Sections with IDs for smooth scrolling navigation */}
-            <HeroSection />
-            <AboutSection />
-            <EducationSection />
-            <CareerTimeline />
-            <ProjectsSection />
-            <AchievementsSection />
-            <ContactSection />
-          </div>
+        <div className="z-10">
+          {/* Sections with IDs for smooth scrolling navigation */}
+          <HeroSection />
+          <AboutSection />
+          <EducationSection />
+          <CareerTimeline />
+          <ProjectsSection />
+          <AchievementsSection />
+          <ContactSection />
         </div>
+      </div>
 
-        {/* Dock with smooth show/hide animation */}
-        <AnimatePresence>
-          {showDock && (
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-[999] w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0"
-            >
-              <Dock
-                items={dockItems}
-                position="bottom"
-                magnification={isMobile ? 60 : 85}
-                baseItemSize={isMobile ? 40 : 50}
-                distance={isMobile ? 120 : 200}
-                panelHeight={isMobile ? 56 : 64}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </ReactLenis>
+      {/* Dock with smooth show/hide animation */}
+      <AnimatePresence>
+        {showDock && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-[999] w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0"
+          >
+            <Dock
+              items={dockItems}
+              position="bottom"
+              magnification={isMobile ? 60 : 85}
+              baseItemSize={isMobile ? 40 : 50}
+              distance={isMobile ? 120 : 200}
+              panelHeight={isMobile ? 56 : 64}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -224,6 +204,8 @@ function App() {
         dyeResolution={1440}
         simulationResolution={256}
       /> */}
+      <StripedBackground className={"fixed z-0 blur-xs"} />
+      <FallBeamBackground className="fixed z-0" />
     </BrowserRouter>
   );
 }

@@ -1,19 +1,19 @@
 import { motion } from "framer-motion";
 import { TypingText } from "../lightswind/typing-text";
 import { Button } from "../lightswind/button";
-import { useLenis } from "lenis/react";
 import { ArrowDown, Sparkles, Mail } from "lucide-react";
 
 export const HeroSection = () => {
-  const lenis = useLenis();
-
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
-    if (el && lenis) {
-      lenis.scrollTo(el, {
-        offset: -80,
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    if (el) {
+      const offset = 80;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
       });
     }
   };

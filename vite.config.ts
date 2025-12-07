@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => ({
           // Vendor chunks
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'redux-vendor': ['@reduxjs/toolkit', 'react-redux', 'redux-persist'],
-          'animation-vendor': ['framer-motion', 'lenis'],
+          'animation-vendor': ['framer-motion'],
           'ui-vendor': ['lucide-react'],
           'ai-vendor': ['openai'],
         },

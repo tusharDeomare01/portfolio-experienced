@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants, MotionProps } from "framer-motion";
 import { Menu, X, Sun, Moon, BookCheckIcon } from "lucide-react";
-import { useLenis } from "lenis/react";
 import { BorderBeam } from "../lightswind/border-beam";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleTheme } from "@/store/slices/themeSlice";
@@ -23,7 +22,6 @@ export default function Header() {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const lenis = useLenis();
 
   // Apply theme on mount (in case Redux Persist hasn't hydrated yet)
   useEffect(() => {
@@ -34,12 +32,10 @@ export default function Header() {
     }
   }, [theme]);
 
-  // Scroll listener for hide/show header - using Lenis smooth scrolling
+  // Scroll listener for hide/show header
   useEffect(() => {
-    if (!lenis) return;
-
-    const handleScroll = ({ scroll }: any) => {
-      const currentScrollY = scroll;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY && currentScrollY > 80) {
         setShowHeader(false); // Scrolling down
       } else {
@@ -48,30 +44,25 @@ export default function Header() {
       setLastScrollY(currentScrollY);
     };
 
-    lenis.on("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      lenis.off("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, [lenis, lastScrollY]);
+  }, [lastScrollY]);
 
   const handleScrollTo = (id: string) => {
-    if (lenis) {
-      // Remove # if present and find the element
-      const cleanId = id.replace("#", "");
-      const el = document.getElementById(cleanId) || document.querySelector(id);
-      if (el) {
-        lenis.scrollTo(el, {
-          offset: -80,
-          duration: 1.2,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        });
-      } else {
-        // Fallback to string selector
-        lenis.scrollTo(id, {
-          offset: -80,
-          duration: 1.2,
-        });
-      }
+    // Remove # if present and find the element
+    const cleanId = id.replace("#", "");
+    const el = document.getElementById(cleanId) || document.querySelector(id);
+    if (el) {
+      const offset = 80;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     }
     setIsMobileMenuOpen(false); // Close mobile menu on click
   };

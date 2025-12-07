@@ -11,6 +11,7 @@ import {
 } from "../lightswind/card";
 import { Button } from "../lightswind/button";
 import { Mail, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { ConfettiButton } from "../lightswind/confetti-button";
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -284,8 +285,15 @@ export const ContactSection = () => {
                 </>
               ) : (
                 <>
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Message
+                  <ConfettiButton
+                    confettiOptions={{
+                      particleCount: 250,
+                      spread: 70,
+                    }}
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Send Message
+                  </ConfettiButton>
                 </>
               )}
             </Button>

@@ -72,7 +72,7 @@ export interface PortfolioData {
 
 export const portfolioData: PortfolioData = {
   personalInfo: {
-    name: "Tushar Narayan Deomare",
+    name: "Tushar Deomare",
     pronouns: "He/him",
     title: "Full-Stack Developer",
     bio: "Passionate Full-Stack Developer with 2+ years of expertise building scalable web applications using MERN Stack, Next.js, and NestJS. Specialized in developing enterprise-grade solutions with advanced authentication, real-time analytics, and AI-powered automation. Proven track record of delivering high-performance applications with 20+ third-party API integrations, dynamic reporting systems, and seamless user experiences. Recognized as 'Above and Beyond Developer' and selected for Tech Star Team at Thinkitive Technologies.",

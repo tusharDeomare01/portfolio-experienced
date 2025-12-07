@@ -39,7 +39,7 @@
 
 /* Smooth scrolling optimizations */
 html {
-  scroll-behavior: auto; /* Let Lenis handle smooth scrolling */
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -97,29 +97,7 @@ body {
 
 /* Smooth scrolling for all anchor links */
 a[href^="#"] {
-  scroll-behavior: auto; /* Let Lenis handle it */
-}
-
-/* Ensure smooth scrolling container */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
+  scroll-behavior: smooth;
 }
 
 /* 3D Carousel Perspective */

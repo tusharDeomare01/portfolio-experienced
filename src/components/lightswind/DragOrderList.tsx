@@ -11,7 +11,6 @@ import {
   MotionValue,
 } from "framer-motion";
 import { GripVertical } from "lucide-react";
-import { useLenis } from "lenis/react";
 
 export interface DragItem {
   id: number;
@@ -29,8 +28,7 @@ interface DragOrderListProps {
 
 export function DragOrderList({ items, onReorder }: DragOrderListProps) {
   const [list, setList] = React.useState(items);
-  const [isDragging, setIsDragging] = useState(false);
-  const lenis = useLenis();
+  const [, setIsDragging] = useState(false);
 
   useEffect(() => {
     // This effect ensures the onReorder callback is triggered
@@ -44,17 +42,6 @@ export function DragOrderList({ items, onReorder }: DragOrderListProps) {
   useEffect(() => {
     setList(items);
   }, [items]);
-
-  // Disable Lenis smooth scrolling during drag operations
-  useEffect(() => {
-    if (lenis) {
-      if (isDragging) {
-        lenis.stop();
-      } else {
-        lenis.start();
-      }
-    }
-  }, [isDragging, lenis]);
 
   return (
     <Reorder.Group

@@ -20,9 +20,9 @@ export function seoPlugin(options: SEOPluginOptions = {}): Plugin {
       return `https://${process.env.VERCEL_URL}`;
     }
     if (process.env.NETLIFY) {
-      return process.env.URL || (process.env.DEPLOY_PRIME_URL ? `https://${process.env.DEPLOY_PRIME_URL}` : 'https://yourdomain.com');
+      return process.env.URL || (process.env.DEPLOY_PRIME_URL ? `https://${process.env.DEPLOY_PRIME_URL}` : 'https://tushar-deomare-portfolio.vercel.app/');
     }
-    return 'https://yourdomain.com';
+    return 'https://tushar-deomare-portfolio.vercel.app/';
   };
 
   const baseUrl = getBaseUrl();

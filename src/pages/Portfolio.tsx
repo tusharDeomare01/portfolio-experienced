@@ -5,14 +5,33 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RaysBackground from "@/components/ui/rays-background";
 import FallBeamBackground from "@/components/ui/fall-beam-background";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/lightswind/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/lightswind/card";
 import { Badge } from "@/components/lightswind/badge";
-import { 
-  ArrowLeft, Code, Zap, Globe, Settings, Layers, Package, 
-  Brain, FileText, Sparkles, Palette, Smartphone, 
-  Cpu, Rocket, Wand2, Eye, MousePointerClick
+import {
+  ArrowLeft,
+  Code,
+  Zap,
+  Globe,
+  Settings,
+  Layers,
+  Package,
+  Brain,
+  FileText,
+  Sparkles,
+  Palette,
+  Smartphone,
+  Cpu,
+  Rocket,
+  Wand2,
+  Eye,
+  MousePointerClick,
 } from "lucide-react";
-import ReactLenis from "lenis/react";
 
 const Portfolio = () => {
   const navigate = useNavigate();
@@ -42,7 +61,8 @@ const Portfolio = () => {
   const techStack = {
     framework: {
       name: "React 19.1.1",
-      description: "Latest React with concurrent features and improved performance",
+      description:
+        "Latest React with concurrent features and improved performance",
       icon: Code,
     },
     language: {
@@ -59,11 +79,6 @@ const Portfolio = () => {
       name: "Framer Motion 12.23.12",
       description: "Production-ready motion library for React",
       icon: Sparkles,
-    },
-    scrolling: {
-      name: "Lenis 1.3.8",
-      description: "Buttery smooth scrolling library",
-      icon: MousePointerClick,
     },
     uiLibrary: {
       name: "Lightswind 3.1.15",
@@ -96,73 +111,78 @@ const Portfolio = () => {
   const features = [
     {
       title: "AI-Powered Assistant",
-      description: "Interactive AI assistant powered by GPT-4o that answers questions about your background, experience, and projects. Features streaming responses, chat history persistence, and multiple session management.",
+      description:
+        "Interactive AI assistant powered by GPT-4o that answers questions about your background, experience, and projects. Features streaming responses, chat history persistence, and multiple session management.",
       icon: Brain,
       color: "purple",
     },
     {
-      title: "Buttery Smooth Scrolling",
-      description: "Implemented Lenis smooth scrolling library for seamless navigation experience. Optimized scroll performance with custom easing functions and touch multipliers for mobile devices.",
-      icon: MousePointerClick,
-      color: "blue",
-    },
-    {
       title: "Advanced Animations",
-      description: "Leveraged Framer Motion for complex animations including scroll-triggered reveals, drag-and-drop interactions, and smooth transitions. Includes 3D carousel effects and interactive UI elements.",
+      description:
+        "Leveraged Framer Motion for complex animations including scroll-triggered reveals, drag-and-drop interactions, and smooth transitions. Includes 3D carousel effects and interactive UI elements.",
       icon: Sparkles,
       color: "pink",
     },
     {
       title: "3D Carousel Component",
-      description: "Custom-built 3D carousel with perspective transforms, auto-rotation, and responsive design. Features intersection observer for performance optimization and mobile-friendly touch interactions.",
+      description:
+        "Custom-built 3D carousel with perspective transforms, auto-rotation, and responsive design. Features intersection observer for performance optimization and mobile-friendly touch interactions.",
       icon: Eye,
       color: "teal",
     },
     {
       title: "Fall Beam Background",
-      description: "Performance-optimized animated background with configurable beam count, colors, and animations. Includes mobile responsiveness and reduced motion support for accessibility.",
+      description:
+        "Performance-optimized animated background with configurable beam count, colors, and animations. Includes mobile responsiveness and reduced motion support for accessibility.",
       icon: Wand2,
       color: "orange",
     },
     {
       title: "Smokey Cursor Effect",
-      description: "WebGL-powered fluid smoke effect that follows cursor movement. Customizable intensity and color schemes with smooth performance optimizations.",
+      description:
+        "WebGL-powered fluid smoke effect that follows cursor movement. Customizable intensity and color schemes with smooth performance optimizations.",
       icon: MousePointerClick,
       color: "green",
     },
     {
       title: "Rays Background",
-      description: "Dynamic rays background component with conic gradients and CSS animations. Supports light/dark themes with customizable opacity and blur effects.",
+      description:
+        "Dynamic rays background component with conic gradients and CSS animations. Supports light/dark themes with customizable opacity and blur effects.",
       icon: Sparkles,
       color: "yellow",
     },
     {
       title: "Drag & Drop Projects",
-      description: "Interactive project reordering with drag-and-drop functionality. Integrated with smooth scrolling to prevent conflicts during drag operations.",
+      description:
+        "Interactive project reordering with drag-and-drop functionality. Integrated with smooth scrolling to prevent conflicts during drag operations.",
       icon: Settings,
       color: "red",
     },
     {
       title: "Theme Toggle",
-      description: "Seamless dark/light mode switching with persistent preferences. Available across all screen sizes with smooth transitions.",
+      description:
+        "Seamless dark/light mode switching with persistent preferences. Available across all screen sizes with smooth transitions.",
       icon: Palette,
       color: "indigo",
     },
     {
       title: "Responsive Design",
-      description: "Fully responsive layout optimized for mobile, tablet, and desktop. Adaptive components that adjust behavior and styling based on screen size.",
+      description:
+        "Fully responsive layout optimized for mobile, tablet, and desktop. Adaptive components that adjust behavior and styling based on screen size.",
       icon: Smartphone,
       color: "cyan",
     },
     {
       title: "Project Detail Pages",
-      description: "Dedicated routes for detailed project showcases with comprehensive information, tech stacks, features, and integrations. Similar structure to MarketJD page.",
+      description:
+        "Dedicated routes for detailed project showcases with comprehensive information, tech stacks, features, and integrations. Similar structure to MarketJD page.",
       icon: FileText,
       color: "violet",
     },
     {
       title: "Achievements Section",
-      description: "3D carousel showcase for career achievements with auto-rotation and navigation controls. Mobile-optimized with simplified 3D effects for better performance.",
+      description:
+        "3D carousel showcase for career achievements with auto-rotation and navigation controls. Mobile-optimized with simplified 3D effects for better performance.",
       icon: Zap,
       color: "amber",
     },
@@ -170,8 +190,16 @@ const Portfolio = () => {
 
   // UI Components used
   const uiComponents = [
-    "Card", "Badge", "Button", "ScrollArea", "Dialog", "Textarea",
-    "Dock", "StripedBackground", "DragOrderList", "ThreeDCarousel"
+    "Card",
+    "Badge",
+    "Button",
+    "ScrollArea",
+    "Dialog",
+    "Textarea",
+    "Dock",
+    "StripedBackground",
+    "DragOrderList",
+    "ThreeDCarousel",
   ];
 
   useEffect(() => {
@@ -211,221 +239,241 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background relative">
       <FallBeamBackground className="fixed z-1" />
-      <RaysBackground 
-        className="fixed z-0" 
+      <RaysBackground
+        className="fixed z-0"
         theme="dark"
         animated={true}
         animationSpeed={1}
         opacity={0.7}
       />
-      
-      <ReactLenis 
-        root 
-        options={{
-          duration: 1.2,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          orientation: 'vertical',
-          gestureOrientation: 'vertical',
-          smoothWheel: true,
-          wheelMultiplier: 1,
-          touchMultiplier: 1.5,
-          infinite: false,
-          lerp: 0.1,
-        }}
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12"
       >
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12"
+        {/* Back Button */}
+        <motion.button
+          onClick={() => navigate(-1)}
+          className="mb-8 flex items-center gap-2 text-foreground hover:text-primary transition-colors group"
+          whileHover={{ x: -5 }}
+          whileTap={{ scale: 0.95 }}
         >
-          {/* Back Button */}
-          <motion.button
-            onClick={() => navigate(-1)}
-            className="mb-8 flex items-center gap-2 text-foreground hover:text-primary transition-colors group"
-            whileHover={{ x: -5 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span>Back to TechShowcase</span>
-          </motion.button>
+          <ArrowLeft
+            size={20}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
+          <span>Back to TechShowcase</span>
+        </motion.button>
 
-          {/* Hero Header */}
-          <motion.div
-            variants={itemVariants}
-            className="mb-16"
-          >
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center min-w-[120px] h-[120px]">
-                <img 
-                  src={isDarkMode ? "/techshowcase-logo-dark.svg" : "/techshowcase-logo-light.svg"}
-                  alt="TechShowcase Logo"
-                  className="h-16 w-auto object-contain"
-                />
+        {/* Hero Header */}
+        <motion.div variants={itemVariants} className="mb-16">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center min-w-[120px] h-[120px]">
+              <img
+                src={
+                  isDarkMode
+                    ? "/techshowcase-logo-dark.svg"
+                    : "/techshowcase-logo-light.svg"
+                }
+                alt="TechShowcase Logo"
+                className="h-16 w-auto object-contain"
+              />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+                TechShowcase
+              </h1>
+              <p className="text-xl text-muted-foreground mb-2">
+                Modern Interactive Portfolio • React + TypeScript
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                <Badge variant="success" size="lg">
+                  Live & Active
+                </Badge>
+                <Badge variant="info" size="lg">
+                  2025 - Present
+                </Badge>
+                <Badge variant="default" size="lg">
+                  Portfolio
+                </Badge>
               </div>
-              <div className="flex-1">
-                <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-                  TechShowcase
-                </h1>
-                <p className="text-xl text-muted-foreground mb-2">
-                  Modern Interactive Portfolio • React + TypeScript
-                </p>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  <Badge variant="success" size="lg">Live & Active</Badge>
-                  <Badge variant="info" size="lg">2025 - Present</Badge>
-                  <Badge variant="default" size="lg">Portfolio</Badge>
-                </div>
-              </div>
             </div>
-            <p className="text-lg text-muted-foreground max-w-4xl leading-relaxed">
-              TechShowcase is a modern, interactive portfolio website showcasing professional experience, projects, and achievements. 
-              Features smooth animations, AI-powered assistant, 3D carousel effects, and responsive design. 
-              Built with React 19, TypeScript, Framer Motion, and cutting-edge UI libraries for an exceptional user experience.
-            </p>
-          </motion.div>
-
-          {/* Tech Stack */}
-          <motion.div
-            variants={itemVariants}
-            className="mb-16"
-          >
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
-                <Cpu className="w-8 h-8 text-primary" />
-                Technology Stack
-              </h2>
-              <p className="text-muted-foreground">Modern technologies powering this portfolio</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {Object.entries(techStack).map(([key, tech]) => {
-                const Icon = tech.icon;
-                return (
-                  <motion.div
-                    key={key}
-                    whileHover={{ y: -5, scale: 1.02 }}
-                    className="p-6 rounded-xl border bg-background/50 backdrop-blur-xl hover:bg-background/80 transition-all duration-300 hover:shadow-lg"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg bg-primary/10">
-                        <Icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground mb-1">{tech.name}</h3>
-                        <p className="text-sm text-muted-foreground">{tech.description}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          {/* Key Features */}
-          <motion.div
-            variants={itemVariants}
-            className="mb-16"
-          >
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
-                <Zap className="w-8 h-8 text-primary" />
-                Key Features & Capabilities
-              </h2>
-              <p className="text-muted-foreground">Major features and development achievements</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {features.map((feature, idx) => {
-                const Icon = feature.icon;
-                return (
-                  <motion.div
-                    key={idx}
-                    variants={itemVariants}
-                    whileHover={{ y: -5 }}
-                    className="group"
-                  >
-                    <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
-                      <CardHeader>
-                        <div className="flex items-start gap-4">
-                          <div className={`p-3 rounded-xl ${colorMap[feature.color]?.bg || "bg-primary/10"} group-hover:scale-110 transition-transform`}>
-                            <Icon className={`w-6 h-6 ${colorMap[feature.color]?.text || "text-primary"}`} />
-                          </div>
-                          <div className="flex-1">
-                            <CardTitle className="mb-2">{feature.title}</CardTitle>
-                            <CardDescription className="text-sm leading-relaxed">
-                              {feature.description}
-                            </CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          {/* UI Components */}
-          <motion.div
-            variants={itemVariants}
-            className="mb-16"
-          >
-            <Card className="backdrop-blur-xl bg-background/80">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Layers className="w-6 h-6 text-primary" />
-                  UI Components & Libraries
-                </CardTitle>
-                <CardDescription>Custom and third-party components used in the portfolio</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {uiComponents.map((component, idx) => (
-                    <Badge key={idx} variant="outline" className="justify-center py-2">
-                      {component}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Project Summary */}
-          <motion.div
-            variants={itemVariants}
-            className="mb-12"
-          >
-            <Card className="backdrop-blur-xl bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-              <CardHeader>
-                <CardTitle>Project Summary</CardTitle>
-                <CardDescription>TechShowcase - Modern portfolio website with advanced features</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">Project Name</h3>
-                    <p className="text-muted-foreground">TechShowcase</p>
-                    <p className="text-sm text-muted-foreground mt-1">Interactive portfolio showcase</p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">Duration</h3>
-                    <p className="text-muted-foreground">2025 - Present</p>
-                    <p className="text-sm text-muted-foreground mt-1">Continuous development & updates</p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">Status</h3>
-                    <Badge variant="success" size="lg">Live & Active</Badge>
-                    <p className="text-sm text-muted-foreground mt-2">Production environment</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          </div>
+          <p className="text-lg text-muted-foreground max-w-4xl leading-relaxed">
+            TechShowcase is a modern, interactive portfolio website showcasing
+            professional experience, projects, and achievements. Features smooth
+            animations, AI-powered assistant, 3D carousel effects, and
+            responsive design. Built with React 19, TypeScript, Framer Motion,
+            and cutting-edge UI libraries for an exceptional user experience.
+          </p>
         </motion.div>
-      </ReactLenis>
+
+        {/* Tech Stack */}
+        <motion.div variants={itemVariants} className="mb-16">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
+              <Cpu className="w-8 h-8 text-primary" />
+              Technology Stack
+            </h2>
+            <p className="text-muted-foreground">
+              Modern technologies powering this portfolio
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Object.entries(techStack).map(([key, tech]) => {
+              const Icon = tech.icon;
+              return (
+                <motion.div
+                  key={key}
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  className="p-6 rounded-xl border bg-background/50 backdrop-blur-xl hover:bg-background/80 transition-all duration-300 hover:shadow-lg"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-lg bg-primary/10">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground mb-1">
+                        {tech.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {tech.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* Key Features */}
+        <motion.div variants={itemVariants} className="mb-16">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
+              <Zap className="w-8 h-8 text-primary" />
+              Key Features & Capabilities
+            </h2>
+            <p className="text-muted-foreground">
+              Major features and development achievements
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {features.map((feature, idx) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  variants={itemVariants}
+                  whileHover={{ y: -5 }}
+                  className="group"
+                >
+                  <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        <div
+                          className={`p-3 rounded-xl ${
+                            colorMap[feature.color]?.bg || "bg-primary/10"
+                          } group-hover:scale-110 transition-transform`}
+                        >
+                          <Icon
+                            className={`w-6 h-6 ${
+                              colorMap[feature.color]?.text || "text-primary"
+                            }`}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="mb-2">
+                            {feature.title}
+                          </CardTitle>
+                          <CardDescription className="text-sm leading-relaxed">
+                            {feature.description}
+                          </CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* UI Components */}
+        <motion.div variants={itemVariants} className="mb-16">
+          <Card className="backdrop-blur-xl bg-background/80">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Layers className="w-6 h-6 text-primary" />
+                UI Components & Libraries
+              </CardTitle>
+              <CardDescription>
+                Custom and third-party components used in the portfolio
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {uiComponents.map((component, idx) => (
+                  <Badge
+                    key={idx}
+                    variant="outline"
+                    className="justify-center py-2"
+                  >
+                    {component}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Project Summary */}
+        <motion.div variants={itemVariants} className="mb-12">
+          <Card className="backdrop-blur-xl bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+            <CardHeader>
+              <CardTitle>Project Summary</CardTitle>
+              <CardDescription>
+                TechShowcase - Modern portfolio website with advanced features
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">
+                    Project Name
+                  </h3>
+                  <p className="text-muted-foreground">TechShowcase</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Interactive portfolio showcase
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">
+                    Duration
+                  </h3>
+                  <p className="text-muted-foreground">2025 - Present</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Continuous development & updates
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">Status</h3>
+                  <Badge variant="success" size="lg">
+                    Live & Active
+                  </Badge>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Production environment
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
 
 export default Portfolio;
-
-
-

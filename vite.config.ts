@@ -21,7 +21,7 @@ const getBaseUrl = () => {
   if (process.env.NETLIFY) {
     return process.env.URL || `https://${process.env.DEPLOY_PRIME_URL}`;
   }
-  return 'https://yourdomain.com';
+  return 'https://tushar-deomare-portfolio.vercel.app/';
 };
 
 export default defineConfig(({ mode }) => ({
@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => ({
           // Vendor chunks
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'redux-vendor': ['@reduxjs/toolkit', 'react-redux', 'redux-persist'],
-          'animation-vendor': ['framer-motion', 'lenis'],
+          'animation-vendor': ['framer-motion'],
           'ui-vendor': ['lucide-react'],
           'ai-vendor': ['openai'],
         },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -11,6 +11,14 @@ import {
 } from "../lightswind/card";
 import { Button } from "../lightswind/button";
 import { Mail, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import type { ConfettiOptions } from "../lightswind/confetti-button";
+
+// Global declaration for confetti
+declare global {
+  interface Window {
+    confetti?: (options?: ConfettiOptions) => void;
+  }
+}
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +33,39 @@ export const ContactSection = () => {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+  const [confettiLoaded, setConfettiLoaded] = useState(false);
+
+  // Load confetti script dynamically
+  useEffect(() => {
+    if (!window.confetti) {
+      const script = document.createElement("script");
+      script.src =
+        "https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js";
+      script.async = true;
+      script.onload = () => setConfettiLoaded(true);
+      document.body.appendChild(script);
+
+      return () => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      };
+    } else {
+      setConfettiLoaded(true);
+    }
+  }, []);
+
+  // Trigger confetti on successful submission
+  useEffect(() => {
+    if (confettiLoaded && submitStatus.type === "success" && window.confetti) {
+      // Trigger confetti from the center of the screen
+      window.confetti({
+        particleCount: 250,
+        spread: 70,
+        origin: { x: 0.5, y: 0.5 },
+      });
+    }
+  }, [confettiLoaded, submitStatus.type]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

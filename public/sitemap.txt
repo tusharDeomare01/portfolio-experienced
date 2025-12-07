@@ -1,7 +1,7 @@
 # Sitemap for Tushar Narayan Deomare Portfolio Website
 # Last Updated: 2025-01-27
 
-https://yourdomain.com/
-https://yourdomain.com/marketjd
-https://yourdomain.com/portfolio
+https://tushar-deomare-portfolio.vercel.app//
+https://tushar-deomare-portfolio.vercel.app//marketjd
+https://tushar-deomare-portfolio.vercel.app//portfolio
 

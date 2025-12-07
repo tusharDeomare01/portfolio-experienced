@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+}
+
+@import "./components/lightswind.css";
+
+
+
+@font-face {
+  font-family: "Geist Sans";
+  src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist Sans";
+  src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist Sans";
+  src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+* {
+  font-family: "Geist Sans", sans-serif !important;
+}
+
+/* Smooth scrolling optimizations */
+html {
+  scroll-behavior: auto; /* Let Lenis handle smooth scrolling */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize rendering performance */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Improve drag and drop performance */
+[data-reorder-item] {
+  will-change: transform;
+}
+
+/* Optimize Fall Beam Background performance */
+[class*="fall-beam"] {
+  contain: layout style paint;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+[class*="fall-beam"] > * {
+  contain: layout style paint;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  isolation: isolate;
+}
+
+/* Optimize SmokeyCursor performance */
+#fluid {
+  contain: layout style paint;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  [class*="fall-beam"] * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Smooth scrolling for all anchor links */
+a[href^="#"] {
+  scroll-behavior: auto; /* Let Lenis handle it */
+}
+
+/* Ensure smooth scrolling container */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* 3D Carousel Perspective */
+.perspective-1000 {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Markdown Content Styling */
+.markdown-content {
+  line-height: 1.6;
+}
+
+.markdown-content > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Ensure markdown lists are properly styled */
+.markdown-content ul,
+.markdown-content ol {
+  margin-left: 1rem;
+}
+
+.markdown-content li {
+  margin-bottom: 0.25rem;
+}
+
+/* Code block styling */
+.markdown-content pre {
+  margin: 0.5rem 0;
+}
+
+.markdown-content code {
+  word-break: break-word;
+}
+
+/* Emoji Support - Ensure emojis display properly */
+.markdown-content,
+.markdown-content p,
+.markdown-content li,
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.text-sm.whitespace-pre-wrap {
+  font-feature-settings: "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Emoji styling - ensure proper size and spacing */
+.markdown-content emoji,
+.markdown-content .emoji,
+.text-sm.whitespace-pre-wrap emoji,
+.text-sm.whitespace-pre-wrap .emoji {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: baseline;
+  font-size: 1em;
+  margin: 0 0.1em;
+}
+
+/* Ensure emojis don't break word wrapping */
+.markdown-content,
+.text-sm.whitespace-pre-wrap {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Hide scrollbar for dock on mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Override InteractiveCard fixed width for responsive projects section */
+.project-card-wrapper > div {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.project-card-wrapper > div > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  aspect-ratio: auto !important;
+}
+

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Pass build arguments (optional - can also use .env file)
+        # VITE_OPENAI_API_KEY: ${VITE_OPENAI_API_KEY}
+        # VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY}
+        # VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID}
+        # VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID}
+    ports:
+      - "8080:80"
+    container_name: portfolio-website
+    restart: unless-stopped
+    environment:
+      # Note: These are runtime env vars, but Vite needs them at build time
+      # So pass them as build args instead (see above)
+      - NODE_ENV=production
+    # Uncomment to use .env file
+    # env_file:
+    #   - .env
+

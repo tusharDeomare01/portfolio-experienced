@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <style>
+    /* Reset styles */
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    
+    /* Mobile responsive styles */
+    @media only screen and (max-width: 600px) {
+      .email-container { width: 100% !important; }
+      .mobile-padding { padding: 20px 15px !important; }
+      .mobile-button { 
+        display: block !important; 
+        width: 100% !important; 
+        margin: 8px 0 !important;
+        padding: 14px 20px !important;
+        box-sizing: border-box !important;
+      }
+      .button-wrapper { display: block !important; width: 100% !important; }
+      .button-cell { 
+        display: block !important; 
+        width: 100% !important; 
+        padding: 0 !important;
+        margin: 8px 0 !important;
+      }
+      .mobile-font { font-size: 14px !important; line-height: 1.6 !important; }
+      .mobile-heading { font-size: 22px !important; }
+      .mobile-subheading { font-size: 14px !important; }
+      .info-icon { font-size: 20px !important; }
+      .mobile-card-padding { padding: 15px !important; }
+      .hide-mobile { display: none !important; }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f2f5; width: 100% !important; min-width: 100%;">
+  
+  <!-- Wrapper table for email clients -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0; padding: 0; background-color: #f0f2f5;">
+    <tr>
+      <td style="padding: 20px 10px;">
+        
+        <!-- Main container -->
+        <table role="presentation" class="email-container" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; max-width: 600px; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+          
+          <!-- Header Section with Gradient -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; position: relative;">
+              <!-- Decorative circle elements -->
+              <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255, 255, 255, 0.1); border-radius: 50%;"></div>
+              <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255, 255, 255, 0.08); border-radius: 50%;"></div>
+              
+              <div style="font-size: 48px; margin-bottom: 8px;">📬</div>
+              <h1 class="mobile-heading" style="color: #ffffff; margin: 0 0 8px 0; font-size: 26px; font-weight: 700; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; letter-spacing: -0.5px;">
+                New Contact Message
+              </h1>
+              <p style="color: rgba(255, 255, 255, 0.95); margin: 0; font-size: 15px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 400;">
+                Someone is reaching out to you! 🚀
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Main Content -->
+          <tr>
+            <td class="mobile-padding" style="padding: 35px 25px;">
+              
+              <!-- Intro Alert Box -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 25px;">
+                <tr>
+                  <td style="background: linear-gradient(135deg, #f6f8fb 0%, #eef1f7 100%); border-left: 4px solid #667eea; padding: 18px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td width="40" style="vertical-align: middle; padding-right: 12px;">
+                          <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                            👋
+                          </div>
+                        </td>
+                        <td style="vertical-align: middle;">
+                          <p class="mobile-font" style="margin: 0; color: #2c3e50; font-size: 15px; line-height: 1.6; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;">
+                            <strong style="color: #667eea; font-weight: 600;">{{from_name}}</strong> sent you a message. Review the details below and respond when ready.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Contact Details Card -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #ffffff; border: 2px solid #e8ecf3; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                <tr>
+                  <td class="mobile-card-padding" style="padding: 25px;">
+                    <h2 class="mobile-subheading" style="color: #2c3e50; font-size: 17px; margin: 0 0 20px 0; font-weight: 700; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; align-items: center;">
+                      <span style="display: inline-block; width: 4px; height: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 2px; margin-right: 10px;"></span>
+                      Contact Information
+                    </h2>
+                    
+                    <!-- Name -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px;">
+                      <tr>
+                        <td width="40" style="vertical-align: top; padding-right: 12px;">
+                          <div class="info-icon" style="width: 38px; height: 38px; background: linear-gradient(135deg, #e0e7ff 0%, #e9d5ff 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            👤
+                          </div>
+                        </td>
+                        <td style="vertical-align: top; padding-top: 2px;">
+                          <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 600;">Full Name</div>
+                          <div class="mobile-font" style="color: #1f2937; font-size: 16px; font-weight: 600; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; word-break: break-word;">{{from_name}}</div>
+                        </td>
+                      </tr>
+                    </table>
+                    
+                    <!-- Email -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px;">
+                      <tr>
+                        <td width="40" style="vertical-align: top; padding-right: 12px;">
+                          <div class="info-icon" style="width: 38px; height: 38px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            📧
+                          </div>
+                        </td>
+                        <td style="vertical-align: top; padding-top: 2px;">
+                          <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 600;">Email Address</div>
+                          <div class="mobile-font" style="color: #1f2937; font-size: 16px; font-weight: 600; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; word-break: break-all;">
+                            <a href="mailto:{{from_email}}" style="color: #667eea; text-decoration: none;">{{from_email}}</a>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                    
+                    <!-- Company -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px;">
+                      <tr>
+                        <td width="40" style="vertical-align: top; padding-right: 12px;">
+                          <div class="info-icon" style="width: 38px; height: 38px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            🏢
+                          </div>
+                        </td>
+                        <td style="vertical-align: top; padding-top: 2px;">
+                          <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 600;">Company / Organization</div>
+                          <div class="mobile-font" style="color: #1f2937; font-size: 16px; font-weight: 600; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; word-break: break-word;">{{company}}</div>
+                        </td>
+                      </tr>
+                    </table>
+                    
+                    <!-- Subject -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px;">
+                      <tr>
+                        <td width="40" style="vertical-align: top; padding-right: 12px;">
+                          <div class="info-icon" style="width: 38px; height: 38px; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            📋
+                          </div>
+                        </td>
+                        <td style="vertical-align: top; padding-top: 2px;">
+                          <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 600;">Subject</div>
+                          <div class="mobile-font" style="color: #1f2937; font-size: 16px; font-weight: 600; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; word-break: break-word;">{{subject}}</div>
+                        </td>
+                      </tr>
+                    </table>
+                    
+                    <!-- Time -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td width="40" style="vertical-align: top; padding-right: 12px;">
+                          <div class="info-icon" style="width: 38px; height: 38px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            🕒
+                          </div>
+                        </td>
+                        <td style="vertical-align: top; padding-top: 2px;">
+                          <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 600;">Received At</div>
+                          <div class="mobile-font" style="color: #1f2937; font-size: 16px; font-weight: 600; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;">{{time}}</div>
+                        </td>
+                      </tr>
+                    </table>
+                    
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Message Card -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #ffffff; border: 2px solid #e8ecf3; border-radius: 12px; margin-bottom: 25px; overflow: hidden;">
+                <tr>
+                  <td class="mobile-card-padding" style="padding: 25px;">
+                    <h2 class="mobile-subheading" style="color: #2c3e50; font-size: 17px; margin: 0 0 15px 0; font-weight: 700; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; align-items: center;">
+                      <span style="display: inline-block; width: 4px; height: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 2px; margin-right: 10px;"></span>
+                      Message
+                    </h2>
+                    <div class="mobile-font" style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); padding: 18px; border-radius: 10px; color: #374151; font-size: 15px; line-height: 1.7; white-space: pre-wrap; border-left: 4px solid #667eea; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; word-wrap: break-word; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);">{{message}}</div>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Action Buttons -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 25px;">
+                <tr>
+                  <td align="center" class="button-wrapper">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <!-- Primary Button -->
+                        <td class="button-cell" style="padding: 0 6px;">
+                          <a href="mailto:{{from_email}}?subject=Re: {{subject}}&body=Hi {{from_name}},%0D%0A%0D%0AThank you for reaching out!%0D%0A%0D%0A" 
+                             class="mobile-button"
+                             style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 10px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; text-align: center; transition: all 0.3s ease;">
+                            ✉️ Reply Now
+                          </a>
+                        </td>
+                        <!-- Secondary Button -->
+                        <td class="button-cell" style="padding: 0 6px;">
+                          <a href="mailto:{{from_email}}" 
+                             class="mobile-button"
+                             style="display: inline-block; background-color: #ffffff; color: #667eea; text-decoration: none; padding: 15px 30px; border-radius: 10px; font-size: 15px; font-weight: 600; border: 2px solid #667eea; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; text-align: center; transition: all 0.3s ease;">
+                            📧 Compose Email
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Summary Box -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 2px solid #fbbf24; border-radius: 10px; padding: 18px; box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td width="40" style="vertical-align: top; padding-right: 12px;">
+                          <div style="font-size: 24px;">💡</div>
+                        </td>
+                        <td style="vertical-align: top;">
+                          <p class="mobile-font" style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;">
+                            <strong style="color: #78350f; font-weight: 700;">Quick Summary:</strong> {{from_name}} from {{company}} contacted you about "{{subject}}". Reply at {{from_email}}.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background: linear-gradient(to right, #f9fafb 0%, #f3f4f6 100%); padding: 25px 20px; text-align: center; border-top: 2px solid #e5e7eb;">
+              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 500;">
+                📨 Automated message from your portfolio contact form
+              </p>
+              <p style="margin: 0; color: #9ca3af; font-size: 12px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;">
+                Powered by <span style="color: #667eea; font-weight: 600;">EmailJS</span> • {{time}}
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+        
+      </td>
+    </tr>
+  </table>
+  
+</body>
+</html>

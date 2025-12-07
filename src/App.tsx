@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header/Header";
 import { HeroSection } from "./components/HeroSection/HeroSection";
-import StripedBackground from "./components/lightswind/StripedBackground";
+// import StripedBackground from "./components/lightswind/StripedBackground";
 import FallBeamBackground from "@/components/ui/fall-beam-background";
 // @ts-ignore - smokey-cursor is a JS file without type definitions
 import SmokeyCursor from "./components/lightswind/smokey-cursor";
@@ -204,7 +204,7 @@ function App() {
         dyeResolution={1440}
         simulationResolution={256}
       /> */}
-      <StripedBackground className={"fixed z-0 blur-xs"} />
+      {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
       <FallBeamBackground className="fixed z-0" />
     </BrowserRouter>
   );

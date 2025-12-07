@@ -21,7 +21,7 @@ const getBaseUrl = () => {
   if (process.env.NETLIFY) {
     return process.env.URL || `https://${process.env.DEPLOY_PRIME_URL}`;
   }
-  return 'https://yourdomain.com';
+  return 'https://tushar-deomare-portfolio.vercel.app/';
 };
 
 export default defineConfig(({ mode }) => ({

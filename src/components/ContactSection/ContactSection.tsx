@@ -11,15 +11,12 @@ import {
 } from "../lightswind/card";
 import { Button } from "../lightswind/button";
 import { Mail, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import type { ConfettiOptions } from "../lightswind/confetti-button";
 
 // Global declaration for confetti
 declare global {
   interface Window {
-    confetti?: (options?: {
-      particleCount?: number;
-      spread?: number;
-      origin?: { x?: number; y?: number };
-    }) => void;
+    confetti?: (options?: ConfettiOptions) => void;
   }
 }
 

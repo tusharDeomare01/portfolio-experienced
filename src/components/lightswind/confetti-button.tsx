@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 // Confetti type
-type ConfettiOptions = {
+export type ConfettiOptions = {
   particleCount?: number;
   spread?: number;
   startVelocity?: number;

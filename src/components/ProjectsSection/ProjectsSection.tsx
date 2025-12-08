@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "@/store/hooks";
 // @ts-ignore - interactive-card is a JS file without type definitions
 import { InteractiveCard } from "../lightswind/interactive-card";
 // @ts-ignore - button is a JS file without type definitions
@@ -13,27 +14,8 @@ import { ArrowRight, Calendar } from "lucide-react";
 export const ProjectsSection = () => {
   const navigate = useNavigate();
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check initial theme
-    const checkTheme = () => {
-      const isDark = document.documentElement.classList.contains("dark");
-      setIsDarkMode(isDark);
-    };
-
-    // Check on mount
-    checkTheme();
-
-    // Watch for theme changes
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const theme = useAppSelector((state) => state.theme.theme);
+  const isDarkMode = theme === "dark";
 
   const getLogoPath = (projectTitle: string) => {
     if (projectTitle === "MarketJD") {

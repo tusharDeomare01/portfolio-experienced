@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "@/store/hooks";
 import RaysBackground from "@/components/ui/rays-background";
 import FallBeamBackground from "@/components/ui/fall-beam-background";
 import {
@@ -38,27 +39,8 @@ import {
 
 const MarketJD = () => {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check initial theme
-    const checkTheme = () => {
-      const isDark = document.documentElement.classList.contains("dark");
-      setIsDarkMode(isDark);
-    };
-
-    // Check on mount
-    checkTheme();
-
-    // Watch for theme changes
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const theme = useAppSelector((state) => state.theme.theme);
+  const isDarkMode = theme === "dark";
 
   // Updated tech stack based on actual package.json
   const techStack = {

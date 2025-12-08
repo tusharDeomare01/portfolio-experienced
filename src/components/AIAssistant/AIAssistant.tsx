@@ -232,7 +232,7 @@ export default function AIAssistant() {
                 ${
                   theme === "dark"
                     ? "bg-gradient-to-br from-primary via-primary/90 to-primary/80 border-primary/30"
-                    : "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 border-blue-400/30"
+                    : "bg-gradient-to-br from-pink-600 via-pink-500 to-pink-400 border-pink-400/30"
                 }
               `}
               whileHover={{ scale: 1.1 }}
@@ -243,7 +243,7 @@ export default function AIAssistant() {
                 className={`absolute inset-0 rounded-full blur-xl ${
                   theme === "dark"
                     ? "bg-primary/40"
-                    : "bg-blue-500/40"
+                    : "bg-pink-500/40"
                 }`}
                 animate={{
                   scale: [1, 1.4, 1],
@@ -261,7 +261,7 @@ export default function AIAssistant() {
                 className={`absolute inset-0 bg-gradient-to-br rounded-full ${
                   theme === "dark"
                     ? "from-primary/20 via-primary/10 to-transparent"
-                    : "from-blue-500/20 via-blue-400/10 to-transparent"
+                    : "from-pink-500/20 via-pink-400/10 to-transparent"
                 }`}
                 animate={{
                   rotate: [0, 360],
@@ -306,7 +306,7 @@ export default function AIAssistant() {
                 className={`absolute inset-0 rounded-full border-2 ${
                   theme === "dark"
                     ? "border-primary/50"
-                    : "border-blue-500/50"
+                    : "border-pink-500/50"
                 }`}
                 animate={{
                   scale: [1, 1.3, 1],

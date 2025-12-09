@@ -8,6 +8,7 @@ import { Badge } from "../lightswind/badge";
 import { Progress } from "../lightswind/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import { CountUp } from "../lightswind/count-up";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
 
 export default function ProfessionalProfile() {
   return (
@@ -32,8 +33,16 @@ export default function ProfessionalProfile() {
         viewport={{ once: true }}
         className="your-child-class"
       >
-        {" "}
-        <h3 className="text-3xl font-bold mb-6">Core Skills</h3>
+        <ScrollReveal
+          size="xl"
+          align="left"
+          variant="default"
+          enableBlur={true}
+          staggerDelay={0.05}
+          containerClassName="mb-6"
+        >
+          Core Skills
+        </ScrollReveal>
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
           <Card>
             <CardHeader>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ThreeDCarousel from "@/components/ThreeDCarousel";
 import type { ThreeDCarouselItem } from "@/components/ThreeDCarousel";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { Trophy, X } from "lucide-react";
 
 export const AchievementsSection = () => {
@@ -77,13 +78,26 @@ export const AchievementsSection = () => {
       >
         <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
           <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-center">
+          <ScrollReveal
+            size="xl"
+            align="center"
+            variant="default"
+            enableBlur={true}
+            staggerDelay={0.05}
+          >
             Achievements
-          </h2>
+          </ScrollReveal>
         </div>
-        <p className="text-muted-foreground text-xs sm:text-sm md:text-base text-center max-w-2xl px-4">
+        <ScrollReveal
+          size="sm"
+          align="center"
+          variant="muted"
+          enableBlur={true}
+          staggerDelay={0.03}
+          containerClassName="max-w-2xl px-4"
+        >
           Showcasing career milestones, awards, and notable accomplishments
-        </p>
+        </ScrollReveal>
       </motion.div>
 
       {/* 3D Carousel */}

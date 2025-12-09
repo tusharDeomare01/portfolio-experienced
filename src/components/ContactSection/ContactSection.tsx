@@ -10,6 +10,7 @@ import {
   CardContent,
 } from "../lightswind/card";
 import { Button } from "../lightswind/button";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { Mail, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import type { ConfettiOptions } from "../lightswind/confetti-button";
 
@@ -170,14 +171,28 @@ export const ContactSection = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true }}
       >
-        <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
+        <div className="mb-2 flex items-center justify-center gap-2">
           <Mail className="w-8 h-8 text-primary" />
-          Get In Touch
-        </h2>
-        <p className="text-muted-foreground">
-          Have a project in mind or want to discuss opportunities? I'd love to
-          hear from you!
-        </p>
+          <ScrollReveal
+            size="xl"
+            align="center"
+            variant="default"
+            enableBlur={true}
+            staggerDelay={0.05}
+            containerClassName="inline-block"
+          >
+            Get In Touch
+          </ScrollReveal>
+        </div>
+        <ScrollReveal
+          size="sm"
+          align="center"
+          variant="muted"
+          enableBlur={true}
+          staggerDelay={0.03}
+        >
+          Have a project in mind or want to discuss opportunities? I'd love to hear from you!
+        </ScrollReveal>
       </motion.div>
 
       <Card className="backdrop-blur-xl bg-background/80 border-2">

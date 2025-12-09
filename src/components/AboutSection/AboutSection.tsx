@@ -1,5 +1,6 @@
 import { Separator } from "../lightswind/separator";
 import { motion } from "framer-motion";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
 
 export const AboutSection = () => {
   return (
@@ -11,15 +12,15 @@ export const AboutSection = () => {
       transition={{ duration: 1.8, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.2 }}
     >
-      <motion.h2
-        className="text-3xl font-bold"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        viewport={{ once: true }}
+      <ScrollReveal
+        size="xl"
+        align="left"
+        variant="default"
+        enableBlur={true}
+        staggerDelay={0.05}
       >
         About Me
-      </motion.h2>
+      </ScrollReveal>
       
       <motion.div
         className="space-y-4 text-muted-foreground text-sm max-w-3xl leading-relaxed"
@@ -28,22 +29,33 @@ export const AboutSection = () => {
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
         viewport={{ once: true }}
       >
-        <p>
-          I'm a developer who enjoys turning ideas into working software. 
-          I focus on writing clean, maintainable code and building things that 
-          people actually find useful.
-        </p>
-        <p>
-          When I'm not coding, I'm usually learning something new or exploring 
-          different ways to solve problems. I believe good software comes from 
-          understanding the problem first, then finding the right solution—not 
-          the other way around.
-        </p>
-        <p>
-          I'm always open to interesting projects and conversations. If you'd 
-          like to work together or just chat about technology, feel free to 
-          reach out.
-        </p>
+        <ScrollReveal
+          size="sm"
+          align="left"
+          variant="muted"
+          enableBlur={true}
+          staggerDelay={0.03}
+        >
+          I'm a developer who enjoys turning ideas into working software. I focus on writing clean, maintainable code and building things that people actually find useful.
+        </ScrollReveal>
+        <ScrollReveal
+          size="sm"
+          align="left"
+          variant="muted"
+          enableBlur={true}
+          staggerDelay={0.03}
+        >
+          When I'm not coding, I'm usually learning something new or exploring different ways to solve problems. I believe good software comes from understanding the problem first, then finding the right solution—not the other way around.
+        </ScrollReveal>
+        <ScrollReveal
+          size="sm"
+          align="left"
+          variant="muted"
+          enableBlur={true}
+          staggerDelay={0.03}
+        >
+          I'm always open to interesting projects and conversations. If you'd like to work together or just chat about technology, feel free to reach out.
+        </ScrollReveal>
       </motion.div>
       
       <Separator />

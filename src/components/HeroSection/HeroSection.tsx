@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { TypingText } from "../lightswind/typing-text";
 import { Button } from "../lightswind/button";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { ArrowDown, Sparkles, Mail } from "lucide-react";
 
 export const HeroSection = () => {
@@ -62,18 +63,17 @@ export const HeroSection = () => {
           >
             Tushar Deomare
           </TypingText>
-          <motion.span
-            className="text-xs sm:text-sm text-pink-500 font-semibold block mt-1"
-            initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              filter: "blur(0px)",
-              transition: { duration: 0.8, ease: "easeOut" },
-            }}
+          <ScrollReveal
+            size="sm"
+            align="left"
+            variant="accent"
+            enableBlur={true}
+            staggerDelay={0.02}
+            containerClassName="mt-1"
+            textClassName="text-xs sm:text-sm text-pink-500 font-semibold block"
           >
             He / Him
-          </motion.span>
+          </ScrollReveal>
         </motion.h1>
 
         {/* Key Highlight - Concise and Impactful */}
@@ -88,11 +88,17 @@ export const HeroSection = () => {
           }}
         >
           <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
-          <span className="font-medium">
-            Building scalable solutions with{" "}
-            <span className="text-foreground font-semibold">2+ years</span> of
-            expertise
-          </span>
+          <ScrollReveal
+            size="md"
+            align="left"
+            variant="muted"
+            enableBlur={true}
+            staggerDelay={0.03}
+            containerClassName="inline"
+            textClassName="font-medium"
+          >
+            Building scalable solutions with 2+ years of expertise
+          </ScrollReveal>
         </motion.div>
 
         {/* Email Contact */}

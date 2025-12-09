@@ -9,7 +9,8 @@ import { InteractiveCard } from "../lightswind/interactive-card";
 // @ts-ignore - button is a JS file without type definitions
 import { Button } from "../lightswind/button";
 import { Badge } from "../lightswind/badge";
-import { ArrowRight, Calendar } from "lucide-react";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
+import { ArrowRight, Calendar, FolderKanban } from "lucide-react";
 
 export const ProjectsSection = () => {
   const navigate = useNavigate();
@@ -83,14 +84,27 @@ export const ProjectsSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="inline-flex items-center gap-2 mb-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
+          <div className="mb-4 flex items-baseline justify-center gap-4">
+            <FolderKanban className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-primary flex-shrink-0 mt-1.5 md:mt-2 lg:mt-2.5" />
+            <ScrollReveal
+              size="2xl"
+              align="center"
+              variant="default"
+              enableBlur={true}
+              staggerDelay={0.05}
+            >
               Projects
-            </h2>
+            </ScrollReveal>
           </div>
-          <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto">
+          <ScrollReveal
+            size="sm"
+            align="center"
+            variant="muted"
+            enableBlur={true}
+            staggerDelay={0.03}
+          >
             Explore my latest work...
-          </p>
+          </ScrollReveal>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 justify-items-center">

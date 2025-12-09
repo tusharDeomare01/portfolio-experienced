@@ -14,6 +14,7 @@ import {
   CardContent,
 } from "@/components/lightswind/card";
 import { Badge } from "@/components/lightswind/badge";
+import { ScrollReveal } from "@/components/lightswind/scroll-reveal";
 import {
   ArrowLeft,
   Code,
@@ -356,12 +357,26 @@ const MarketJD = () => {
               />
             </div>
             <div className="flex-1">
-              <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+              <ScrollReveal
+                size="2xl"
+                align="left"
+                variant="default"
+                enableBlur={true}
+                staggerDelay={0.05}
+                containerClassName="mb-3"
+              >
                 MarketJD
-              </h1>
-              <p className="text-xl text-muted-foreground mb-2">
+              </ScrollReveal>
+              <ScrollReveal
+                size="md"
+                align="left"
+                variant="muted"
+                enableBlur={true}
+                staggerDelay={0.03}
+                containerClassName="mb-2"
+              >
                 SEO Admin Portal • Enterprise Platform
-              </p>
+              </ScrollReveal>
               <div className="flex flex-wrap gap-2 mt-4">
                 <Badge variant="success" size="lg">
                   Live & Active
@@ -375,25 +390,43 @@ const MarketJD = () => {
               </div>
             </div>
           </div>
-          <p className="text-lg text-muted-foreground max-w-4xl leading-relaxed">
-            A comprehensive SEO insights and analytics platform with 20+
-            third-party API integrations, advanced authentication, dynamic
-            reporting, and AI-powered automation. Built with Next.js 14,
-            TypeScript, Prisma, and modern best practices for enterprise-scale
-            applications.
-          </p>
+          <ScrollReveal
+            size="md"
+            align="left"
+            variant="muted"
+            enableBlur={true}
+            staggerDelay={0.03}
+            containerClassName="max-w-4xl"
+          >
+            A comprehensive SEO insights and analytics platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with Next.js 14, TypeScript, Prisma, and modern best practices for enterprise-scale applications.
+          </ScrollReveal>
         </motion.div>
 
         {/* Tech Stack */}
         <motion.div variants={itemVariants} className="mb-16">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-2">
               <Cpu className="w-8 h-8 text-primary" />
-              Technology Stack
-            </h2>
-            <p className="text-muted-foreground">
+              <ScrollReveal
+                size="xl"
+                align="left"
+                variant="default"
+                enableBlur={true}
+                staggerDelay={0.05}
+                containerClassName="inline-block"
+              >
+                Technology Stack
+              </ScrollReveal>
+            </div>
+            <ScrollReveal
+              size="sm"
+              align="left"
+              variant="muted"
+              enableBlur={true}
+              staggerDelay={0.03}
+            >
               Modern, scalable technologies powering the platform
-            </p>
+            </ScrollReveal>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {Object.entries(techStack).map(([key, tech]) => {
@@ -426,13 +459,28 @@ const MarketJD = () => {
         {/* API Integrations */}
         <motion.div variants={itemVariants} className="mb-16">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-2">
               <Webhook className="w-8 h-8 text-primary" />
-              Third-Party Integrations
-            </h2>
-            <p className="text-muted-foreground">
+              <ScrollReveal
+                size="xl"
+                align="left"
+                variant="default"
+                enableBlur={true}
+                staggerDelay={0.05}
+                containerClassName="inline-block"
+              >
+                Third-Party Integrations
+              </ScrollReveal>
+            </div>
+            <ScrollReveal
+              size="sm"
+              align="left"
+              variant="muted"
+              enableBlur={true}
+              staggerDelay={0.03}
+            >
               20+ seamless API integrations for comprehensive data insights
-            </p>
+            </ScrollReveal>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {integrations.map((integration, idx) => {
@@ -492,13 +540,28 @@ const MarketJD = () => {
         {/* Key Features */}
         <motion.div variants={itemVariants} className="mb-16">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-2">
               <Zap className="w-8 h-8 text-primary" />
-              Key Features & Capabilities
-            </h2>
-            <p className="text-muted-foreground">
+              <ScrollReveal
+                size="xl"
+                align="left"
+                variant="default"
+                enableBlur={true}
+                staggerDelay={0.05}
+                containerClassName="inline-block"
+              >
+                Key Features & Capabilities
+              </ScrollReveal>
+            </div>
+            <ScrollReveal
+              size="sm"
+              align="left"
+              variant="muted"
+              enableBlur={true}
+              staggerDelay={0.03}
+            >
               Major development achievements and platform capabilities
-            </p>
+            </ScrollReveal>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((feature, idx) => {

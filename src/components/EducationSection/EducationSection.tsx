@@ -1,8 +1,9 @@
 import { Card, CardHeader, CardTitle } from "../lightswind/card";
 import ProfessionalProfile from "./SkillCategory";
 import { motion } from "framer-motion";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { portfolioData } from "@/lib/portfolioData";
-import { MapPin } from "lucide-react";
+import { MapPin, GraduationCap } from "lucide-react";
 
 export const EducationSection = () => {
   return (
@@ -16,15 +17,18 @@ export const EducationSection = () => {
     >
       {/* Education */}
       <div>
-        <motion.h3
-          className="text-3xl font-bold mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true }}
-        >
-          Education
-        </motion.h3>
+        <div className="flex items-baseline gap-4 mb-6">
+          <GraduationCap className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
+          <ScrollReveal
+            size="xl"
+            align="left"
+            variant="default"
+            enableBlur={true}
+            staggerDelay={0.05}
+          >
+            Education
+          </ScrollReveal>
+        </div>
 
         <motion.div
           className="grid grid-cols-1 md:grid-cols-1 gap-8"

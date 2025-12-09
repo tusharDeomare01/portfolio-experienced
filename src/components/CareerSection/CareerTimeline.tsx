@@ -1,5 +1,7 @@
 import { ScrollTimeline } from "../lightswind/scroll-timeline";
 import { portfolioData } from "@/lib/portfolioData";
+import { Briefcase } from "lucide-react";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
 
 export const CareerTimeline = () => {
   // Build description with achievements and technologies if available
@@ -29,21 +31,47 @@ export const CareerTimeline = () => {
 
   return (
     <div id="career" className="min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20">
-      <ScrollTimeline
-        events={careerEvents}
-        title="Career Journey"
-        subtitle="An evolving path of leadership, innovation, and impact"
-        animationOrder="staggered"
-        cardAlignment="alternating"
-        cardVariant="elevated"
-        parallaxIntensity={0.15}
-        revealAnimation="fade"
-        progressIndicator={true}
-        lineColor="bg-primary/20"
-        activeColor="bg-primary"
-        progressLineWidth={3}
-        progressLineCap="round"
-      />
+      <div className="text-center mb-8 px-4">
+        <div className="flex items-baseline justify-center gap-4 mb-4">
+          <Briefcase className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
+          <ScrollReveal
+            size="xl"
+            align="center"
+            variant="default"
+            enableBlur={true}
+            staggerDelay={0.05}
+          >
+            Career Journey
+          </ScrollReveal>
+        </div>
+        <ScrollReveal
+          size="sm"
+          align="center"
+          variant="muted"
+          enableBlur={true}
+          staggerDelay={0.03}
+          containerClassName="max-w-2xl mx-auto"
+        >
+          An evolving path of leadership, innovation, and impact
+        </ScrollReveal>
+      </div>
+      <div className="[&_div.text-center]:hidden">
+        <ScrollTimeline
+          events={careerEvents}
+          title=""
+          subtitle=""
+          animationOrder="staggered"
+          cardAlignment="alternating"
+          cardVariant="elevated"
+          parallaxIntensity={0.15}
+          revealAnimation="fade"
+          progressIndicator={true}
+          lineColor="bg-primary/20"
+          activeColor="bg-primary"
+          progressLineWidth={3}
+          progressLineCap="round"
+        />
+      </div>
     </div>
   );
 };

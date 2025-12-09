@@ -124,12 +124,11 @@ function HomePage() {
     },
   ];
   return (
-    <div className="bg-background min-h-screen flex items-center justify-center">
+    <div className="bg-background min-h-screen w-full">
       <Header />
 
       <div
-        className="w-full bg-transparent max-w-5xl px-4 my-30
-        flex items-center justify-center 
+        className="w-full bg-transparent max-w-5xl mx-auto px-4 py-8
         lg:rounded-3xl backdrop-blur-xl border-gray-100 dark:border-gray-900"
       >
         <div className="z-10">

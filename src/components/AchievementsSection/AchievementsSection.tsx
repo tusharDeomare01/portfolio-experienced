@@ -76,8 +76,8 @@ export const AchievementsSection = () => {
         transition={{ duration: 0.5, ease: "easeOut" }}
         viewport={{ once: true }}
       >
-        <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+        <div className="flex items-baseline justify-center gap-4 mb-3 sm:mb-4">
+          <Trophy className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
           <ScrollReveal
             size="xl"
             align="center"

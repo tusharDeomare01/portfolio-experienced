@@ -171,15 +171,14 @@ export const ContactSection = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true }}
       >
-        <div className="mb-2 flex items-center justify-center gap-2">
-          <Mail className="w-8 h-8 text-primary" />
+        <div className="mb-2 flex items-baseline justify-center gap-4">
+          <Mail className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
           <ScrollReveal
             size="xl"
             align="center"
             variant="default"
             enableBlur={true}
             staggerDelay={0.05}
-            containerClassName="inline-block"
           >
             Get In Touch
           </ScrollReveal>

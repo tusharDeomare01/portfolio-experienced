@@ -10,7 +10,7 @@ import { InteractiveCard } from "../lightswind/interactive-card";
 import { Button } from "../lightswind/button";
 import { Badge } from "../lightswind/badge";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
-import { ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight, Calendar, FolderKanban } from "lucide-react";
 
 export const ProjectsSection = () => {
   const navigate = useNavigate();
@@ -84,7 +84,8 @@ export const ProjectsSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="mb-4">
+          <div className="mb-4 flex items-baseline justify-center gap-4">
+            <FolderKanban className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-primary flex-shrink-0 mt-1.5 md:mt-2 lg:mt-2.5" />
             <ScrollReveal
               size="2xl"
               align="center"

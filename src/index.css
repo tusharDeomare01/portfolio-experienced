@@ -43,13 +43,29 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  /* Ensure vertical scrolling works on mobile PWA */
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
   overflow-x: hidden;
-  overscroll-behavior-y: none;
-  overscroll-behavior-x: none;
+  /* Allow vertical scrolling - critical for mobile PWA */
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
+  overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
+  /* Ensure body takes full height and allows scrolling */
+  min-height: 100%;
+  height: auto;
+  position: relative;
+}
+
+/* Ensure root element allows scrolling */
+#root {
+  min-height: 100%;
+  width: 100%;
+  position: relative;
 }
 
 /* Optimize rendering performance */

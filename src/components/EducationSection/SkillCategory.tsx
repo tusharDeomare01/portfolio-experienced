@@ -38,7 +38,7 @@ export default function ProfessionalProfile() {
           align="left"
           variant="default"
           enableBlur={true}
-          blurStrength={20}
+          blurStrength={5}
           baseRotation={0}
           containerClassName="mb-6"
         >

@@ -360,7 +360,7 @@ const MarketJD = () => {
                 variant="default"
                 enableBlur={true}
                 containerClassName="mb-3"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 MarketJD
@@ -371,7 +371,7 @@ const MarketJD = () => {
                 variant="muted"
                 enableBlur={true}
                 containerClassName="mb-2"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 SEO Admin Portal • Enterprise Platform
@@ -395,7 +395,7 @@ const MarketJD = () => {
             variant="muted"
             enableBlur={true}
             containerClassName="max-w-4xl"
-            blurStrength={20}
+            blurStrength={5}
             baseRotation={0}
           >
             A comprehensive SEO insights and analytics platform with 20+
@@ -417,7 +417,7 @@ const MarketJD = () => {
                 variant="default"
                 enableBlur={true}
                 containerClassName="inline-block"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 Technology Stack
@@ -428,7 +428,7 @@ const MarketJD = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              blurStrength={20}
+              blurStrength={5}
               baseRotation={0}
             >
               Modern, scalable technologies powering the platform
@@ -473,7 +473,7 @@ const MarketJD = () => {
                 variant="default"
                 enableBlur={true}
                 containerClassName="inline-block"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 Third-Party Integrations
@@ -484,7 +484,7 @@ const MarketJD = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              blurStrength={20}
+              blurStrength={5}
               baseRotation={0}
             >
               20+ seamless API integrations for comprehensive data insights
@@ -556,7 +556,7 @@ const MarketJD = () => {
                 variant="default"
                 enableBlur={true}
                 containerClassName="inline-block"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 Key Features & Capabilities
@@ -567,7 +567,7 @@ const MarketJD = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              blurStrength={20}
+              blurStrength={5}
               baseRotation={0}
             >
               Major development achievements and platform capabilities

@@ -335,21 +335,21 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
     requestAnimationFrame(() => {
         try {
           // Update dimensions in case of resize
-          const width = window.innerWidth;
-          const height = window.innerHeight;
-          const isSmall = width < 375;
-          const isMobile = width < 768;
-          const isTablet = width >= 768 && width < 1024;
-          const isLarge = width >= 1920;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const isSmall = width < 375;
+    const isMobile = width < 768;
+    const isTablet = width >= 768 && width < 1024;
+    const isLarge = width >= 1920;
 
           const currentDimensions = {
-            width,
-            height,
-            tooltipWidth: isSmall ? 300 : isMobile ? 340 : isTablet ? 400 : isLarge ? 450 : 420,
-            spacing: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 28 : 24,
-            padding: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 32 : 24,
-            estimatedHeight: isSmall ? 260 : isMobile ? 280 : isTablet ? 300 : 320,
-          };
+      width,
+      height,
+      tooltipWidth: isSmall ? 300 : isMobile ? 340 : isTablet ? 400 : isLarge ? 450 : 420,
+      spacing: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 28 : 24,
+      padding: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 32 : 24,
+      estimatedHeight: isSmall ? 260 : isMobile ? 280 : isTablet ? 300 : 320,
+    };
 
           const element = targetElement || document.querySelector(step.target);
       

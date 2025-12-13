@@ -5,16 +5,13 @@ import "./App.css";
 import Header from "./components/Header/Header";
 import { HeroSection } from "./components/HeroSection/HeroSection";
 // import StripedBackground from "./components/lightswind/StripedBackground";
-import FallBeamBackground from "@/components/ui/fall-beam-background";
 // @ts-ignore - smokey-cursor is a JS file without type definitions
-import SmokeyCursor from "./components/lightswind/smokey-cursor";
 import { AboutSection } from "./components/AboutSection/AboutSection";
 import { ProjectsSection } from "./components/ProjectsSection/ProjectsSection";
 import { EducationSection } from "./components/EducationSection/EducationSection";
 import { CareerTimeline } from "./components/CareerSection/CareerTimeline";
 import { AchievementsSection } from "./components/AchievementsSection/AchievementsSection";
 import { ContactSection } from "./components/ContactSection/ContactSection";
-import Dock from "./components/lightswind/dock";
 import {
   Home,
   User,
@@ -29,6 +26,8 @@ import AIAssistant from "./components/AIAssistant/AIAssistant";
 import { useIsMobile } from "./components/hooks/use-mobile";
 import { Tour } from "./components/Tour/Tour";
 import { TourProvider, useTourContext } from "./components/Tour/TourContext";
+import Dock from "./components/lightswind/dock";
+import FallBeamBackground from "./components/lightswind/fall-beam-background";
 
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
@@ -56,7 +55,7 @@ function HomePage() {
       const currentScrollY = window.scrollY;
 
       // Show dock if scrolling down OR if tour is active and on dock step
-      const shouldShowDock = 
+      const shouldShowDock =
         (currentScrollY > lastScrollY && currentScrollY > 100) ||
         (tour.isTourActive && tour.currentStep === 8); // Step 8 is the dock step
 
@@ -71,12 +70,12 @@ function HomePage() {
     };
 
     window.addEventListener("scroll", handleScroll);
-    
+
     // Show dock if tour is on dock step
     if (tour.isTourActive && tour.currentStep === 8) {
       setShowDock(true);
     }
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -166,7 +165,9 @@ function HomePage() {
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
             className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 ${
-              tour.isTourActive && tour.currentStep === 8 ? "z-[10001]" : "z-[999]"
+              tour.isTourActive && tour.currentStep === 8
+                ? "z-[10001]"
+                : "z-[999]"
             }`}
           >
             <Dock
@@ -197,42 +198,42 @@ function HomePage() {
 function App() {
   return (
     <TourProvider>
-    <BrowserRouter>
-      <Routes>
-        {/* MarketJD Project Detail Page */}
-        <Route
-          path="/marketjd"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <MarketJD />
-            </Suspense>
-          }
-        />
+      <BrowserRouter>
+        <Routes>
+          {/* MarketJD Project Detail Page */}
+          <Route
+            path="/marketjd"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <MarketJD />
+              </Suspense>
+            }
+          />
 
-        {/* Portfolio Project Detail Page */}
-        <Route
-          path="/portfolio"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <Portfolio />
-            </Suspense>
-          }
-        />
+          {/* Portfolio Project Detail Page */}
+          <Route
+            path="/portfolio"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <Portfolio />
+              </Suspense>
+            }
+          />
 
-        {/* Main Portfolio Page */}
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-      {/* AI Assistant - Available on all routes */}
-      <AIAssistant />
-      {/* <SmokeyCursor
+          {/* Main Portfolio Page */}
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+        {/* AI Assistant - Available on all routes */}
+        <AIAssistant />
+        {/* <SmokeyCursor
         followMouse={true}
         autoColors={true}
         dyeResolution={1440}
         simulationResolution={256}
       /> */}
-      {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
-      <FallBeamBackground className="fixed z-0" />
-    </BrowserRouter>
+        {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
+        <FallBeamBackground className="fixed z-0" />
+      </BrowserRouter>
     </TourProvider>
   );
 }

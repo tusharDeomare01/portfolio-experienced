@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ThreeDCarousel from "@/components/ThreeDCarousel";
-import type { ThreeDCarouselItem } from "@/components/ThreeDCarousel";
+import ThreeDCarousel from "../lightswind/ThreeDCarousel";
+import type { ThreeDCarouselItem } from "../lightswind/ThreeDCarousel";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { Trophy, X } from "lucide-react";
 
@@ -13,23 +13,27 @@ export const AchievementsSection = () => {
       id: "1",
       image: "/image-1.png",
       title: "Above & Beyond Award Ceremony",
-      description: "Receiving the prestigious 'Above & Beyond' award from Thinkitive, recognizing exceptional dedication and outstanding contributions to the company's success.",
+      description:
+        "Receiving the prestigious 'Above & Beyond' award from Thinkitive, recognizing exceptional dedication and outstanding contributions to the company's success.",
     },
     {
       id: "2",
       image: "/image-2.png",
       title: "Thinkitive Above & Beyond Award 2024",
-      description: "Honored with the 'Above & Beyond of the Year 2024' trophy, celebrating relentless effort and selfless dedication in driving innovation and excellence.",
+      description:
+        "Honored with the 'Above & Beyond of the Year 2024' trophy, celebrating relentless effort and selfless dedication in driving innovation and excellence.",
     },
     {
       id: "3",
       image: "/image-3.png",
       title: "Recognition Certificate",
-      description: "Certificate of recognition for transforming challenges into opportunities and playing a pivotal role in driving Thinkitive Inc. to new heights during their Glorious 10 Years celebration.",
+      description:
+        "Certificate of recognition for transforming challenges into opportunities and playing a pivotal role in driving Thinkitive Inc. to new heights during their Glorious 10 Years celebration.",
     },
   ]);
 
-  const [selectedAchievement, setSelectedAchievement] = useState<ThreeDCarouselItem | null>(null);
+  const [selectedAchievement, setSelectedAchievement] =
+    useState<ThreeDCarouselItem | null>(null);
 
   const handleItemClick = (item: ThreeDCarouselItem) => {
     setSelectedAchievement(item);
@@ -130,17 +134,17 @@ export const AchievementsSection = () => {
               className="fixed inset-0 z-[100] bg-black/60 dark:bg-black/80 backdrop-blur-sm"
               onClick={closeModal}
             />
-            
+
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ 
+              transition={{
                 type: "spring",
                 stiffness: 300,
                 damping: 30,
-                duration: 0.3
+                duration: 0.3,
               }}
               className="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-6 md:p-8"
               onClick={(e) => e.stopPropagation()}
@@ -169,7 +173,8 @@ export const AchievementsSection = () => {
                         alt={selectedAchievement.title || "Achievement"}
                         className="max-w-full max-h-full w-auto h-auto object-contain brightness-105 contrast-105 dark:brightness-100 dark:contrast-100 drop-shadow-2xl dark:drop-shadow-lg"
                         style={{
-                          filter: "brightness(1.05) contrast(1.05) saturate(1.02)",
+                          filter:
+                            "brightness(1.05) contrast(1.05) saturate(1.02)",
                         }}
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;

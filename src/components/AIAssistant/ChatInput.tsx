@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { Button } from "@/components/lightswind/button";
-import { Textarea } from "@/components/lightswind/textarea";
 import { Send, Loader2 } from "lucide-react";
 import { sendMessage } from "./useChat";
 import { store } from "@/store/store";
+import { Textarea } from "../lightswind/textarea";
+import { Button } from "../lightswind/button";
 
 export default function ChatInput() {
   const dispatch = useAppDispatch();
@@ -53,4 +53,3 @@ export default function ChatInput() {
     </div>
   );
 }
-

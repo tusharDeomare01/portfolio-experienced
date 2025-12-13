@@ -2,7 +2,21 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronRight, ChevronLeft, Sparkles, Home, User, GraduationCap, Briefcase, FolderKanban, Trophy, Mail, Bot, Maximize2 } from "lucide-react";
+import {
+  X,
+  ChevronRight,
+  ChevronLeft,
+  Sparkles,
+  Home,
+  User,
+  GraduationCap,
+  Briefcase,
+  FolderKanban,
+  Trophy,
+  Mail,
+  Bot,
+  Maximize2,
+} from "lucide-react";
 import { Button } from "../lightswind/button";
 import { BorderBeam } from "../lightswind/border-beam";
 
@@ -20,7 +34,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "welcome",
     target: "#hero",
     title: "Welcome to My Portfolio! 👋",
-    content: "Welcome! This is my interactive portfolio showcasing my work, skills, and achievements. Let me guide you through the different sections.",
+    content:
+      "Welcome! This is my interactive portfolio showcasing my work, skills, and achievements. Let me guide you through the different sections.",
     position: "bottom",
     icon: <Sparkles className="w-5 h-5" />,
   },
@@ -28,7 +43,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "header",
     target: "header",
     title: "Navigation Header",
-    content: "Use the header to navigate between sections. You can toggle between light/dark theme and enter fullscreen mode for a better viewing experience.",
+    content:
+      "Use the header to navigate between sections. You can toggle between light/dark theme and enter fullscreen mode for a better viewing experience.",
     position: "bottom",
     icon: <Maximize2 className="w-5 h-5" />,
   },
@@ -36,7 +52,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "about",
     target: "#about",
     title: "About Me",
-    content: "Learn more about who I am, my background, and what drives me as a developer. This section gives you insights into my personality and approach to software development.",
+    content:
+      "Learn more about who I am, my background, and what drives me as a developer. This section gives you insights into my personality and approach to software development.",
     position: "top",
     icon: <User className="w-5 h-5" />,
   },
@@ -44,7 +61,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "education",
     target: "#education",
     title: "Education & Skills",
-    content: "Explore my educational background and technical skills. Here you'll find my academic achievements and the technologies I'm proficient in.",
+    content:
+      "Explore my educational background and technical skills. Here you'll find my academic achievements and the technologies I'm proficient in.",
     position: "top",
     icon: <GraduationCap className="w-5 h-5" />,
   },
@@ -52,7 +70,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "career",
     target: "#career",
     title: "Career Timeline",
-    content: "Discover my professional journey through an interactive timeline. See my work experience, roles, and key achievements throughout my career.",
+    content:
+      "Discover my professional journey through an interactive timeline. See my work experience, roles, and key achievements throughout my career.",
     position: "top",
     icon: <Briefcase className="w-5 h-5" />,
   },
@@ -60,7 +79,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "projects",
     target: "#projects",
     title: "Featured Projects",
-    content: "Browse through my portfolio projects. Each project showcases different technologies and solutions I've built. Click on any project to see detailed information.",
+    content:
+      "Browse through my portfolio projects. Each project showcases different technologies and solutions I've built. Click on any project to see detailed information.",
     position: "top",
     icon: <FolderKanban className="w-5 h-5" />,
   },
@@ -68,7 +88,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "achievements",
     target: "#achievements",
     title: "Achievements & Awards",
-    content: "View my notable achievements and recognitions. This includes awards, certifications, and other milestones in my professional journey.",
+    content:
+      "View my notable achievements and recognitions. This includes awards, certifications, and other milestones in my professional journey.",
     position: "top",
     icon: <Trophy className="w-5 h-5" />,
   },
@@ -76,7 +97,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "contact",
     target: "#contact",
     title: "Get In Touch",
-    content: "Have a project in mind or want to collaborate? Fill out the contact form to reach out. I'm always open to interesting opportunities and conversations.",
+    content:
+      "Have a project in mind or want to collaborate? Fill out the contact form to reach out. I'm always open to interesting opportunities and conversations.",
     position: "top",
     icon: <Mail className="w-5 h-5" />,
   },
@@ -84,7 +106,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "dock",
     target: "[data-dock]",
     title: "Quick Navigation Dock",
-    content: "When you scroll down, a navigation dock appears at the bottom. Use it to quickly jump to any section without scrolling back to the top.",
+    content:
+      "When you scroll down, a navigation dock appears at the bottom. Use it to quickly jump to any section without scrolling back to the top.",
     position: "top",
     icon: <Home className="w-5 h-5" />,
   },
@@ -92,7 +115,8 @@ const TOUR_STEPS: TourStep[] = [
     id: "ai-assistant",
     target: "[data-ai-assistant]",
     title: "AI Assistant",
-    content: "Meet your AI assistant! Click the floating button to get help, ask questions about my portfolio, or get information about my projects and experience.",
+    content:
+      "Meet your AI assistant! Click the floating button to get help, ask questions about my portfolio, or get information about my projects and experience.",
     position: "left",
     icon: <Bot className="w-5 h-5" />,
   },
@@ -108,17 +132,17 @@ export function useTour() {
   // Check if this is the first visit - only auto-start tour once in lifetime
   useEffect(() => {
     try {
-    const tourCompleted = localStorage.getItem(TOUR_STORAGE_KEY);
-      
+      const tourCompleted = localStorage.getItem(TOUR_STORAGE_KEY);
+
       if (tourCompleted === "true") {
         // User has seen the tour before
         setHasSeenTour(true);
       } else {
         // First time visiting - auto-start tour after a short delay
-      const timer = setTimeout(() => {
-        setIsTourActive(true);
-      }, 1500);
-      return () => clearTimeout(timer);
+        const timer = setTimeout(() => {
+          setIsTourActive(true);
+        }, 1500);
+        return () => clearTimeout(timer);
       }
     } catch (error) {
       // Handle localStorage errors (e.g., private browsing mode)
@@ -139,7 +163,7 @@ export function useTour() {
     document.body.style.overflow = "";
     // Mark tour as completed in localStorage - persists across sessions
     try {
-    localStorage.setItem(TOUR_STORAGE_KEY, "true");
+      localStorage.setItem(TOUR_STORAGE_KEY, "true");
     } catch (error) {
       console.warn("Tour: Could not save to localStorage", error);
     }
@@ -224,7 +248,14 @@ function throttle<T extends (...args: any[]) => any>(
   };
 }
 
-export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }: TourProps) {
+export function Tour({
+  isActive,
+  currentStep,
+  onNext,
+  onPrev,
+  onSkip,
+  onClose,
+}: TourProps) {
   const step = useMemo(() => TOUR_STEPS[currentStep], [currentStep]);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition>({
@@ -233,126 +264,163 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
     width: 380,
     position: "bottom",
   });
-  const [arrowPosition, setArrowPosition] = useState<ArrowPosition | null>(null);
+  const [arrowPosition, setArrowPosition] = useState<ArrowPosition | null>(
+    null
+  );
   const [isPositioning, setIsPositioning] = useState(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isNavigatingRef = useRef(false);
 
   // Improved scroll completion detection with Intersection Observer
-  const waitForScrollComplete = useCallback((callback: () => void, targetElement?: Element | null) => {
-    let lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    let scrollEndTimer: NodeJS.Timeout | null = null;
-    let rafId: number | null = null;
-    let isComplete = false;
-    let observer: IntersectionObserver | null = null;
-    let fallbackTimer: NodeJS.Timeout | null = null;
-    
-    const cleanup = () => {
-      isComplete = true;
-      if (scrollEndTimer) clearTimeout(scrollEndTimer);
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      if (fallbackTimer) clearTimeout(fallbackTimer);
-      if (observer && targetElement) {
-        observer.disconnect();
-      }
-    };
-    
-    // Use Intersection Observer if target element is provided
-    if (targetElement) {
-      observer = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-            // Element is visible, wait a bit for smooth scroll to settle
-            if (scrollEndTimer) clearTimeout(scrollEndTimer);
-            scrollEndTimer = setTimeout(() => {
-              if (!isComplete) {
-                cleanup();
-                callback();
-              }
-            }, 250);
+  const waitForScrollComplete = useCallback(
+    (callback: () => void, targetElement?: Element | null) => {
+      let lastScrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      let scrollEndTimer: NodeJS.Timeout | null = null;
+      let rafId: number | null = null;
+      let isComplete = false;
+      let observer: IntersectionObserver | null = null;
+      let fallbackTimer: NodeJS.Timeout | null = null;
+
+      const cleanup = () => {
+        isComplete = true;
+        if (scrollEndTimer) clearTimeout(scrollEndTimer);
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        if (fallbackTimer) clearTimeout(fallbackTimer);
+        if (observer && targetElement) {
+          observer.disconnect();
+        }
+      };
+
+      // Use Intersection Observer if target element is provided
+      if (targetElement) {
+        observer = new IntersectionObserver(
+          (entries) => {
+            const entry = entries[0];
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+              // Element is visible, wait a bit for smooth scroll to settle
+              if (scrollEndTimer) clearTimeout(scrollEndTimer);
+              scrollEndTimer = setTimeout(() => {
+                if (!isComplete) {
+                  cleanup();
+                  callback();
+                }
+              }, 250);
+            }
+          },
+          { threshold: 0.5, rootMargin: "0px" }
+        );
+
+        observer.observe(targetElement);
+
+        // Fallback timeout
+        fallbackTimer = setTimeout(() => {
+          if (!isComplete) {
+            cleanup();
+            callback();
           }
-        },
-        { threshold: 0.5, rootMargin: "0px" }
-      );
-      
-      observer.observe(targetElement);
-      
+        }, 1500);
+
+        return cleanup;
+      }
+
+      // Fallback to scroll position tracking
+      const checkScroll = () => {
+        if (isComplete) return;
+
+        const currentScrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+
+        if (Math.abs(currentScrollTop - lastScrollTop) < 1) {
+          // Scroll has stopped (within 1px tolerance)
+          if (scrollEndTimer) {
+            clearTimeout(scrollEndTimer);
+          }
+          scrollEndTimer = setTimeout(() => {
+            if (!isComplete) {
+              cleanup();
+              callback();
+            }
+          }, 200);
+        } else {
+          lastScrollTop = currentScrollTop;
+          rafId = requestAnimationFrame(checkScroll);
+        }
+      };
+
+      rafId = requestAnimationFrame(checkScroll);
+
       // Fallback timeout
       fallbackTimer = setTimeout(() => {
         if (!isComplete) {
           cleanup();
           callback();
         }
-      }, 1500);
-      
+      }, 1200);
+
       return cleanup;
-    }
-    
-    // Fallback to scroll position tracking
-    const checkScroll = () => {
-      if (isComplete) return;
-      
-      const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      
-      if (Math.abs(currentScrollTop - lastScrollTop) < 1) {
-        // Scroll has stopped (within 1px tolerance)
-        if (scrollEndTimer) {
-          clearTimeout(scrollEndTimer);
-        }
-        scrollEndTimer = setTimeout(() => {
-          if (!isComplete) {
-            cleanup();
-            callback();
-          }
-        }, 200);
-      } else {
-        lastScrollTop = currentScrollTop;
-        rafId = requestAnimationFrame(checkScroll);
-      }
-    };
-    
-    rafId = requestAnimationFrame(checkScroll);
-    
-    // Fallback timeout
-    fallbackTimer = setTimeout(() => {
-      if (!isComplete) {
-        cleanup();
-        callback();
-      }
-    }, 1200);
-    
-    return cleanup;
-  }, []);
+    },
+    []
+  );
 
   // Optimized position calculation with error handling
   const calculatePosition = useCallback(() => {
     if (!step || !isActive) return;
 
     setIsPositioning(true);
-    
+
     const performPositioning = (targetElement?: Element | null) => {
-    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         try {
           // Update dimensions in case of resize
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const isSmall = width < 375;
-    const isMobile = width < 768;
-    const isTablet = width >= 768 && width < 1024;
-    const isLarge = width >= 1920;
+          const width = window.innerWidth;
+          const height = window.innerHeight;
+          const isSmall = width < 375;
+          const isMobile = width < 768;
+          const isTablet = width >= 768 && width < 1024;
+          const isLarge = width >= 1920;
 
           const currentDimensions = {
-      width,
-      height,
-      tooltipWidth: isSmall ? 300 : isMobile ? 340 : isTablet ? 400 : isLarge ? 450 : 420,
-      spacing: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 28 : 24,
-      padding: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 32 : 24,
-      estimatedHeight: isSmall ? 260 : isMobile ? 280 : isTablet ? 300 : 320,
-    };
+            width,
+            height,
+            tooltipWidth: isSmall
+              ? 300
+              : isMobile
+              ? 340
+              : isTablet
+              ? 400
+              : isLarge
+              ? 450
+              : 420,
+            spacing: isSmall
+              ? 12
+              : isMobile
+              ? 16
+              : isTablet
+              ? 20
+              : isLarge
+              ? 28
+              : 24,
+            padding: isSmall
+              ? 12
+              : isMobile
+              ? 16
+              : isTablet
+              ? 20
+              : isLarge
+              ? 32
+              : 24,
+            estimatedHeight: isSmall
+              ? 260
+              : isMobile
+              ? 280
+              : isTablet
+              ? 300
+              : 320,
+          };
 
           const element = targetElement || document.querySelector(step.target);
-      
+
           if (!element) {
             // Element not found - center tooltip
             setTooltipPosition({
@@ -367,115 +435,168 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
           }
 
           const rect = element.getBoundingClientRect();
-          
+
           // Check if element is actually visible
           if (rect.width === 0 && rect.height === 0) {
-        setTooltipPosition({
+            setTooltipPosition({
               top: currentDimensions.height / 2,
               left: currentDimensions.width / 2,
               width: currentDimensions.tooltipWidth,
-          position: "center",
-        });
-        setArrowPosition(null);
-        setIsPositioning(false);
-        return;
-      }
+              position: "center",
+            });
+            setArrowPosition(null);
+            setIsPositioning(false);
+            return;
+          }
 
-          const { tooltipWidth, spacing, padding, estimatedHeight } = currentDimensions;
-      
-      let finalPosition: "top" | "bottom" | "left" | "right" | "center" = step.position || "bottom";
-      let tooltipTop = 0;
-      let tooltipLeft = 0;
+          const { tooltipWidth, spacing, padding, estimatedHeight } =
+            currentDimensions;
+
+          let finalPosition: "top" | "bottom" | "left" | "right" | "center" =
+            step.position || "bottom";
+          let tooltipTop = 0;
+          let tooltipLeft = 0;
 
           // Smart positioning logic for mobile
-          if (currentDimensions.width < 768 && (finalPosition === "left" || finalPosition === "right")) {
-            finalPosition = rect.top > currentDimensions.height / 2 ? "top" : "bottom";
-      }
+          if (
+            currentDimensions.width < 768 &&
+            (finalPosition === "left" || finalPosition === "right")
+          ) {
+            finalPosition =
+              rect.top > currentDimensions.height / 2 ? "top" : "bottom";
+          }
 
-      switch (finalPosition) {
-        case "top":
-          tooltipTop = rect.top - spacing;
-          tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
-          if (tooltipTop < padding) {
-            tooltipTop = rect.bottom + spacing;
-            finalPosition = "bottom";
+          switch (finalPosition) {
+            case "top":
+              tooltipTop = rect.top - spacing;
+              tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
+              if (tooltipTop < padding) {
+                tooltipTop = rect.bottom + spacing;
+                finalPosition = "bottom";
+              }
+              break;
+            case "bottom":
+              tooltipTop = rect.bottom + spacing;
+              tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
+              if (
+                tooltipTop + estimatedHeight >
+                currentDimensions.height - padding
+              ) {
+                tooltipTop = Math.max(
+                  padding,
+                  rect.top - spacing - estimatedHeight
+                );
+                finalPosition = "top";
+              }
+              break;
+            case "left":
+              tooltipTop = rect.top + rect.height / 2 - estimatedHeight / 2;
+              tooltipLeft = rect.left - tooltipWidth - spacing;
+              if (tooltipLeft < padding) {
+                tooltipLeft = rect.right + spacing;
+                finalPosition = "right";
+              }
+              break;
+            case "right":
+              tooltipTop = rect.top + rect.height / 2 - estimatedHeight / 2;
+              tooltipLeft = rect.right + spacing;
+              if (
+                tooltipLeft + tooltipWidth >
+                currentDimensions.width - padding
+              ) {
+                tooltipLeft = Math.max(
+                  padding,
+                  rect.left - tooltipWidth - spacing
+                );
+                finalPosition = "left";
+              }
+              break;
           }
-          break;
-        case "bottom":
-          tooltipTop = rect.bottom + spacing;
-          tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
-              if (tooltipTop + estimatedHeight > currentDimensions.height - padding) {
-            tooltipTop = Math.max(padding, rect.top - spacing - estimatedHeight);
-            finalPosition = "top";
-          }
-          break;
-        case "left":
-          tooltipTop = rect.top + rect.height / 2 - estimatedHeight / 2;
-          tooltipLeft = rect.left - tooltipWidth - spacing;
-          if (tooltipLeft < padding) {
-            tooltipLeft = rect.right + spacing;
-            finalPosition = "right";
-          }
-          break;
-        case "right":
-          tooltipTop = rect.top + rect.height / 2 - estimatedHeight / 2;
-          tooltipLeft = rect.right + spacing;
-              if (tooltipLeft + tooltipWidth > currentDimensions.width - padding) {
-            tooltipLeft = Math.max(padding, rect.left - tooltipWidth - spacing);
-            finalPosition = "left";
-          }
-          break;
-      }
 
           // Constrain to viewport with safe margins
-          tooltipLeft = Math.max(padding, Math.min(tooltipLeft, currentDimensions.width - tooltipWidth - padding));
-          tooltipTop = Math.max(padding, Math.min(tooltipTop, currentDimensions.height - estimatedHeight - padding));
+          tooltipLeft = Math.max(
+            padding,
+            Math.min(
+              tooltipLeft,
+              currentDimensions.width - tooltipWidth - padding
+            )
+          );
+          tooltipTop = Math.max(
+            padding,
+            Math.min(
+              tooltipTop,
+              currentDimensions.height - estimatedHeight - padding
+            )
+          );
 
-      setTooltipPosition({
-            top: finalPosition === "center" ? currentDimensions.height / 2 : tooltipTop,
-            left: finalPosition === "center" ? currentDimensions.width / 2 : tooltipLeft,
-        width: tooltipWidth,
-        position: finalPosition,
-      });
+          setTooltipPosition({
+            top:
+              finalPosition === "center"
+                ? currentDimensions.height / 2
+                : tooltipTop,
+            left:
+              finalPosition === "center"
+                ? currentDimensions.width / 2
+                : tooltipLeft,
+            width: tooltipWidth,
+            position: finalPosition,
+          });
 
-      // Calculate arrow position
-      if (finalPosition !== "center") {
-            const arrowSize = currentDimensions.width < 375 ? 10 : currentDimensions.width < 768 ? 11 : 12;
-        let arrowTop = 0;
-        let arrowLeft = 0;
+          // Calculate arrow position
+          if (finalPosition !== "center") {
+            const arrowSize =
+              currentDimensions.width < 375
+                ? 10
+                : currentDimensions.width < 768
+                ? 11
+                : 12;
+            let arrowTop = 0;
+            let arrowLeft = 0;
 
-        switch (finalPosition) {
-          case "top":
-            arrowTop = tooltipTop + estimatedHeight - arrowSize;
-            arrowLeft = rect.left + rect.width / 2 - arrowSize;
-            break;
-          case "bottom":
-            arrowTop = tooltipTop - arrowSize;
-            arrowLeft = rect.left + rect.width / 2 - arrowSize;
-            break;
-          case "left":
-            arrowTop = tooltipTop + estimatedHeight / 2 - arrowSize;
-            arrowLeft = tooltipLeft + tooltipWidth - arrowSize;
-            break;
-          case "right":
-            arrowTop = tooltipTop + estimatedHeight / 2 - arrowSize;
-            arrowLeft = tooltipLeft - arrowSize;
-            break;
-        }
+            switch (finalPosition) {
+              case "top":
+                arrowTop = tooltipTop + estimatedHeight - arrowSize;
+                arrowLeft = rect.left + rect.width / 2 - arrowSize;
+                break;
+              case "bottom":
+                arrowTop = tooltipTop - arrowSize;
+                arrowLeft = rect.left + rect.width / 2 - arrowSize;
+                break;
+              case "left":
+                arrowTop = tooltipTop + estimatedHeight / 2 - arrowSize;
+                arrowLeft = tooltipLeft + tooltipWidth - arrowSize;
+                break;
+              case "right":
+                arrowTop = tooltipTop + estimatedHeight / 2 - arrowSize;
+                arrowLeft = tooltipLeft - arrowSize;
+                break;
+            }
 
-            arrowLeft = Math.max(padding, Math.min(arrowLeft, currentDimensions.width - arrowSize * 2 - padding));
-            arrowTop = Math.max(padding, Math.min(arrowTop, currentDimensions.height - arrowSize * 2 - padding));
+            arrowLeft = Math.max(
+              padding,
+              Math.min(
+                arrowLeft,
+                currentDimensions.width - arrowSize * 2 - padding
+              )
+            );
+            arrowTop = Math.max(
+              padding,
+              Math.min(
+                arrowTop,
+                currentDimensions.height - arrowSize * 2 - padding
+              )
+            );
 
-        setArrowPosition({
-          top: arrowTop,
-          left: arrowLeft,
-          direction: finalPosition,
-        });
-      } else {
-        setArrowPosition(null);
-      }
+            setArrowPosition({
+              top: arrowTop,
+              left: arrowLeft,
+              direction: finalPosition,
+            });
+          } else {
+            setArrowPosition(null);
+          }
 
-      setIsPositioning(false);
+          setIsPositioning(false);
         } catch (error) {
           console.error("Tour: Error calculating position", error);
           setIsPositioning(false);
@@ -486,14 +607,27 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
     // Smooth scroll to target first, then position
     try {
       if (step.id === "dock") {
-          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
         const dockElement = document.querySelector(step.target);
-        waitForScrollComplete(() => performPositioning(dockElement), dockElement);
+        waitForScrollComplete(
+          () => performPositioning(dockElement),
+          dockElement
+        );
       } else {
         const targetElement = document.querySelector(step.target);
         if (targetElement) {
-          targetElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-          waitForScrollComplete(() => performPositioning(targetElement), targetElement);
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "nearest",
+          });
+          waitForScrollComplete(
+            () => performPositioning(targetElement),
+            targetElement
+          );
         } else {
           performPositioning();
         }
@@ -525,13 +659,13 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
 
     // Small delay to allow DOM to settle before calculating position
     const timer = setTimeout(() => {
-    calculatePosition();
+      calculatePosition();
     }, 100); // Slightly increased for better stability
 
     // Add keyboard navigation with debouncing
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isActive || isNavigatingRef.current) return;
-      
+
       if (e.key === "Escape") {
         onClose();
       } else if (e.key === "ArrowRight" && (e.ctrlKey || e.metaKey)) {
@@ -553,7 +687,7 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
 
     window.addEventListener("resize", handleResize, { passive: true });
     window.addEventListener("keydown", handleKeyDown);
-    
+
     // Focus management for accessibility
     if (tooltipRef.current) {
       tooltipRef.current.focus();
@@ -567,7 +701,16 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isActive, currentStep, step, calculatePosition, handleResize, onClose, onNext, onPrev]);
+  }, [
+    isActive,
+    currentStep,
+    step,
+    calculatePosition,
+    handleResize,
+    onClose,
+    onNext,
+    onPrev,
+  ]);
 
   // Create overlay clip path
   const overlayClipPath = useMemo(() => {
@@ -624,9 +767,9 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ 
-            duration: 0.4, 
-            ease: [0.4, 0, 0.2, 1]
+          transition={{
+            duration: 0.4,
+            ease: [0.4, 0, 0.2, 1],
           }}
           className="bg-black/60 backdrop-blur-sm transition-opacity duration-300"
           style={{ clipPath: overlayClipPath }}
@@ -639,11 +782,11 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
             initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.5, rotate: 180 }}
-            transition={{ 
+            transition={{
               type: "spring",
               stiffness: 350,
               damping: 28,
-              delay: 0.2
+              delay: 0.2,
             }}
             className="pointer-events-none"
             style={{
@@ -673,17 +816,17 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
           key={`tooltip-${currentStep}`}
           ref={tooltipRef}
           initial={{ opacity: 0, scale: 0.92, y: 20, filter: "blur(4px)" }}
-          animate={{ 
-            opacity: 1, 
-            scale: 1, 
+          animate={{
+            opacity: 1,
+            scale: 1,
             y: 0,
-            filter: "blur(0px)"
+            filter: "blur(0px)",
           }}
-          exit={{ 
-            opacity: 0, 
-            scale: 0.92, 
+          exit={{
+            opacity: 0,
+            scale: 0.92,
             y: 20,
-            filter: "blur(4px)"
+            filter: "blur(4px)",
           }}
           transition={{
             type: "spring",
@@ -700,106 +843,98 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
           tabIndex={-1}
         >
           {/* BorderBeam wrapper */}
-          <BorderBeam
-            size={60}
-            duration={8}
-            delay={0}
-            colorFrom="#d48aff"
-            colorTo="#ff40d9"
-            borderWidth={2}
-            className="rounded-xl"
-          />
+          <BorderBeam />
           {/* Content wrapper with relative positioning for BorderBeam */}
           <div className="relative z-10">
-          {/* Header */}
-            <motion.div 
+            {/* Header */}
+            <motion.div
               className="flex items-start justify-between gap-3 mb-4"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.3 }}
             >
-            <div className="flex items-start gap-3 flex-1 min-w-0">
-              {step.icon && (
-                  <motion.div 
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                {step.icon && (
+                  <motion.div
                     className="p-2 rounded-lg bg-primary/10 text-primary flex-shrink-0 transition-all duration-300 hover:bg-primary/20 hover:scale-105"
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    transition={{ 
+                    transition={{
                       type: "spring",
                       stiffness: 300,
                       damping: 20,
-                      delay: 0.15
+                      delay: 0.15,
                     }}
                   >
-                  {step.icon}
+                    {step.icon}
                   </motion.div>
-              )}
-              <div className="flex-1 min-w-0">
-                  <motion.h3 
+                )}
+                <div className="flex-1 min-w-0">
+                  <motion.h3
                     id={`tour-title-${currentStep}`}
                     className="text-base sm:text-lg font-bold text-foreground leading-tight mb-1 break-words"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2, duration: 0.3 }}
                   >
-                  {step.title}
+                    {step.title}
                   </motion.h3>
-                  <motion.span 
-                    className="text-xs text-muted-foreground" 
+                  <motion.span
+                    className="text-xs text-muted-foreground"
                     aria-live="polite"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.3 }}
                   >
-                  Step {currentStep + 1} of {TOUR_STEPS.length}
+                    Step {currentStep + 1} of {TOUR_STEPS.length}
                   </motion.span>
                 </div>
               </div>
               <motion.button
-              onClick={onClose}
+                onClick={onClose}
                 className="p-1.5 rounded-lg hover:bg-muted transition-all duration-200 flex-shrink-0 touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 active:scale-95"
-              aria-label="Close tour"
+                aria-label="Close tour"
                 type="button"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.25, type: "spring", stiffness: 300 }}
-            >
-              <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+              >
+                <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               </motion.button>
             </motion.div>
 
-          {/* Content */}
-            <motion.p 
+            {/* Content */}
+            <motion.p
               id={`tour-content-${currentStep}`}
               className="text-sm text-muted-foreground mb-6 leading-relaxed break-words"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.4 }}
             >
-            {step.content}
+              {step.content}
             </motion.p>
 
-          {/* Actions */}
-            <motion.div 
+            {/* Actions */}
+            <motion.div
               className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.4 }}
             >
-            <Button
-              variant="outline"
-              onClick={onSkip}
+              <Button
+                variant="outline"
+                onClick={onSkip}
                 className="text-xs sm:text-sm h-9 sm:h-10 order-2 sm:order-1 w-full sm:w-auto transition-all duration-200 hover:scale-105 active:scale-95"
                 type="button"
                 aria-label="Skip tour"
-            >
-              Skip Tour
-            </Button>
-            <div className="flex items-center gap-2 order-1 sm:order-2 w-full sm:w-auto">
-              <Button
-                variant="outline"
+              >
+                Skip Tour
+              </Button>
+              <div className="flex items-center gap-2 order-1 sm:order-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
                   onClick={() => {
                     if (!isNavigatingRef.current) {
                       isNavigatingRef.current = true;
@@ -812,12 +947,14 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
                   disabled={currentStep === 0 || isPositioning}
                   className="text-xs sm:text-sm flex items-center gap-1 h-9 sm:h-10 flex-1 sm:flex-initial transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   type="button"
-                  aria-label={`Go to previous step${currentStep === 0 ? " (disabled)" : ""}`}
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Previous</span>
-              </Button>
-              <Button
+                  aria-label={`Go to previous step${
+                    currentStep === 0 ? " (disabled)" : ""
+                  }`}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline">Previous</span>
+                </Button>
+                <Button
                   onClick={() => {
                     if (!isNavigatingRef.current) {
                       isNavigatingRef.current = true;
@@ -830,41 +967,49 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
                   disabled={isPositioning}
                   className="text-xs sm:text-sm flex items-center gap-1 h-9 sm:h-10 flex-1 sm:flex-initial transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   type="button"
-                  aria-label={currentStep === TOUR_STEPS.length - 1 ? "Finish tour" : "Go to next step"}
-              >
-                <span>{currentStep === TOUR_STEPS.length - 1 ? "Finish" : "Next"}</span>
-                {currentStep < TOUR_STEPS.length - 1 && <ChevronRight className="w-4 h-4" />}
-              </Button>
-            </div>
+                  aria-label={
+                    currentStep === TOUR_STEPS.length - 1
+                      ? "Finish tour"
+                      : "Go to next step"
+                  }
+                >
+                  <span>
+                    {currentStep === TOUR_STEPS.length - 1 ? "Finish" : "Next"}
+                  </span>
+                  {currentStep < TOUR_STEPS.length - 1 && (
+                    <ChevronRight className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
             </motion.div>
 
-          {/* Progress */}
-            <motion.div 
+            {/* Progress */}
+            <motion.div
               className="flex items-center justify-center gap-1.5 sm:gap-2 mt-4 pt-4 border-t border-border"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.35, duration: 0.4 }}
             >
-            {TOUR_STEPS.map((_, index) => (
+              {TOUR_STEPS.map((_, index) => (
                 <motion.div
-                key={index}
-                className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 flex-shrink-0 ${
-                  index === currentStep
-                    ? "w-5 sm:w-6 md:w-8 bg-primary"
-                    : index < currentStep
-                    ? "w-1.5 sm:w-2 bg-primary/50"
-                    : "w-1.5 sm:w-2 bg-muted"
-                }`}
+                  key={index}
+                  className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 flex-shrink-0 ${
+                    index === currentStep
+                      ? "w-5 sm:w-6 md:w-8 bg-primary"
+                      : index < currentStep
+                      ? "w-1.5 sm:w-2 bg-primary/50"
+                      : "w-1.5 sm:w-2 bg-muted"
+                  }`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ 
-                    delay: 0.4 + (index * 0.02),
+                  transition={{
+                    delay: 0.4 + index * 0.02,
                     type: "spring",
                     stiffness: 300,
-                    damping: 25
+                    damping: 25,
                   }}
-              />
-            ))}
+                />
+              ))}
             </motion.div>
           </div>
         </motion.div>

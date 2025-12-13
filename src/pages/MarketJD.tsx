@@ -4,17 +4,6 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
-import RaysBackground from "@/components/ui/rays-background";
-import FallBeamBackground from "@/components/ui/fall-beam-background";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/lightswind/card";
-import { Badge } from "@/components/lightswind/badge";
-import { ScrollReveal } from "@/components/lightswind/scroll-reveal";
 import {
   ArrowLeft,
   Code,
@@ -37,6 +26,17 @@ import {
   Calendar,
   Cpu,
 } from "lucide-react";
+import FallBeamBackground from "@/components/lightswind/fall-beam-background";
+import RaysBackground from "@/components/lightswind/rays-background";
+import ScrollReveal from "@/components/lightswind/scroll-reveal";
+import { Badge } from "@/components/lightswind/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/lightswind/card";
 
 const MarketJD = () => {
   const navigate = useNavigate();
@@ -314,13 +314,7 @@ const MarketJD = () => {
   return (
     <div className="min-h-screen bg-background relative">
       <FallBeamBackground className="fixed z-1" />
-      <RaysBackground
-        className="fixed z-0"
-        theme="dark"
-        animated={true}
-        animationSpeed={1}
-        opacity={0.7}
-      />
+      <RaysBackground className="fixed z-0" />
 
       <motion.div
         variants={containerVariants}
@@ -398,7 +392,11 @@ const MarketJD = () => {
             staggerDelay={0.03}
             containerClassName="max-w-4xl"
           >
-            A comprehensive SEO insights and analytics platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with Next.js 14, TypeScript, Prisma, and modern best practices for enterprise-scale applications.
+            A comprehensive SEO insights and analytics platform with 20+
+            third-party API integrations, advanced authentication, dynamic
+            reporting, and AI-powered automation. Built with Next.js 14,
+            TypeScript, Prisma, and modern best practices for enterprise-scale
+            applications.
           </ScrollReveal>
         </motion.div>
 

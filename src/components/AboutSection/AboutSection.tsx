@@ -1,7 +1,6 @@
-import { Separator } from "../lightswind/separator";
 import { motion } from "framer-motion";
-import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { User } from "lucide-react";
+import ScrollReveal from "../lightswind/scroll-reveal";
 
 export const AboutSection = () => {
   return (
@@ -25,7 +24,7 @@ export const AboutSection = () => {
           About Me
         </ScrollReveal>
       </div>
-      
+
       <motion.div
         className="space-y-3 sm:space-y-4 text-muted-foreground text-xs sm:text-sm max-w-3xl leading-relaxed"
         initial={{ opacity: 0, y: 20 }}
@@ -40,7 +39,9 @@ export const AboutSection = () => {
           enableBlur={true}
           staggerDelay={0.03}
         >
-          I'm a developer who enjoys turning ideas into working software. I focus on writing clean, maintainable code and building things that people actually find useful.
+          I'm a developer who enjoys turning ideas into working software. I
+          focus on writing clean, maintainable code and building things that
+          people actually find useful.
         </ScrollReveal>
         <ScrollReveal
           size="sm"
@@ -49,7 +50,10 @@ export const AboutSection = () => {
           enableBlur={true}
           staggerDelay={0.03}
         >
-          When I'm not coding, I'm usually learning something new or exploring different ways to solve problems. I believe good software comes from understanding the problem first, then finding the right solution—not the other way around.
+          When I'm not coding, I'm usually learning something new or exploring
+          different ways to solve problems. I believe good software comes from
+          understanding the problem first, then finding the right solution—not
+          the other way around.
         </ScrollReveal>
         <ScrollReveal
           size="sm"
@@ -58,11 +62,11 @@ export const AboutSection = () => {
           enableBlur={true}
           staggerDelay={0.03}
         >
-          I'm always open to interesting projects and conversations. If you'd like to work together or just chat about technology, feel free to reach out.
+          I'm always open to interesting projects and conversations. If you'd
+          like to work together or just chat about technology, feel free to
+          reach out.
         </ScrollReveal>
       </motion.div>
-      
-      <Separator />
     </motion.div>
   );
 };

@@ -5,15 +5,41 @@ import { motion, AnimatePresence, DragControls } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
-import { Card } from "@/components/lightswind/card";
-import { Button } from "@/components/lightswind/button";
-import { ScrollArea } from "@/components/lightswind/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/lightswind/dialog";
-import { X, Maximize2, Minimize2, Trash2, ArrowLeft, Plus, GripVertical } from "lucide-react";
-import { closeChat, toggleFullscreen, clearMessages, goBackToSessions, createNewSession, switchSession, addMessage, setLastInteractivePromptTime, markAsRead } from "@/store/slices/chatSlice";
+import {
+  X,
+  Maximize2,
+  Minimize2,
+  Trash2,
+  ArrowLeft,
+  Plus,
+  GripVertical,
+} from "lucide-react";
+import {
+  closeChat,
+  toggleFullscreen,
+  clearMessages,
+  goBackToSessions,
+  createNewSession,
+  switchSession,
+  addMessage,
+  setLastInteractivePromptTime,
+  markAsRead,
+} from "@/store/slices/chatSlice";
 import SuggestedQuestions from "./SuggestedQuestions";
 import { playSubtleNotificationSound } from "@/lib/audioUtils";
 import { resetPageTitle } from "@/lib/notificationUtils";
+import { Card } from "../lightswind/card";
+import { Button } from "../lightswind/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../lightswind/dialog";
+import { ScrollArea } from "../lightswind/scroll-area";
 
 interface ChatInterfaceProps {
   isFullscreen: boolean;
@@ -21,18 +47,22 @@ interface ChatInterfaceProps {
   dragControls?: DragControls;
 }
 
-export default function ChatInterface({ 
-  isFullscreen, 
+export default function ChatInterface({
+  isFullscreen,
   dragEnabled = false,
   dragControls,
 }: ChatInterfaceProps) {
   const dispatch = useAppDispatch();
   const messages = useAppSelector((state) => state.chat.messages);
   const sessions = useAppSelector((state) => state.chat.sessions);
-  const currentSessionId = useAppSelector((state) => state.chat.currentSessionId);
+  const currentSessionId = useAppSelector(
+    (state) => state.chat.currentSessionId
+  );
   const isStreaming = useAppSelector((state) => state.chat.isStreaming);
   const error = useAppSelector((state) => state.chat.error);
-  const lastInteractivePromptTime = useAppSelector((state) => state.chat.lastInteractivePromptTime);
+  const lastInteractivePromptTime = useAppSelector(
+    (state) => state.chat.lastInteractivePromptTime
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [showClearDialog, setShowClearDialog] = useState(false);
@@ -49,7 +79,9 @@ export default function ChatInterface({
 
   // Prevent scroll propagation to main app
   useEffect(() => {
-    const scrollContainer = scrollAreaRef.current?.querySelector('[class*="overflow"]') as HTMLElement;
+    const scrollContainer = scrollAreaRef.current?.querySelector(
+      '[class*="overflow"]'
+    ) as HTMLElement;
     if (scrollContainer) {
       const handleWheel = (e: Event) => {
         const wheelEvent = e as WheelEvent;
@@ -59,13 +91,17 @@ export default function ChatInterface({
         const touchEvent = e as TouchEvent;
         touchEvent.stopPropagation();
       };
-      
-      scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
-      scrollContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-      
+
+      scrollContainer.addEventListener("wheel", handleWheel, {
+        passive: false,
+      });
+      scrollContainer.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+
       return () => {
-        scrollContainer.removeEventListener('wheel', handleWheel);
-        scrollContainer.removeEventListener('touchmove', handleTouchMove);
+        scrollContainer.removeEventListener("wheel", handleWheel);
+        scrollContainer.removeEventListener("touchmove", handleTouchMove);
       };
     }
   }, []); // Empty dependency array - only set up once
@@ -80,7 +116,7 @@ export default function ChatInterface({
         }
       });
     }
-    
+
     // Mark messages as read when chat is open and user is viewing
     if (messages.length > 0 && !isStreaming) {
       dispatch(markAsRead());
@@ -101,9 +137,10 @@ export default function ChatInterface({
       const timer = setTimeout(() => {
         if (messages.length === 0) {
           // Select a random interactive prompt
-          const randomPrompt = interactivePrompts[
-            Math.floor(Math.random() * interactivePrompts.length)
-          ];
+          const randomPrompt =
+            interactivePrompts[
+              Math.floor(Math.random() * interactivePrompts.length)
+            ];
 
           // Play subtle notification sound
           playSubtleNotificationSound().catch(() => {
@@ -127,7 +164,13 @@ export default function ChatInterface({
 
       return () => clearTimeout(timer);
     }
-  }, [lastInteractivePromptTime, messages.length, isStreaming, dispatch, interactivePrompts]);
+  }, [
+    lastInteractivePromptTime,
+    messages.length,
+    isStreaming,
+    dispatch,
+    interactivePrompts,
+  ]);
 
   // Reset interactive prompt flag when messages are cleared
   useEffect(() => {
@@ -185,7 +228,7 @@ export default function ChatInterface({
             if (dragEnabled && dragControls && !isFullscreen) {
               // Only allow drag to start from header area, not from buttons
               const target = e.target as HTMLElement;
-              const isButton = target.closest('button') !== null;
+              const isButton = target.closest("button") !== null;
               if (!isButton) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -196,16 +239,18 @@ export default function ChatInterface({
           onTouchStart={(e) => {
             if (dragEnabled && dragControls && !isFullscreen) {
               const target = e.target as HTMLElement;
-              const isButton = target.closest('button') !== null;
+              const isButton = target.closest("button") !== null;
               if (!isButton) {
                 e.stopPropagation();
               }
             }
           }}
           className={`flex items-center justify-between p-3 sm:p-4 border-b border-border ${
-            dragEnabled && !isFullscreen ? "cursor-grab active:cursor-grabbing select-none" : ""
+            dragEnabled && !isFullscreen
+              ? "cursor-grab active:cursor-grabbing select-none"
+              : ""
           }`}
-          style={{ 
+          style={{
             touchAction: dragEnabled && !isFullscreen ? "none" : "auto",
           }}
         >
@@ -228,14 +273,19 @@ export default function ChatInterface({
               </Button>
             )}
             <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
-            <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">AI Assistant</h3>
+            <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">
+              AI Assistant
+            </h3>
             {sessions.length > 1 && (
               <span className="text-xs text-muted-foreground hidden sm:inline">
                 ({sessions.length} chats)
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0" onPointerDown={(e) => e.stopPropagation()}>
+          <div
+            className="flex items-center gap-1 sm:gap-2 flex-shrink-0"
+            onPointerDown={(e) => e.stopPropagation()}
+          >
             {messages.length > 0 && (
               <Dialog open={showClearDialog} onOpenChange={setShowClearDialog}>
                 <DialogTrigger asChild>
@@ -253,7 +303,8 @@ export default function ChatInterface({
                   <DialogHeader>
                     <DialogTitle>Clear Chat</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to clear all messages in this chat? This action cannot be undone.
+                      Are you sure you want to clear all messages in this chat?
+                      This action cannot be undone.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
@@ -263,10 +314,7 @@ export default function ChatInterface({
                     >
                       Cancel
                     </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={handleClearChat}
-                    >
+                    <Button variant="destructive" onClick={handleClearChat}>
                       Clear Chat
                     </Button>
                   </DialogFooter>
@@ -332,7 +380,8 @@ export default function ChatInterface({
                     {session.title}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {session.messages.length} messages • {new Date(session.updatedAt).toLocaleDateString()}
+                    {session.messages.length} messages •{" "}
+                    {new Date(session.updatedAt).toLocaleDateString()}
                   </p>
                 </motion.div>
               ))}
@@ -341,11 +390,12 @@ export default function ChatInterface({
         )}
 
         {/* Messages Area */}
-        <ScrollArea 
-          ref={scrollAreaRef}
-          className="flex-1 p-3 sm:p-4"
-        >
-          <div className="space-y-3 sm:space-y-4" onWheel={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()}>
+        <ScrollArea ref={scrollAreaRef} className="flex-1 p-3 sm:p-4">
+          <div
+            className="space-y-3 sm:space-y-4"
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full min-h-[300px] sm:min-h-[400px] text-center px-2">
                 <motion.div

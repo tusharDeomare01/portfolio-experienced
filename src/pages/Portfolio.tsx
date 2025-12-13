@@ -268,7 +268,7 @@ const Portfolio = () => {
                 variant="default"
                 enableBlur={true}
                 containerClassName="mb-3"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 TechShowcase
@@ -279,7 +279,7 @@ const Portfolio = () => {
                 variant="muted"
                 enableBlur={true}
                 containerClassName="mb-2"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 Modern Interactive Portfolio • React + TypeScript
@@ -303,7 +303,7 @@ const Portfolio = () => {
             variant="muted"
             enableBlur={true}
             containerClassName="max-w-4xl"
-            blurStrength={20}
+            blurStrength={5}
             baseRotation={0}
           >
             TechShowcase is a modern, interactive portfolio website showcasing
@@ -325,7 +325,7 @@ const Portfolio = () => {
                 variant="default"
                 enableBlur={true}
                 containerClassName="inline-block"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 Technology Stack
@@ -336,7 +336,7 @@ const Portfolio = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              blurStrength={20}
+              blurStrength={5}
               baseRotation={0}
             >
               Modern technologies powering this portfolio
@@ -381,7 +381,7 @@ const Portfolio = () => {
                 variant="default"
                 enableBlur={true}
                 containerClassName="inline-block"
-                blurStrength={20}
+                blurStrength={5}
                 baseRotation={0}
               >
                 Key Features & Capabilities
@@ -392,7 +392,7 @@ const Portfolio = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              blurStrength={20}
+              blurStrength={5}
               baseRotation={0}
             >
               Major features and development achievements

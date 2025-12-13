@@ -93,7 +93,7 @@ export const ProjectsSection = () => {
               align="center"
               variant="default"
               enableBlur={true}
-              blurStrength={20}
+              blurStrength={5}
               baseRotation={0}
             >
               Projects
@@ -104,7 +104,7 @@ export const ProjectsSection = () => {
             align="center"
             variant="muted"
             enableBlur={true}
-            blurStrength={20}
+            blurStrength={5}
             baseRotation={0}
           >
             Explore my latest work...

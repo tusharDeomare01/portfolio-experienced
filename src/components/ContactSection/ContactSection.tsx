@@ -176,7 +176,7 @@ export const ContactSection = () => {
             align="center"
             variant="default"
             enableBlur={true}
-            blurStrength={20}
+            blurStrength={5}
             baseRotation={0}
           >
             Get In Touch
@@ -187,7 +187,7 @@ export const ContactSection = () => {
           align="center"
           variant="muted"
           enableBlur={true}
-          blurStrength={20}
+          blurStrength={5}
             baseRotation={0}
           containerClassName="px-2 sm:px-0"
         >

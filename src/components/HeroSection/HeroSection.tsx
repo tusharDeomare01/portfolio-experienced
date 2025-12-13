@@ -68,7 +68,7 @@ export const HeroSection = () => {
             align="left"
             variant="accent"
             enableBlur={true}
-            blurStrength={20}
+            blurStrength={5}
             baseRotation={0}
             containerClassName="mt-1"
             textClassName="text-xs sm:text-sm text-pink-500 font-semibold block"
@@ -94,7 +94,7 @@ export const HeroSection = () => {
             align="left"
             variant="muted"
             enableBlur={true}
-            blurStrength={20}
+            blurStrength={5}
             baseRotation={0}
             containerClassName="inline"
             textClassName="font-medium"

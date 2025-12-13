@@ -1,5 +1,3 @@
-"use client";
-
 import { motion } from "framer-motion";
 import type { Message } from "@/store/slices/chatSlice";
 import StreamingText from "./StreamingText";
@@ -29,15 +27,15 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             : "bg-primary/10 text-primary"
         }`}
       >
-        {isUser ? (
-          <User className="w-4 h-4" />
-        ) : (
-          <Bot className="w-4 h-4" />
-        )}
+        {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
       </div>
 
       {/* Message Content */}
-      <div className={`flex-1 ${isUser ? "items-end" : "items-start"} flex flex-col gap-1`}>
+      <div
+        className={`flex-1 ${
+          isUser ? "items-end" : "items-start"
+        } flex flex-col gap-1`}
+      >
         <div
           className={`rounded-2xl px-4 py-2.5 max-w-[85%] ${
             isUser
@@ -46,7 +44,10 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           }`}
         >
           {message.streaming ? (
-            <StreamingText text={message.content} isStreaming={message.streaming} />
+            <StreamingText
+              text={message.content}
+              isStreaming={message.streaming}
+            />
           ) : isUser ? (
             // User messages: plain text (no markdown needed)
             <p className="text-sm whitespace-pre-wrap break-words">
@@ -67,4 +68,3 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
     </motion.div>
   );
 }
-

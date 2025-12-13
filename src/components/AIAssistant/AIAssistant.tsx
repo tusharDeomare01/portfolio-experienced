@@ -1,14 +1,29 @@
-"use client";
-
 import { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useDragControls } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useDragControls,
+} from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { openChat, closeChat, showTooltip, setUserInteracted, setLastInteractivePromptTime, markAsRead } from "@/store/slices/chatSlice";
+import {
+  openChat,
+  closeChat,
+  showTooltip,
+  setUserInteracted,
+  setLastInteractivePromptTime,
+  markAsRead,
+} from "@/store/slices/chatSlice";
 import ChatInterface from "./ChatInterface";
 import InteractiveTooltip from "./InteractiveTooltip";
 import { Sparkles } from "lucide-react";
 import { initializeAudioContext } from "@/lib/audioUtils";
-import { resetPageTitle, updatePageTitle, requestNotificationPermission, getNotificationPreferences } from "@/lib/notificationUtils";
+import {
+  resetPageTitle,
+  updatePageTitle,
+  requestNotificationPermission,
+  getNotificationPreferences,
+} from "@/lib/notificationUtils";
 
 export default function AIAssistant() {
   const dispatch = useAppDispatch();
@@ -57,14 +72,16 @@ export default function AIAssistant() {
     };
 
     // Listen for various user interaction events
-    window.addEventListener('click', handleUserInteraction, { once: true });
-    window.addEventListener('touchstart', handleUserInteraction, { once: true });
-    window.addEventListener('keydown', handleUserInteraction, { once: true });
+    window.addEventListener("click", handleUserInteraction, { once: true });
+    window.addEventListener("touchstart", handleUserInteraction, {
+      once: true,
+    });
+    window.addEventListener("keydown", handleUserInteraction, { once: true });
 
     return () => {
-      window.removeEventListener('click', handleUserInteraction);
-      window.removeEventListener('touchstart', handleUserInteraction);
-      window.removeEventListener('keydown', handleUserInteraction);
+      window.removeEventListener("click", handleUserInteraction);
+      window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
     };
   }, []);
 
@@ -87,17 +104,18 @@ export default function AIAssistant() {
 
   // Show tooltip on initial page load (after 8 seconds)
   useEffect(() => {
-    if (tooltipShownRef.current || userInteracted || isOpen || showTooltipState) return;
+    if (tooltipShownRef.current || userInteracted || isOpen || showTooltipState)
+      return;
 
     // Check if we should show tooltip based on localStorage
-    const lastShown = localStorage.getItem('aiAssistantTooltipLastShown');
+    const lastShown = localStorage.getItem("aiAssistantTooltipLastShown");
     const now = Date.now();
     const oneDay = 24 * 60 * 60 * 1000; // 24 hours
 
     // Show tooltip if:
     // 1. Never shown before, OR
     // 2. Last shown more than 24 hours ago
-    const shouldShow = !lastShown || (now - parseInt(lastShown)) > oneDay;
+    const shouldShow = !lastShown || now - parseInt(lastShown) > oneDay;
 
     if (shouldShow) {
       // Ensure audio context is initialized before showing tooltip
@@ -109,7 +127,7 @@ export default function AIAssistant() {
         // Only show if chat is not open and user hasn't interacted
         if (!isOpen && !userInteracted && !showTooltipState) {
           dispatch(showTooltip());
-          localStorage.setItem('aiAssistantTooltipLastShown', now.toString());
+          localStorage.setItem("aiAssistantTooltipLastShown", now.toString());
           tooltipShownRef.current = true;
         }
       }, 8000); // 8 seconds - allows time for audio preloading
@@ -173,8 +191,14 @@ export default function AIAssistant() {
 
     const maxLeft = -(window.innerWidth - widgetWidth - padding - initialRight);
     const maxRight = window.innerWidth - widgetWidth - padding - initialRight;
-    const maxTop = -(window.innerHeight - widgetHeight - padding - initialBottom);
-    const maxBottom = window.innerHeight - widgetHeight - padding - initialBottom;
+    const maxTop = -(
+      window.innerHeight -
+      widgetHeight -
+      padding -
+      initialBottom
+    );
+    const maxBottom =
+      window.innerHeight - widgetHeight - padding - initialBottom;
 
     return {
       left: maxLeft,
@@ -242,9 +266,7 @@ export default function AIAssistant() {
               {/* Subtle glow effect */}
               <motion.div
                 className={`absolute inset-0 rounded-full blur-md ${
-                  theme === "dark"
-                    ? "bg-white/10"
-                    : "bg-pink-400/20"
+                  theme === "dark" ? "bg-white/10" : "bg-pink-400/20"
                 }`}
                 animate={{
                   scale: [1, 1.2, 1],
@@ -256,7 +278,7 @@ export default function AIAssistant() {
                   ease: "easeInOut",
                 }}
               />
-              
+
               {/* Sparkles icon with animation */}
               <motion.div
                 className="relative z-10"
@@ -270,16 +292,14 @@ export default function AIAssistant() {
                   ease: "easeInOut",
                 }}
               >
-                <Sparkles 
+                <Sparkles
                   className={`h-6 w-6 sm:h-7 sm:w-7 group-hover:opacity-90 transition-colors drop-shadow-lg ${
-                    theme === "dark"
-                      ? "text-white"
-                      : "text-white"
+                    theme === "dark" ? "text-white" : "text-white"
                   }`}
                   strokeWidth={2}
                 />
               </motion.div>
-              
+
               {/* Unread badge */}
               {unreadCount > 0 && getNotificationPreferences().badgeEnabled && (
                 <motion.div
@@ -288,16 +308,14 @@ export default function AIAssistant() {
                   exit={{ scale: 0, opacity: 0 }}
                   className="absolute -top-1 -right-1 z-20 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-lg border-2 border-background"
                 >
-                  {unreadCount > 99 ? '99+' : unreadCount}
+                  {unreadCount > 99 ? "99+" : unreadCount}
                 </motion.div>
               )}
-              
+
               {/* Subtle pulsing ring effect */}
               <motion.div
                 className={`absolute inset-0 rounded-full border-2 ${
-                  theme === "dark"
-                    ? "border-white/30"
-                    : "border-pink-400/40"
+                  theme === "dark" ? "border-white/30" : "border-pink-400/40"
                 }`}
                 animate={{
                   scale: [1, 1.3, 1],
@@ -309,7 +327,7 @@ export default function AIAssistant() {
                   ease: "easeOut",
                 }}
               />
-              
+
               {/* Tooltip text */}
               <motion.div
                 className="absolute -top-12 right-0 bg-foreground/90 text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50"

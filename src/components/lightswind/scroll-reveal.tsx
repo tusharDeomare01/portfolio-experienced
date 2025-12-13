@@ -1,8 +1,6 @@
-// "use client"; directive is correctly placed at the top
-
-import React, { useRef, useMemo } from "react"; // Added useMemo
+import React, { useRef, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { cn } from "../../lib/utils"; // Assuming cn utility is available
+import { cn } from "../../lib/utils";
 
 export interface ScrollRevealProps {
   children: React.ReactNode;
@@ -59,7 +57,33 @@ const variantClasses = {
   primary: "text-primary",
 };
 
-export function ScrollReveal({
+// Constants moved outside component to avoid recreation
+const DEFAULT_SCROLL_OFFSET: ["start end", "end start"] = ["start end", "end start"];
+const DEFAULT_ROTATION_INPUT: [number, number, number] = [0, 0.5, 1];
+const DEFAULT_SPRING_CONFIG = {
+  damping: 25,
+  stiffness: 100,
+  mass: 1,
+} as const;
+
+// Optimized whitespace check function
+const isWhitespaceOnly = (str: string): boolean => {
+  if (str.length === 0) return false;
+  // Fast check: if first char is not whitespace, it's not whitespace-only
+  if (str[0] !== " " && str[0] !== "\t" && str[0] !== "\n" && str[0] !== "\r") {
+    return false;
+  }
+  // Check all characters are whitespace
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (char !== " " && char !== "\t" && char !== "\n" && char !== "\r") {
+      return false;
+    }
+  }
+  return true;
+};
+
+const ScrollRevealComponent = ({
   children,
   containerClassName,
   textClassName,
@@ -70,119 +94,164 @@ export function ScrollReveal({
   staggerDelay = 0.05,
   threshold = 0.5,
   duration = 0.8,
-  springConfig = { // Default spring config is always good to have
-    damping: 25,
-    stiffness: 100,
-    mass: 1,
-  },
+  springConfig,
   size = "lg",
   align = "left",
   variant = "default",
-}: ScrollRevealProps) {
+}: ScrollRevealProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, {
-    amount: threshold,
-    once: false
-  });
-
+  
+  // Use stable default springConfig reference
+  const stableSpringConfig = springConfig ?? DEFAULT_SPRING_CONFIG;
+  
+  // Extract spring config values to avoid dependency on object reference
+  const { damping, stiffness, mass } = stableSpringConfig;
+  
+  // Memoize useInView options to prevent recreation on every render
+  const inViewOptions = useMemo(
+    () => ({
+      amount: threshold,
+      once: false,
+    }),
+    [threshold]
+  );
+  
+  const isInView = useInView(containerRef, inViewOptions);
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: DEFAULT_SCROLL_OFFSET,
   });
+
+  // Memoize rotation transform output array (input is constant)
+  const rotationOutput = useMemo<[number, number, number]>(
+    () => [baseRotation, 0, 0],
+    [baseRotation]
+  );
 
   // Transform rotation based on scroll
   const rotation = useTransform(
     scrollYProgress,
-    [0, 0.5, 1],
-    [baseRotation, 0, 0]
+    DEFAULT_ROTATION_INPUT,
+    rotationOutput
+  );
+
+  // Memoize style object to prevent recreation
+  const rotationStyle = useMemo(
+    () => ({ rotate: rotation }),
+    [rotation]
   );
 
   // Split text into words and spaces, ensuring each part is an object
-  const splitText = useMemo(() => { // Using useMemo is good here
+  const splitText = useMemo(() => {
     const text = typeof children === "string" ? children : "";
-    // Split by spaces, keeping the spaces as separate elements in the array.
-    // Each 'part' will either be a word or a sequence of spaces.
-    return text.split(/(\s+)/).map((part, index) => {
-      // Return an object for both words and spaces, with a 'type' property
-      // to differentiate them in the rendering loop.
-      return {
+    if (!text) return [];
+    
+    // Optimized: use efficient whitespace check function
+    return text
+      .split(/(\s+)/)
+      .map((part, index) => ({
         value: part,
-        isSpace: part.match(/^\s+$/) && part.length > 0, // Check if it's a non-empty string of only whitespace
-        originalIndex: index, // Keep original index for stable keys
-      };
-    }).filter(item => item.value.length > 0); // Filter out any empty strings that might result from split
+        isSpace: isWhitespaceOnly(part),
+        originalIndex: index,
+      }))
+      .filter((item) => item.value.length > 0);
   }, [children]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: staggerDelay,
-        delayChildren: 0.1,
+  // Memoize containerVariants to prevent recreation on every render
+  const containerVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: staggerDelay,
+          delayChildren: 0.1,
+        },
       },
-    },
-  };
+    }),
+    [staggerDelay]
+  );
 
-  const wordVariants = {
-    hidden: {
-      opacity: baseOpacity,
-      filter: enableBlur ? `blur(${blurStrength}px)` : "blur(0px)",
-      y: 20,
-    },
-    visible: {
-      opacity: 1,
-      filter: "blur(0px)",
-      y: 0,
-      transition: {
-        // Removed `type: "spring"` here. Framer Motion infers "spring"
-        // when damping, stiffness, or mass are present.
-        ...springConfig,
-        duration, // This is a common property for all transition types
+  // Memoize blur filter string to avoid template literal recreation
+  const blurFilter = useMemo(
+    () => (enableBlur ? `blur(${blurStrength}px)` : "blur(0px)"),
+    [enableBlur, blurStrength]
+  );
+
+  // Memoize wordVariants to prevent recreation on every render
+  // Use extracted spring config values to avoid dependency on object reference
+  const wordVariants = useMemo(
+    () => ({
+      hidden: {
+        opacity: baseOpacity,
+        filter: blurFilter,
+        y: 20,
       },
-    },
-  };
+      visible: {
+        opacity: 1,
+        filter: "blur(0px)",
+        y: 0,
+        transition: {
+          damping,
+          stiffness,
+          mass,
+          duration,
+        },
+      },
+    }),
+    [baseOpacity, blurFilter, damping, stiffness, mass, duration]
+  );
+
+  // Memoize className strings to prevent recalculation
+  const containerClass = useMemo(
+    () => cn("my-5 transform-gpu", containerClassName),
+    [containerClassName]
+  );
+
+  const textClass = useMemo(
+    () =>
+      cn(
+        "leading-relaxed font-semibold",
+        sizeClasses[size],
+        alignClasses[align],
+        variantClasses[variant],
+        textClassName
+      ),
+    [size, align, variant, textClassName]
+  );
 
   return (
     <motion.div
       ref={containerRef}
-      style={{ rotate: rotation }}
-      className={cn(
-        "my-5 transform-gpu",
-        containerClassName
-      )}
+      style={rotationStyle}
+      className={containerClass}
     >
       <motion.p
-        className={cn(
-          "leading-relaxed font-semibold",
-          sizeClasses[size],
-          alignClasses[align],
-          variantClasses[variant],
-          textClassName
-        )}
+        className={textClass}
         variants={containerVariants}
         initial="hidden"
-        // Changed to `isInView` to match the behavior of triggering on view
         animate={isInView ? "visible" : "hidden"}
       >
-        {splitText.map((item) => ( // Map over 'item' directly as it's always an object
+        {splitText.map((item) =>
           item.isSpace ? (
-            // Render spaces as a regular span
             <span key={`space-${item.originalIndex}`}>{item.value}</span>
           ) : (
-            // Render words as motion.span for animation
             <motion.span
-              key={`word-${item.originalIndex}`} // Use originalIndex for stable keys
+              key={`word-${item.originalIndex}`}
               className="inline-block"
               variants={wordVariants}
             >
               {item.value}
             </motion.span>
           )
-        ))}
+        )}
       </motion.p>
     </motion.div>
   );
-}
+};
+
+// Memoize component to prevent unnecessary re-renders when props haven't changed
+export const ScrollReveal = React.memo(ScrollRevealComponent);
 
 export default ScrollReveal;

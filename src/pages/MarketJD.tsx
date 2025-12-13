@@ -1,7 +1,5 @@
-"use client";
-
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -26,8 +24,6 @@ import {
   Calendar,
   Cpu,
 } from "lucide-react";
-import FallBeamBackground from "@/components/lightswind/fall-beam-background";
-import RaysBackground from "@/components/lightswind/rays-background";
 import ScrollReveal from "@/components/lightswind/scroll-reveal";
 import { Badge } from "@/components/lightswind/badge";
 import {
@@ -37,6 +33,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/lightswind/card";
+
+const RaysBackground = lazy(
+  () => import("../components/lightswind/rays-background")
+);
+const FallBeamBackground = lazy(
+  () => import("../components/lightswind/fall-beam-background")
+);
 
 const MarketJD = () => {
   const navigate = useNavigate();
@@ -313,7 +316,7 @@ const MarketJD = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <FallBeamBackground className="fixed z-1" />
+      <FallBeamBackground className="fixed z-1" beamCount={5} />
       <RaysBackground className="fixed z-0" />
 
       <motion.div

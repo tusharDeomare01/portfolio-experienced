@@ -1,5 +1,3 @@
-"use client";
-
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
@@ -9,7 +7,10 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-export default function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
+export default function MarkdownRenderer({
+  content,
+  className,
+}: MarkdownRendererProps) {
   return (
     <div className={cn("markdown-content", className)}>
       <ReactMarkdown
@@ -17,27 +18,48 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
         components={{
           // Headings
           h1: ({ node, ...props }) => (
-            <h1 className="text-xl font-bold mt-4 mb-2 text-foreground first:mt-0" {...props} />
+            <h1
+              className="text-xl font-bold mt-4 mb-2 text-foreground first:mt-0"
+              {...props}
+            />
           ),
           h2: ({ node, ...props }) => (
-            <h2 className="text-lg font-semibold mt-3 mb-2 text-foreground first:mt-0" {...props} />
+            <h2
+              className="text-lg font-semibold mt-3 mb-2 text-foreground first:mt-0"
+              {...props}
+            />
           ),
           h3: ({ node, ...props }) => (
-            <h3 className="text-base font-semibold mt-2 mb-1 text-foreground first:mt-0" {...props} />
+            <h3
+              className="text-base font-semibold mt-2 mb-1 text-foreground first:mt-0"
+              {...props}
+            />
           ),
           // Paragraphs
           p: ({ node, ...props }) => (
-            <p className="text-sm leading-relaxed mb-2 text-foreground first:mt-0 last:mb-0" {...props} />
+            <p
+              className="text-sm leading-relaxed mb-2 text-foreground first:mt-0 last:mb-0"
+              {...props}
+            />
           ),
           // Lists
           ul: ({ node, ...props }) => (
-            <ul className="list-disc list-inside mb-2 space-y-1 text-sm text-foreground pl-2" {...props} />
+            <ul
+              className="list-disc list-inside mb-2 space-y-1 text-sm text-foreground pl-2"
+              {...props}
+            />
           ),
           ol: ({ node, ...props }) => (
-            <ol className="list-decimal list-inside mb-2 space-y-1 text-sm text-foreground pl-2" {...props} />
+            <ol
+              className="list-decimal list-inside mb-2 space-y-1 text-sm text-foreground pl-2"
+              {...props}
+            />
           ),
           li: ({ node, ...props }) => (
-            <li className="text-sm text-foreground leading-relaxed" {...props} />
+            <li
+              className="text-sm text-foreground leading-relaxed"
+              {...props}
+            />
           ),
           // Bold and italic
           strong: ({ node, ...props }) => (
@@ -50,7 +72,7 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
           code: ({ node, inline, className, children, ...props }: any) => {
             // const match = /language-(\w+)/.exec(className || '');
             // const language = match ? match[1] : '';
-            
+
             if (inline) {
               return (
                 <code
@@ -63,7 +85,9 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
             }
             return (
               <code
-                className={`block p-3 rounded-lg bg-background/50 text-foreground text-xs font-mono overflow-x-auto mb-2 border border-border/50 ${className || ''}`}
+                className={`block p-3 rounded-lg bg-background/50 text-foreground text-xs font-mono overflow-x-auto mb-2 border border-border/50 ${
+                  className || ""
+                }`}
                 {...props}
               >
                 {children}
@@ -98,23 +122,33 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
           // Tables
           table: ({ node, ...props }) => (
             <div className="overflow-x-auto my-2">
-              <table className="min-w-full border-collapse border border-border rounded" {...props} />
+              <table
+                className="min-w-full border-collapse border border-border rounded"
+                {...props}
+              />
             </div>
           ),
           thead: ({ node, ...props }) => (
             <thead className="bg-muted/50" {...props} />
           ),
-          tbody: ({ node, ...props }) => (
-            <tbody {...props} />
-          ),
+          tbody: ({ node, ...props }) => <tbody {...props} />,
           tr: ({ node, ...props }) => (
-            <tr className="border-b border-border hover:bg-muted/30 transition-colors" {...props} />
+            <tr
+              className="border-b border-border hover:bg-muted/30 transition-colors"
+              {...props}
+            />
           ),
           th: ({ node, ...props }) => (
-            <th className="border border-border px-3 py-2 text-left font-semibold text-sm text-foreground" {...props} />
+            <th
+              className="border border-border px-3 py-2 text-left font-semibold text-sm text-foreground"
+              {...props}
+            />
           ),
           td: ({ node, ...props }) => (
-            <td className="border border-border px-3 py-2 text-sm text-foreground" {...props} />
+            <td
+              className="border border-border px-3 py-2 text-sm text-foreground"
+              {...props}
+            />
           ),
         }}
       >
@@ -123,4 +157,3 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
     </div>
   );
 }
-

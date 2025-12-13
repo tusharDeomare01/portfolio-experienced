@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import {
@@ -191,7 +189,8 @@ export const ContactSection = () => {
           staggerDelay={0.03}
           containerClassName="px-2 sm:px-0"
         >
-          Have a project in mind or want to discuss opportunities? I'd love to hear from you!
+          Have a project in mind or want to discuss opportunities? I'd love to
+          hear from you!
         </ScrollReveal>
       </motion.div>
 

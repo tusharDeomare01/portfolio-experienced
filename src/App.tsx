@@ -2,16 +2,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header/Header";
-import { HeroSection } from "./components/HeroSection/HeroSection";
-// import StripedBackground from "./components/lightswind/StripedBackground";
-// @ts-ignore - smokey-cursor is a JS file without type definitions
-import { AboutSection } from "./components/AboutSection/AboutSection";
-import { ProjectsSection } from "./components/ProjectsSection/ProjectsSection";
-import { EducationSection } from "./components/EducationSection/EducationSection";
-import { CareerTimeline } from "./components/CareerSection/CareerTimeline";
-import { AchievementsSection } from "./components/AchievementsSection/AchievementsSection";
-import { ContactSection } from "./components/ContactSection/ContactSection";
 import {
   Home,
   User,
@@ -22,12 +12,27 @@ import {
   Mail,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import AIAssistant from "./components/AIAssistant/AIAssistant";
 import { useIsMobile } from "./components/hooks/use-mobile";
-import { Tour } from "./components/Tour/Tour";
 import { TourProvider, useTourContext } from "./components/Tour/TourContext";
-import Dock from "./components/lightswind/dock";
-import FallBeamBackground from "./components/lightswind/fall-beam-background";
+
+// Lazy load section components
+const Header = lazy(() => import("./components/Header/Header"));
+const HeroSection = lazy(() => import("./components/HeroSection/HeroSection").then(module => ({ default: module.HeroSection })));
+const AboutSection = lazy(() => import("./components/AboutSection/AboutSection").then(module => ({ default: module.AboutSection })));
+const ProjectsSection = lazy(() => import("./components/ProjectsSection/ProjectsSection").then(module => ({ default: module.ProjectsSection })));
+const EducationSection = lazy(() => import("./components/EducationSection/EducationSection").then(module => ({ default: module.EducationSection })));
+const CareerTimeline = lazy(() => import("./components/CareerSection/CareerTimeline").then(module => ({ default: module.CareerTimeline })));
+const AchievementsSection = lazy(() => import("./components/AchievementsSection/AchievementsSection").then(module => ({ default: module.AchievementsSection })));
+const ContactSection = lazy(() => import("./components/ContactSection/ContactSection").then(module => ({ default: module.ContactSection })));
+
+// Lazy load other components
+const AIAssistant = lazy(() => import("./components/AIAssistant/AIAssistant"));
+const Tour = lazy(() => import("./components/Tour/Tour").then(module => ({ default: module.Tour })));
+const Dock = lazy(() => import("./components/lightswind/dock"));
+
+const FallBeamBackground = lazy(
+  () => import("./components/lightswind/fall-beam-background")
+);
 
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
@@ -137,21 +142,25 @@ function HomePage() {
   ];
   return (
     <div className="bg-background min-h-screen w-full">
-      <Header />
+      <Suspense fallback={null}>
+        <Header />
+      </Suspense>
 
       <div
         className="w-full bg-transparent max-w-5xl mx-auto px-4 py-8
         lg:rounded-3xl backdrop-blur-xl border-gray-100 dark:border-gray-900"
       >
-        <div className="z-10">
+        <div className="z-[111]">
           {/* Sections with IDs for smooth scrolling navigation */}
-          <HeroSection />
-          <AboutSection />
-          <EducationSection />
-          <CareerTimeline />
-          <ProjectsSection />
-          <AchievementsSection />
-          <ContactSection />
+          <Suspense fallback={null}>
+            <HeroSection />
+            <AboutSection />
+            <EducationSection />
+            <CareerTimeline />
+            <ProjectsSection />
+            <AchievementsSection />
+            <ContactSection />
+          </Suspense>
         </div>
       </div>
 
@@ -170,27 +179,31 @@ function HomePage() {
                 : "z-[999]"
             }`}
           >
-            <Dock
-              items={dockItems}
-              position="bottom"
-              magnification={isMobile ? 60 : 85}
-              baseItemSize={isMobile ? 40 : 50}
-              distance={isMobile ? 120 : 200}
-              panelHeight={isMobile ? 56 : 64}
-            />
+            <Suspense fallback={null}>
+              <Dock
+                items={dockItems}
+                position="bottom"
+                magnification={isMobile ? 60 : 85}
+                baseItemSize={isMobile ? 40 : 50}
+                distance={isMobile ? 120 : 200}
+                panelHeight={isMobile ? 56 : 64}
+              />
+            </Suspense>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Tour Component */}
-      <Tour
-        isActive={tour.isTourActive}
-        currentStep={tour.currentStep}
-        onNext={tour.nextStep}
-        onPrev={tour.prevStep}
-        onSkip={tour.skipTour}
-        onClose={tour.endTour}
-      />
+      <Suspense fallback={null}>
+        <Tour
+          isActive={tour.isTourActive}
+          currentStep={tour.currentStep}
+          onNext={tour.nextStep}
+          onPrev={tour.prevStep}
+          onSkip={tour.skipTour}
+          onClose={tour.endTour}
+        />
+      </Suspense>
     </div>
   );
 }
@@ -205,7 +218,11 @@ function App() {
             path="/marketjd"
             element={
               <Suspense fallback={<PageLoader />}>
-                <MarketJD />
+                <>
+                  <div className="z-[111]">
+                    <MarketJD />
+                  </div>
+                </>
               </Suspense>
             }
           />
@@ -215,7 +232,11 @@ function App() {
             path="/portfolio"
             element={
               <Suspense fallback={<PageLoader />}>
-                <Portfolio />
+                <>
+                  <div className="z-[111]">
+                    <Portfolio />
+                  </div>
+                </>
               </Suspense>
             }
           />
@@ -224,7 +245,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
         </Routes>
         {/* AI Assistant - Available on all routes */}
-        <AIAssistant />
+        <Suspense fallback={null}>
+          <AIAssistant />
+        </Suspense>
         {/* <SmokeyCursor
         followMouse={true}
         autoColors={true}
@@ -232,7 +255,7 @@ function App() {
         simulationResolution={256}
       /> */}
         {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
-        <FallBeamBackground className="fixed z-0" />
+        <FallBeamBackground beamCount={5} />
       </BrowserRouter>
     </TourProvider>
   );

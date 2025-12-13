@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import MarkdownRenderer from "./MarkdownRenderer";
@@ -9,7 +7,10 @@ interface StreamingTextProps {
   isStreaming?: boolean;
 }
 
-export default function StreamingText({ text, isStreaming = true }: StreamingTextProps) {
+export default function StreamingText({
+  text,
+  isStreaming = true,
+}: StreamingTextProps) {
   // Use useMemo to determine if we should show markdown or plain text
   // Only render markdown when streaming is complete
   const shouldRenderMarkdown = useMemo(() => {
@@ -40,10 +41,5 @@ export default function StreamingText({ text, isStreaming = true }: StreamingTex
   }
 
   // Fallback: show plain text if no content
-  return (
-    <div className="text-sm whitespace-pre-wrap break-words">
-      {text}
-    </div>
-  );
+  return <div className="text-sm whitespace-pre-wrap break-words">{text}</div>;
 }
-

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
@@ -21,38 +19,46 @@ interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ 
-    className, 
-    children, 
-    viewportRef, 
-    maxHeight,
-    showScrollbars = true,
-    scrollable = true,
-    orientation = "vertical",
-    smooth = false,
-    theme = "default",
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      children,
+      viewportRef,
+      maxHeight,
+      showScrollbars = true,
+      scrollable = true,
+      orientation = "vertical",
+      smooth = false,
+      theme = "default",
+      ...props
+    },
+    ref
+  ) => {
     const internalRef = React.useRef<HTMLDivElement>(null);
     const resolvedRef = viewportRef || internalRef;
 
     const style: React.CSSProperties = {
-      maxHeight: maxHeight !== undefined ? (typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight) : undefined,
-      ...props.style
+      maxHeight:
+        maxHeight !== undefined
+          ? typeof maxHeight === "number"
+            ? `${maxHeight}px`
+            : maxHeight
+          : undefined,
+      ...props.style,
     };
 
     // Orientation scroll classes
     const orientationClasses = {
       vertical: "overflow-y-auto overflow-x-hidden",
       horizontal: "overflow-x-auto overflow-y-hidden",
-      both: "overflow-auto"
+      both: "overflow-auto",
     };
 
     // Theme classes
     const themeClasses = {
       default: "themed-scrollbar",
       minimal: "minimal-scrollbar",
-      none: "scrollbar-none"
+      none: "scrollbar-none",
     };
 
     return (
@@ -89,18 +95,21 @@ interface ScrollBarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ScrollBar = React.forwardRef<HTMLDivElement, ScrollBarProps>(
-  ({ 
-    className, 
-    orientation = "vertical", 
-    size = "default",
-    visible = false,
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      orientation = "vertical",
+      size = "default",
+      visible = false,
+      ...props
+    },
+    ref
+  ) => {
     // Size classes
     const sizeClasses = {
       thin: orientation === "vertical" ? "w-1" : "h-1",
       default: orientation === "vertical" ? "w-1.5" : "h-1.5",
-      thick: orientation === "vertical" ? "w-2" : "h-2"
+      thick: orientation === "vertical" ? "w-2" : "h-2",
     };
 
     return (

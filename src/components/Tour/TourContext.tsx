@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useContext, type ReactNode } from "react";
 import { useTour } from "./Tour";
 
@@ -29,4 +27,3 @@ export function useTourContext() {
   }
   return context;
 }
-

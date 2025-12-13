@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, DragControls } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";

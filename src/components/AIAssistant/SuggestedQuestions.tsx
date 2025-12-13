@@ -1,5 +1,3 @@
-"use client";
-
 import { motion } from "framer-motion";
 import { SUGGESTED_QUESTIONS } from "@/lib/prompts";
 import { useAppDispatch } from "@/store/hooks";

@@ -93,7 +93,8 @@ export const ProjectsSection = () => {
               align="center"
               variant="default"
               enableBlur={true}
-              staggerDelay={0.05}
+              blurStrength={20}
+              baseRotation={0}
             >
               Projects
             </ScrollReveal>
@@ -103,7 +104,8 @@ export const ProjectsSection = () => {
             align="center"
             variant="muted"
             enableBlur={true}
-            staggerDelay={0.03}
+            blurStrength={20}
+            baseRotation={0}
           >
             Explore my latest work...
           </ScrollReveal>

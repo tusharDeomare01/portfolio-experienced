@@ -24,7 +24,8 @@ export const EducationSection = () => {
             align="left"
             variant="default"
             enableBlur={true}
-            staggerDelay={0.05}
+            blurStrength={20}
+            baseRotation={0}
           >
             Education
           </ScrollReveal>
@@ -56,7 +57,9 @@ export const EducationSection = () => {
                       <span> : {edu.period}</span>
                     </>
                   ) : (
-                    <span>{edu.institution} : {edu.period}</span>
+                    <span>
+                      {edu.institution} : {edu.period}
+                    </span>
                   )}
                 </p>
               </CardHeader>

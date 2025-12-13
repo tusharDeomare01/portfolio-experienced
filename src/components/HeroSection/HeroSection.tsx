@@ -68,7 +68,8 @@ export const HeroSection = () => {
             align="left"
             variant="accent"
             enableBlur={true}
-            staggerDelay={0.02}
+            blurStrength={20}
+            baseRotation={0}
             containerClassName="mt-1"
             textClassName="text-xs sm:text-sm text-pink-500 font-semibold block"
           >
@@ -93,7 +94,8 @@ export const HeroSection = () => {
             align="left"
             variant="muted"
             enableBlur={true}
-            staggerDelay={0.03}
+            blurStrength={20}
+            baseRotation={0}
             containerClassName="inline"
             textClassName="font-medium"
           >

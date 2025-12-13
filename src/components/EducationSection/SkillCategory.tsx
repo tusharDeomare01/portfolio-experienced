@@ -38,7 +38,8 @@ export default function ProfessionalProfile() {
           align="left"
           variant="default"
           enableBlur={true}
-          staggerDelay={0.05}
+          blurStrength={20}
+          baseRotation={0}
           containerClassName="mb-6"
         >
           Core Skills

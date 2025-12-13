@@ -19,9 +19,11 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copy package files first for better layer caching
-COPY package*.json ./
+# Explicitly copy both package.json and package-lock.json for npm ci
+COPY package.json package-lock.json ./
 
 # Install dependencies with clean install and audit
+# npm ci requires package-lock.json for reproducible builds
 RUN npm ci --include=dev --prefer-offline --no-audit --progress=false \
     && npm cache clean --force
 

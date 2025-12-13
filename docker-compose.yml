@@ -6,22 +6,53 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # Pass build arguments (optional - can also use .env file)
-        # VITE_OPENAI_API_KEY: ${VITE_OPENAI_API_KEY}
-        # VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY}
-        # VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID}
-        # VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID}
-    ports:
-      - "8080:80"
+        # Pass build arguments from environment or .env file
+        # These are needed at build time for Vite
+        VITE_OPENAI_API_KEY: ${VITE_OPENAI_API_KEY:-}
+        VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY:-}
+        VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID:-}
+        VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID:-}
+        VITE_BASE_URL: ${VITE_BASE_URL:-}
+    image: portfolio-website:latest
     container_name: portfolio-website
+    ports:
+      - "${PORT:-8080}:8080"
     restart: unless-stopped
     environment:
-      # Note: These are runtime env vars, but Vite needs them at build time
-      # So pass them as build args instead (see above)
       - NODE_ENV=production
-    # Uncomment to use .env file
+    # Health check configuration
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Use .env file if it exists (uncomment to enable)
     # env_file:
     #   - .env
+    # Networks (optional - for multi-container setups)
+    # networks:
+    #   - portfolio-network
+
+# Optional: Define networks for multi-container setups
+# networks:
+#   portfolio-network:
+#     driver: bridge
 
 
 

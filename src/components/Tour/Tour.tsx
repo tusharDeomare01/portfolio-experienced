@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { motion, AnimatePresence, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronRight, ChevronLeft, Sparkles, Home, User, GraduationCap, Briefcase, FolderKanban, Trophy, Mail, Bot, Maximize2 } from "lucide-react";
 import { Button } from "../lightswind/button";
 import { BorderBeam } from "../lightswind/border-beam";
@@ -104,7 +104,6 @@ export function useTour() {
   const [isTourActive, setIsTourActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [hasSeenTour, setHasSeenTour] = useState(false);
-  const [hasCheckedFirstVisit, setHasCheckedFirstVisit] = useState(false);
 
   // Check if this is the first visit - only auto-start tour once in lifetime
   useEffect(() => {
@@ -114,19 +113,16 @@ export function useTour() {
       if (tourCompleted === "true") {
         // User has seen the tour before
         setHasSeenTour(true);
-        setHasCheckedFirstVisit(true);
       } else {
         // First time visiting - auto-start tour after a short delay
       const timer = setTimeout(() => {
         setIsTourActive(true);
-          setHasCheckedFirstVisit(true);
       }, 1500);
       return () => clearTimeout(timer);
       }
     } catch (error) {
       // Handle localStorage errors (e.g., private browsing mode)
       console.warn("Tour: Could not access localStorage", error);
-      setHasCheckedFirstVisit(true);
     }
   }, []);
 
@@ -242,25 +238,6 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isNavigatingRef = useRef(false);
 
-  // Calculate responsive dimensions with state for updates
-  const [dimensions, setDimensions] = useState(() => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const isSmall = width < 375;
-    const isMobile = width < 768;
-    const isTablet = width >= 768 && width < 1024;
-    const isLarge = width >= 1920;
-
-    return {
-      width,
-      height,
-      tooltipWidth: isSmall ? 300 : isMobile ? 340 : isTablet ? 400 : isLarge ? 450 : 420,
-      spacing: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 28 : 24,
-      padding: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 32 : 24,
-      estimatedHeight: isSmall ? 260 : isMobile ? 280 : isTablet ? 300 : 320,
-    };
-  });
-
   // Improved scroll completion detection with Intersection Observer
   const waitForScrollComplete = useCallback((callback: () => void, targetElement?: Element | null) => {
     let lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -268,11 +245,13 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
     let rafId: number | null = null;
     let isComplete = false;
     let observer: IntersectionObserver | null = null;
+    let fallbackTimer: NodeJS.Timeout | null = null;
     
     const cleanup = () => {
       isComplete = true;
       if (scrollEndTimer) clearTimeout(scrollEndTimer);
       if (rafId !== null) cancelAnimationFrame(rafId);
+      if (fallbackTimer) clearTimeout(fallbackTimer);
       if (observer && targetElement) {
         observer.disconnect();
       }
@@ -300,7 +279,7 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
       observer.observe(targetElement);
       
       // Fallback timeout
-      setTimeout(() => {
+      fallbackTimer = setTimeout(() => {
         if (!isComplete) {
           cleanup();
           callback();
@@ -336,7 +315,7 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
     rafId = requestAnimationFrame(checkScroll);
     
     // Fallback timeout
-    const fallbackTimer = setTimeout(() => {
+    fallbackTimer = setTimeout(() => {
       if (!isComplete) {
         cleanup();
         callback();
@@ -371,8 +350,6 @@ export function Tour({ isActive, currentStep, onNext, onPrev, onSkip, onClose }:
             padding: isSmall ? 12 : isMobile ? 16 : isTablet ? 20 : isLarge ? 32 : 24,
             estimatedHeight: isSmall ? 260 : isMobile ? 280 : isTablet ? 300 : 320,
           };
-
-          setDimensions(currentDimensions);
 
           const element = targetElement || document.querySelector(step.target);
       

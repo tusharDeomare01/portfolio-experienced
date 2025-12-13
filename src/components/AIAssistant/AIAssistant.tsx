@@ -233,15 +233,19 @@ export default function AIAssistant() {
                 ${
                   theme === "dark"
                     ? "bg-black border-white"
-                    : "bg-white border-white"
+                    : "bg-pink-500 border-pink-500"
                 }
               `}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              {/* Subtle glow effect - Previous version style */}
+              {/* Subtle glow effect */}
               <motion.div
-                className="absolute inset-0 rounded-full blur-md bg-white/10"
+                className={`absolute inset-0 rounded-full blur-md ${
+                  theme === "dark"
+                    ? "bg-white/10"
+                    : "bg-pink-400/20"
+                }`}
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.3, 0.5, 0.3],
@@ -253,7 +257,7 @@ export default function AIAssistant() {
                 }}
               />
               
-              {/* Sparkles icon with animation - Previous version style */}
+              {/* Sparkles icon with animation */}
               <motion.div
                 className="relative z-10"
                 animate={{
@@ -267,7 +271,11 @@ export default function AIAssistant() {
                 }}
               >
                 <Sparkles 
-                  className="h-6 w-6 sm:h-7 sm:w-7 text-white group-hover:text-white/90 transition-colors drop-shadow-lg" 
+                  className={`h-6 w-6 sm:h-7 sm:w-7 group-hover:opacity-90 transition-colors drop-shadow-lg ${
+                    theme === "dark"
+                      ? "text-white"
+                      : "text-white"
+                  }`}
                   strokeWidth={2}
                 />
               </motion.div>
@@ -284,9 +292,13 @@ export default function AIAssistant() {
                 </motion.div>
               )}
               
-              {/* Subtle pulsing ring effect - Previous version style */}
+              {/* Subtle pulsing ring effect */}
               <motion.div
-                className="absolute inset-0 rounded-full border-2 border-white/30"
+                className={`absolute inset-0 rounded-full border-2 ${
+                  theme === "dark"
+                    ? "border-white/30"
+                    : "border-pink-400/40"
+                }`}
                 animate={{
                   scale: [1, 1.3, 1],
                   opacity: [0.4, 0, 0.4],

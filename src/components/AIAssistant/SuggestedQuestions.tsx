@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/lightswind/button";
 import { SUGGESTED_QUESTIONS } from "@/lib/prompts";
 import { useAppDispatch } from "@/store/hooks";
 import { sendMessage } from "./useChat";
 import { store } from "@/store/store";
+import { Button } from "../lightswind/button";
 
 export default function SuggestedQuestions() {
   const dispatch = useAppDispatch();
@@ -16,7 +16,9 @@ export default function SuggestedQuestions() {
 
   return (
     <div className="space-y-2 w-full">
-      <p className="text-xs text-muted-foreground mb-2 sm:mb-3">Suggested questions:</p>
+      <p className="text-xs text-muted-foreground mb-2 sm:mb-3">
+        Suggested questions:
+      </p>
       <div className="flex flex-wrap gap-2">
         {SUGGESTED_QUESTIONS.slice(0, 4).map((question, index) => (
           <motion.div
@@ -40,4 +42,3 @@ export default function SuggestedQuestions() {
     </div>
   );
 }
-

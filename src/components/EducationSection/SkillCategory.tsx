@@ -4,11 +4,11 @@ import {
   CardTitle,
   CardContent,
 } from "../lightswind/card.tsx";
-import { Badge } from "../lightswind/badge";
-import { Progress } from "../lightswind/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { CountUp } from "../lightswind/count-up";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
+import { CountUp } from "../lightswind/count-up.tsx";
+import { Progress } from "../lightswind/progress.tsx";
+import { Badge } from "../lightswind/badge.tsx";
 
 export default function ProfessionalProfile() {
   return (

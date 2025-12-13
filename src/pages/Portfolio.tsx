@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
-import RaysBackground from "@/components/ui/rays-background";
-import FallBeamBackground from "@/components/ui/fall-beam-background";
 import {
   Card,
   CardHeader,
@@ -34,6 +32,8 @@ import {
   Eye,
   MousePointerClick,
 } from "lucide-react";
+import FallBeamBackground from "@/components/lightswind/fall-beam-background";
+import RaysBackground from "@/components/lightswind/rays-background";
 
 const Portfolio = () => {
   const navigate = useNavigate();
@@ -222,13 +222,7 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background relative">
       <FallBeamBackground className="fixed z-1" />
-      <RaysBackground
-        className="fixed z-0"
-        theme="dark"
-        animated={true}
-        animationSpeed={1}
-        opacity={0.7}
-      />
+      <RaysBackground className="fixed z-0" />
 
       <motion.div
         variants={containerVariants}
@@ -306,7 +300,11 @@ const Portfolio = () => {
             staggerDelay={0.03}
             containerClassName="max-w-4xl"
           >
-            TechShowcase is a modern, interactive portfolio website showcasing professional experience, projects, and achievements. Features smooth animations, AI-powered assistant, 3D carousel effects, and responsive design. Built with React 19, TypeScript, Framer Motion, and cutting-edge UI libraries for an exceptional user experience.
+            TechShowcase is a modern, interactive portfolio website showcasing
+            professional experience, projects, and achievements. Features smooth
+            animations, AI-powered assistant, 3D carousel effects, and
+            responsive design. Built with React 19, TypeScript, Framer Motion,
+            and cutting-edge UI libraries for an exceptional user experience.
           </ScrollReveal>
         </motion.div>
 

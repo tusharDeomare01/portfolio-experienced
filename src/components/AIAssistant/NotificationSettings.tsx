@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings, Bell, BellOff, Volume2, VolumeX, FileText, FileX, Circle, CircleOff } from "lucide-react";
-import { Button } from "@/components/lightswind/button";
-import { Card } from "@/components/lightswind/card";
+import {
+  Settings,
+  Bell,
+  BellOff,
+  Volume2,
+  VolumeX,
+  FileText,
+  FileX,
+  Circle,
+  CircleOff,
+} from "lucide-react";
 import {
   getNotificationPreferences,
   saveNotificationPreferences,
@@ -12,16 +20,21 @@ import {
   supportsNotifications,
 } from "@/lib/notificationUtils";
 import type { NotificationPreferences } from "@/lib/notificationUtils";
+import { Card } from "../lightswind/card";
+import { Button } from "../lightswind/button";
 
 interface NotificationSettingsProps {
   onClose?: () => void;
 }
 
-export default function NotificationSettings({ onClose }: NotificationSettingsProps) {
-  const [prefs, setPrefs] = useState<NotificationPreferences>(getNotificationPreferences());
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | null>(
-    getNotificationPermission()
+export default function NotificationSettings({
+  onClose,
+}: NotificationSettingsProps) {
+  const [prefs, setPrefs] = useState<NotificationPreferences>(
+    getNotificationPreferences()
   );
+  const [notificationPermission, setNotificationPermission] =
+    useState<NotificationPermission | null>(getNotificationPermission());
 
   useEffect(() => {
     setPrefs(getNotificationPreferences());
@@ -34,7 +47,11 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
     saveNotificationPreferences(newPrefs);
 
     // If enabling browser notifications, request permission
-    if (key === 'browserNotifications' && newPrefs.browserNotifications && notificationPermission !== 'granted') {
+    if (
+      key === "browserNotifications" &&
+      newPrefs.browserNotifications &&
+      notificationPermission !== "granted"
+    ) {
       requestNotificationPermission().then((granted) => {
         if (!granted) {
           // Revert if permission denied
@@ -65,7 +82,12 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
           <h3 className="font-semibold text-sm">Notification Settings</h3>
         </div>
         {onClose && (
-          <Button variant="ghost" size="sm" onClick={onClose} className="h-6 w-6 p-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="h-6 w-6 p-0"
+          >
             ×
           </Button>
         )}
@@ -90,9 +112,11 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleToggle('browserNotifications')}
+            onClick={() => handleToggle("browserNotifications")}
             className="h-8 w-8 p-0"
-            disabled={!supportsNotifications() || notificationPermission === 'denied'}
+            disabled={
+              !supportsNotifications() || notificationPermission === "denied"
+            }
           >
             {prefs.browserNotifications ? (
               <Circle className="h-4 w-4 text-primary fill-primary" />
@@ -108,26 +132,29 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
           </p>
         )}
 
-        {supportsNotifications() && notificationPermission === 'denied' && (
+        {supportsNotifications() && notificationPermission === "denied" && (
           <div className="pl-6">
             <p className="text-xs text-destructive mb-2">
-              Notifications are blocked. Please enable them in your browser settings.
+              Notifications are blocked. Please enable them in your browser
+              settings.
             </p>
           </div>
         )}
 
-        {supportsNotifications() && notificationPermission !== 'granted' && notificationPermission !== 'denied' && (
-          <div className="pl-6">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRequestPermission}
-              className="text-xs h-7"
-            >
-              Request Permission
-            </Button>
-          </div>
-        )}
+        {supportsNotifications() &&
+          notificationPermission !== "granted" &&
+          notificationPermission !== "denied" && (
+            <div className="pl-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRequestPermission}
+                className="text-xs h-7"
+              >
+                Request Permission
+              </Button>
+            </div>
+          )}
 
         {/* Sound Notifications */}
         <div className="flex items-center justify-between">
@@ -147,7 +174,7 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleToggle('soundEnabled')}
+            onClick={() => handleToggle("soundEnabled")}
             className="h-8 w-8 p-0"
           >
             {prefs.soundEnabled ? (
@@ -176,7 +203,7 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleToggle('pageTitleNotifications')}
+            onClick={() => handleToggle("pageTitleNotifications")}
             className="h-8 w-8 p-0"
           >
             {prefs.pageTitleNotifications ? (
@@ -205,7 +232,7 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleToggle('badgeEnabled')}
+            onClick={() => handleToggle("badgeEnabled")}
             className="h-8 w-8 p-0"
           >
             {prefs.badgeEnabled ? (
@@ -219,4 +246,3 @@ export default function NotificationSettings({ onClose }: NotificationSettingsPr
     </Card>
   );
 }
-

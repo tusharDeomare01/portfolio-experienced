@@ -1,12 +1,7 @@
+"use client";
 import React, { useState, useEffect, useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  MotionValue,
-} from "framer-motion";
-import { cn } from "../lib/utils";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { cn } from "../../lib/utils";
 import { Card, CardContent } from "./card";
 import { Calendar } from "lucide-react";
 
@@ -38,7 +33,9 @@ export interface ScrollTimelineProps {
   className?: string;
   revealAnimation?: "fade" | "slide" | "scale" | "flip" | "none";
   connectorStyle?: "dots" | "line" | "dashed";
+  perspective?: boolean;
   darkMode?: boolean;
+  smoothScroll?: boolean;
 }
 
 const DEFAULT_EVENTS: TimelineEvent[] = [
@@ -80,6 +77,7 @@ export const ScrollTimeline = ({
   revealAnimation = "fade",
   className = "",
   connectorStyle = "line",
+
   darkMode = false,
 }: ScrollTimelineProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -97,12 +95,6 @@ export const ScrollTimeline = ({
     restDelta: 0.001,
   });
 
-  const yOffset: MotionValue<number> = useTransform(
-    smoothProgress,
-    [0, 1],
-    [parallaxIntensity * 100, -parallaxIntensity * 100]
-  );
-
   const progressHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
 
   useEffect(() => {
@@ -118,6 +110,50 @@ export const ScrollTimeline = ({
     });
     return () => unsubscribe();
   }, [scrollYProgress, events.length, activeIndex]);
+
+  const getCardVariants = (index: number) => {
+    const baseDelay =
+      animationOrder === "simultaneous"
+        ? 0
+        : animationOrder === "staggered"
+        ? index * 0.2
+        : index * 0.3;
+
+    const initialStates = {
+      fade: { opacity: 0, y: 20 },
+      slide: {
+        x:
+          cardAlignment === "left"
+            ? -100
+            : cardAlignment === "right"
+            ? 100
+            : index % 2 === 0
+            ? -100
+            : 100,
+        opacity: 0,
+      },
+      scale: { scale: 0.8, opacity: 0 },
+      flip: { rotateY: 90, opacity: 0 },
+      none: { opacity: 1 },
+    };
+
+    return {
+      initial: initialStates[revealAnimation],
+      whileInView: {
+        opacity: 1,
+        y: 0,
+        x: 0,
+        scale: 1,
+        rotateY: 0,
+        transition: {
+          duration: 0.7,
+          delay: baseDelay,
+          ease: [0.25, 0.1, 0.25, 1.0] as [number, number, number, number],
+        },
+      },
+      viewport: { once: false, margin: "-100px" },
+    };
+  };
 
   const getConnectorClasses = () => {
     const baseClasses = cn(
@@ -162,6 +198,7 @@ export const ScrollTimeline = ({
         : cardAlignment === "left"
         ? "lg:mr-auto lg:ml-0"
         : "lg:ml-auto lg:mr-0";
+
     return cn(
       baseClasses,
       variantClasses[cardVariant],
@@ -169,50 +206,6 @@ export const ScrollTimeline = ({
       alignmentClassesDesktop,
       "w-full lg:w-[calc(50%-40px)]"
     );
-  };
-
-  const getInitialProps = (index: number) => {
-    const baseDelay =
-      animationOrder === "simultaneous"
-        ? 0
-        : animationOrder === "staggered"
-        ? index * 0.2
-        : index * 0.3;
-
-    const initialStates = {
-      fade: { opacity: 0, y: 20 },
-      slide: {
-        x:
-          cardAlignment === "left"
-            ? -100
-            : cardAlignment === "right"
-            ? 100
-            : index % 2 === 0
-            ? -100
-            : 100,
-        opacity: 0,
-      },
-      scale: { scale: 0.8, opacity: 0 },
-      flip: { rotateY: 90, opacity: 0 },
-      none: { opacity: 1 },
-    };
-
-    return {
-      initial: initialStates[revealAnimation],
-      whileInView: {
-        opacity: 1,
-        y: 0,
-        x: 0,
-        scale: 1,
-        rotateY: 0,
-        transition: {
-          duration: 0.7,
-          delay: baseDelay,
-          ease: [0.25, 0.1, 0.25, 1.0] as [number, number, number, number],
-        },
-      },
-      viewport: { once: false, margin: "-100px" },
-    };
   };
 
   return (
@@ -235,10 +228,13 @@ export const ScrollTimeline = ({
         <div className="relative mx-auto">
           <div
             className={cn(getConnectorClasses(), "h-full absolute top-0 z-10")}
-          />
+          ></div>
 
+          {/* === MODIFICATION START === */}
+          {/* Enhanced Progress Indicator with Traveling Glow */}
           {progressIndicator && (
             <>
+              {/* The main filled progress line */}
               <motion.div
                 className="absolute top-0 z-10"
                 style={{
@@ -248,27 +244,38 @@ export const ScrollTimeline = ({
                   transform: "translateX(-50%)",
                   borderRadius: progressLineCap === "round" ? "9999px" : "0px",
                   background: `linear-gradient(to bottom, #22d3ee, #6366f1, #a855f7)`,
-                  boxShadow: `0 0 15px rgba(99,102,241,0.5), 0 0 25px rgba(168,85,247,0.3)`,
+                  // Enhanced shadow for a constant glow effect along the path
+                  boxShadow: `
+                    0 0 15px rgba(99,102,241,0.5),
+                    0 0 25px rgba(168,85,247,0.3)
+                  `,
                 }}
               />
+              {/* The traveling glow "comet" at the head of the line */}
               <motion.div
                 className="absolute z-20"
                 style={{
                   top: progressHeight,
                   left: "50%",
                   translateX: "-50%",
-                  translateY: "-50%",
+                  translateY: "-50%", // Center the comet on the line's end point
                 }}
               >
                 <motion.div
-                  className="w-5 h-5 rounded-full"
+                  className="w-5 h-5 rounded-full" // Size of the comet core
                   style={{
                     background:
                       "radial-gradient(circle, rgba(168,85,247,0.8) 0%, rgba(99,102,241,0.5) 40%, rgba(34,211,238,0) 70%)",
-                    boxShadow:
-                      "0 0 15px 4px rgba(168,85,247,0.6), 0 0 25px 8px rgba(99,102,241,0.4), 0 0 40px 15px rgba(34,211,238,0.2)",
+                    // Intense, layered glow effect for the comet
+                    boxShadow: `
+                      0 0 15px 4px rgba(168, 85, 247, 0.6),
+                      0 0 25px 8px rgba(99, 102, 241, 0.4),
+                      0 0 40px 15px rgba(34, 211, 238, 0.2)
+                    `,
                   }}
-                  animate={{ scale: [1, 1.3, 1] }}
+                  animate={{
+                    scale: [1, 1.3, 1],
+                  }}
                   transition={{
                     duration: 2,
                     repeat: Infinity,
@@ -278,18 +285,24 @@ export const ScrollTimeline = ({
               </motion.div>
             </>
           )}
+          {/* === MODIFICATION END === */}
 
           <div className="relative z-20">
             {events.map((event, index) => {
-              const animationProps = getInitialProps(index);
+              const yOffset = useTransform(
+                smoothProgress,
+                [0, 1],
+                [parallaxIntensity * 100, -parallaxIntensity * 100]
+              );
               return (
                 <div
                   key={event.id || index}
                   ref={(el) => {
-                    timelineRefs.current[index] = el; // <-- correct
+                    timelineRefs.current[index] = el;
                   }}
                   className={cn(
-                    "relative flex items-center mb-20 py-4 flex-col lg:flex-row",
+                    "relative flex items-center mb-20 py-4",
+                    "flex-col lg:flex-row",
                     cardAlignment === "alternating"
                       ? index % 2 === 0
                         ? "lg:justify-start"
@@ -299,7 +312,12 @@ export const ScrollTimeline = ({
                       : "lg:flex-row-reverse lg:justify-start"
                   )}
                 >
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30">
+                  <div
+                    className={cn(
+                      "absolute top-1/2 transform -translate-y-1/2 z-30",
+                      "left-1/2 -translate-x-1/2"
+                    )}
+                  >
                     <motion.div
                       className={cn(
                         "w-6 h-6 rounded-full border-4 bg-background flex items-center justify-center",
@@ -327,12 +345,12 @@ export const ScrollTimeline = ({
                       }}
                     />
                   </div>
-
                   <motion.div
                     className={cn(getCardClasses(index), "mt-12 lg:mt-0")}
-                    initial={animationProps.initial}
-                    whileInView={animationProps.whileInView}
-                    viewport={animationProps.viewport}
+                    variants={getCardVariants(index)}
+                    initial="initial"
+                    whileInView="whileInView"
+                    viewport={{ once: false, margin: "-100px" }}
                     style={parallaxIntensity > 0 ? { y: yOffset } : undefined}
                   >
                     <Card className="bg-background border">

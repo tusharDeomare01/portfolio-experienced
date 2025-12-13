@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+"use client";
+import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import type { AnimationOptions } from "framer-motion";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 // Helper function to format the number
 const formatValue = (val: number, precision: number, sep: string): string => {
@@ -26,27 +26,14 @@ export interface CountUpProps {
   onAnimationComplete?: () => void;
 }
 
-// Typed easing functions
-const easingFunctions: Record<
-  NonNullable<CountUpProps["easing"]>,
-  [number, number, number, number]
-> = {
+const easingFunctions = {
   linear: [0, 0, 1, 1],
   easeIn: [0.42, 0, 1, 1],
   easeOut: [0, 0, 0.58, 1],
   easeInOut: [0.42, 0, 0.58, 1],
 };
 
-// Animation style keys
-type AnimationStyleKey =
-  | "default"
-  | "bounce"
-  | "spring"
-  | "gentle"
-  | "energetic";
-
-// Typed animation styles
-const animationStyles: Record<AnimationStyleKey, Partial<AnimationOptions>> = {
+const animationStyles = {
   default: { type: "tween" },
   bounce: { type: "spring", bounce: 0.25 },
   spring: { type: "spring", stiffness: 100, damping: 10 },
@@ -54,8 +41,7 @@ const animationStyles: Record<AnimationStyleKey, Partial<AnimationOptions>> = {
   energetic: { type: "spring", stiffness: 300, damping: 20 },
 };
 
-// Color schemes
-const colorSchemes: Record<NonNullable<CountUpProps["colorScheme"]>, string> = {
+const colorSchemes = {
   default: "text-foreground",
   gradient:
     "bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600",
@@ -84,28 +70,24 @@ export function CountUp({
   const [hasAnimated, setHasAnimated] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const count = useMotionValue(0);
-
-  const rounded = useTransform(count, (latest) => {
+  const rounded = useTransform(count, function (latest) {
     return formatValue(latest, decimals, separator);
   });
 
-  // Animation config without `any`
-  const animationConfig = useMemo<Partial<AnimationOptions>>(
-    () => ({
-      ...animationStyles[animationStyle],
-      ease: easingFunctions[easing],
-      duration: animationStyle === "default" ? duration : undefined,
-    }),
-    [animationStyle, easing, duration] // dependencies
-  );
+  const animationConfig = {
+    ...(animationStyles[animationStyle] as any),
+    ease: easingFunctions[easing],
+    duration: animationStyle === "default" ? duration : undefined,
+  };
 
-  // Trigger animation
   useEffect(() => {
     if (!triggerOnView) {
       animate(count.get(), value, {
         ...animationConfig,
-        onUpdate: (latest) => count.set(latest),
-        onComplete: () => {
+        onUpdate: function (latest) {
+          return count.set(latest);
+        },
+        onComplete: function () {
           setHasAnimated(true);
           if (onAnimationComplete) onAnimationComplete();
         },
@@ -114,12 +96,14 @@ export function CountUp({
     }
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
+      function ([entry]) {
         if (entry.isIntersecting && !hasAnimated) {
           animate(count.get(), value, {
             ...animationConfig,
-            onUpdate: (latest) => count.set(latest),
-            onComplete: () => {
+            onUpdate: function (latest) {
+              return count.set(latest);
+            },
+            onComplete: function () {
               setHasAnimated(true);
               if (onAnimationComplete) onAnimationComplete();
             },
@@ -130,39 +114,31 @@ export function CountUp({
     );
 
     if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [
-    value,
-    triggerOnView,
-    hasAnimated,
-    animationConfig,
-    count,
-    onAnimationComplete,
-  ]);
 
-  // Update if value changes after animation
-  useEffect(() => {
-    if (hasAnimated || !triggerOnView) {
-      animate(count.get(), value, {
-        ...animationConfig,
-        onUpdate: (latest) => count.set(latest),
-        onComplete: onAnimationComplete,
-      });
-    }
-  }, [
-    value,
-    animationConfig,
-    hasAnimated,
-    triggerOnView,
-    onAnimationComplete,
-    count,
-  ]);
+    return function () {
+      return observer.disconnect();
+    };
+  }, [value, triggerOnView, hasAnimated]);
+
+  useEffect(
+    function () {
+      if (hasAnimated || !triggerOnView) {
+        animate(count.get(), value, {
+          ...animationConfig,
+          onUpdate: function (latest) {
+            return count.set(latest);
+          },
+          onComplete: onAnimationComplete,
+        });
+      }
+    },
+    [value, animationConfig, hasAnimated, triggerOnView, onAnimationComplete]
+  );
 
   const colorClass =
     colorScheme === "custom" && customColor ? "" : colorSchemes[colorScheme];
 
-  // Hover interaction
-  const getHoverAnimation = () => {
+  const getHoverAnimation = function () {
     if (!interactive) return {};
     return {
       whileHover: {
@@ -181,8 +157,9 @@ export function CountUp({
   return (
     <div
       ref={containerRef}
+      // Using cn directly with string literals for classes
       className={cn(
-        "inline-flex items-center justify-center text-4xl font-bold text-black dark:text-white",
+        "inline-flex items-center justify-center text-4xl font-bold text-black dark:textwhite",
         className
       )}
     >
@@ -200,8 +177,8 @@ export function CountUp({
         }
       >
         {prefix && <span className="mr-1 text-foreground">{prefix}</span>}
-        <motion.span className="text-foreground">{rounded}</motion.span>
-        {suffix && <span className="ml-1 text-foreground">{suffix}</span>}
+        <motion.span className=" text-foreground">{rounded}</motion.span>
+        {suffix && <span className="ml-1  text-foreground">{suffix}</span>}
       </motion.div>
     </div>
   );

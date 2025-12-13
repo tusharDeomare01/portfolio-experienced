@@ -20,9 +20,13 @@ export const ProjectsSection = () => {
 
   const getLogoPath = (projectTitle: string) => {
     if (projectTitle === "MarketJD") {
-      return isDarkMode ? "/logo-horizontal-dark.svg" : "/logo-horizontal-light.svg";
+      return isDarkMode
+        ? "/logo-horizontal-dark.svg"
+        : "/logo-horizontal-light.svg";
     } else if (projectTitle === "TechShowcase") {
-      return isDarkMode ? "/techshowcase-logo-dark.svg" : "/techshowcase-logo-light.svg";
+      return isDarkMode
+        ? "/techshowcase-logo-dark.svg"
+        : "/techshowcase-logo-light.svg";
     }
     return "";
   };
@@ -131,11 +135,13 @@ export const ProjectsSection = () => {
                 tailwindBgClass="bg-background/90 backdrop-blur-xl border border-border/60 shadow-xl hover:shadow-2xl transition-shadow duration-500"
               >
                 {/* Image Section with Enhanced Overlay */}
-                <div className={`relative w-full overflow-hidden flex items-center justify-center ${
-                  project.image.endsWith(".svg")
-                    ? "bg-transparent h-[200px] sm:h-64 md:h-64"
-                    : "bg-background/50 h-52 sm:h-64"
-                }`}>
+                <div
+                  className={`relative w-full overflow-hidden flex items-center justify-center ${
+                    project.image.endsWith(".svg")
+                      ? "bg-transparent h-[200px] sm:h-64 md:h-64"
+                      : "bg-background/50 h-52 sm:h-64"
+                  }`}
+                >
                   {project.image.endsWith(".svg") ? (
                     <motion.img
                       src={getLogoPath(project.title)}

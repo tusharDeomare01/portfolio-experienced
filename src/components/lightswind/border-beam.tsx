@@ -1,7 +1,9 @@
+
 "use client";
 
-import { cn } from "../lib/utils";
-import { motion, type MotionStyle, type Transition } from "framer-motion";
+import React from "react";
+import { cn } from "../../lib/utils";
+import { motion } from "framer-motion";
 
 interface BorderBeamProps {
   /**
@@ -27,7 +29,7 @@ interface BorderBeamProps {
   /**
    * The motion transition of the border beam.
    */
-  transition?: Transition;
+  transition?: any;
   /**
    * The class name of the border beam.
    */
@@ -45,9 +47,29 @@ interface BorderBeamProps {
    */
   initialOffset?: number;
   /**
-   * The border width of the beam.
+   * The thickness of the border.
    */
-  borderWidth?: number;
+  borderThickness?: number;
+  /**
+   * The opacity of the beam.
+   */
+  opacity?: number;
+  /**
+   * The intensity of the glow effect.
+   */
+  glowIntensity?: number;
+  /**
+   * Border radius of the beam in pixels.
+   */
+  beamBorderRadius?: number;
+  /**
+   * Whether to pause animation on hover.
+   */
+  pauseOnHover?: boolean;
+  /**
+   * Animation speed multiplier (higher is faster).
+   */
+  speedMultiplier?: number;
 }
 
 export const BorderBeam = ({
@@ -55,38 +77,53 @@ export const BorderBeam = ({
   size = 50,
   delay = 0,
   duration = 6,
-  colorFrom = "#d48affff",
-  colorTo = "#ff40d9ff",
+  colorFrom = "#7400ff",
+  colorTo = "#9b41ff",
   transition,
   style,
   reverse = false,
   initialOffset = 0,
-  borderWidth = 1,
+  borderThickness: _borderThickness = 1,
+  opacity = 1,
+  glowIntensity = 0,
+  beamBorderRadius,
+  pauseOnHover = false,
+  speedMultiplier = 1,
 }: BorderBeamProps) => {
+  // Calculate actual duration based on speed multiplier
+  const actualDuration = speedMultiplier ? duration / speedMultiplier : duration;
+  
+  // Generate box shadow for glow effect
+  const glowEffect = glowIntensity > 0 
+    ? `0 0 ${glowIntensity * 5}px ${glowIntensity * 2}px var(--color-from)` 
+    : undefined;
+
   return (
-    <div
-      className="pointer-events-none absolute inset-0 rounded-[inherit] border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)] border-(length:--border-beam-width)"
-      style={
-        {
-          "--border-beam-width": `${borderWidth}px`,
-        } as React.CSSProperties
-      }
+ <div className="pointer-events-none absolute inset-0 rounded-[inherit] 
+    border border-transparent [mask-clip:padding-box,border-box] 
+    [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]"
+ 
+      // style={{ 
+      //   borderWidth: `${borderThickness}px`,
+      // }}
     >
       <motion.div
         className={cn(
           "absolute aspect-square",
           "bg-gradient-to-l from-[var(--color-from)] via-[var(--color-to)] to-transparent",
-          className
+          pauseOnHover && "group-hover:animation-play-state-paused",
+          className,
         )}
-        style={
-          {
-            width: size,
-            offsetPath: `rect(0 auto auto 0 round ${size}px)`,
-            "--color-from": colorFrom,
-            "--color-to": colorTo,
-            ...style,
-          } as MotionStyle
-        }
+        style={{
+          width: size,
+          offsetPath: `rect(0 auto auto 0 round ${beamBorderRadius ?? size}px)`,
+          "--color-from": colorFrom,
+          "--color-to": colorTo,
+          opacity: opacity,
+          boxShadow: glowEffect,
+          borderRadius: beamBorderRadius ? `${beamBorderRadius}px` : undefined,
+          ...style,
+        } as any}
         initial={{ offsetDistance: `${initialOffset}%` }}
         animate={{
           offsetDistance: reverse
@@ -96,7 +133,7 @@ export const BorderBeam = ({
         transition={{
           repeat: Infinity,
           ease: "linear",
-          duration,
+          duration: actualDuration,
           delay: -delay,
           ...transition,
         }}

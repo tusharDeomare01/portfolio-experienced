@@ -176,7 +176,8 @@ export const ContactSection = () => {
             align="center"
             variant="default"
             enableBlur={true}
-            staggerDelay={0.05}
+            blurStrength={20}
+            baseRotation={0}
           >
             Get In Touch
           </ScrollReveal>
@@ -186,7 +187,8 @@ export const ContactSection = () => {
           align="center"
           variant="muted"
           enableBlur={true}
-          staggerDelay={0.03}
+          blurStrength={20}
+            baseRotation={0}
           containerClassName="px-2 sm:px-0"
         >
           Have a project in mind or want to discuss opportunities? I'd love to

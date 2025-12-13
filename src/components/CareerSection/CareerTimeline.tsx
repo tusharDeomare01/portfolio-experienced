@@ -42,7 +42,8 @@ export const CareerTimeline = () => {
             align="center"
             variant="default"
             enableBlur={true}
-            staggerDelay={0.05}
+            blurStrength={20}
+            baseRotation={0}
           >
             Career Journey
           </ScrollReveal>
@@ -52,7 +53,8 @@ export const CareerTimeline = () => {
           align="center"
           variant="muted"
           enableBlur={true}
-          staggerDelay={0.03}
+          blurStrength={20}
+          baseRotation={0}
           containerClassName="max-w-2xl mx-auto"
         >
           An evolving path of leadership, innovation, and impact

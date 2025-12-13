@@ -34,9 +34,9 @@ import {
 const RaysBackground = lazy(
   () => import("../components/lightswind/rays-background")
 );
-const FallBeamBackground = lazy(
-  () => import("../components/lightswind/fall-beam-background")
-);
+// const FallBeamBackground = lazy(
+//   () => import("../components/lightswind/fall-beam-background")
+// );
 
 const Portfolio = () => {
   const navigate = useNavigate();
@@ -224,7 +224,7 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <FallBeamBackground className="fixed z-1" beamCount={5} />
+      {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
       <RaysBackground className="fixed z-0" />
 
       <motion.div
@@ -267,8 +267,9 @@ const Portfolio = () => {
                 align="left"
                 variant="default"
                 enableBlur={true}
-                staggerDelay={0.05}
                 containerClassName="mb-3"
+                blurStrength={20}
+                baseRotation={0}
               >
                 TechShowcase
               </ScrollReveal>
@@ -277,8 +278,9 @@ const Portfolio = () => {
                 align="left"
                 variant="muted"
                 enableBlur={true}
-                staggerDelay={0.03}
                 containerClassName="mb-2"
+                blurStrength={20}
+                baseRotation={0}
               >
                 Modern Interactive Portfolio • React + TypeScript
               </ScrollReveal>
@@ -300,8 +302,9 @@ const Portfolio = () => {
             align="left"
             variant="muted"
             enableBlur={true}
-            staggerDelay={0.03}
             containerClassName="max-w-4xl"
+            blurStrength={20}
+            baseRotation={0}
           >
             TechShowcase is a modern, interactive portfolio website showcasing
             professional experience, projects, and achievements. Features smooth
@@ -321,8 +324,9 @@ const Portfolio = () => {
                 align="left"
                 variant="default"
                 enableBlur={true}
-                staggerDelay={0.05}
                 containerClassName="inline-block"
+                blurStrength={20}
+                baseRotation={0}
               >
                 Technology Stack
               </ScrollReveal>
@@ -332,7 +336,8 @@ const Portfolio = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              staggerDelay={0.03}
+              blurStrength={20}
+              baseRotation={0}
             >
               Modern technologies powering this portfolio
             </ScrollReveal>
@@ -375,8 +380,9 @@ const Portfolio = () => {
                 align="left"
                 variant="default"
                 enableBlur={true}
-                staggerDelay={0.05}
                 containerClassName="inline-block"
+                blurStrength={20}
+                baseRotation={0}
               >
                 Key Features & Capabilities
               </ScrollReveal>
@@ -386,7 +392,8 @@ const Portfolio = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              staggerDelay={0.03}
+              blurStrength={20}
+              baseRotation={0}
             >
               Major features and development achievements
             </ScrollReveal>

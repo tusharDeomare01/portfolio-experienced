@@ -19,7 +19,8 @@ export const AboutSection = () => {
           align="left"
           variant="default"
           enableBlur={true}
-          staggerDelay={0.05}
+          blurStrength={20}
+          baseRotation={0}
         >
           About Me
         </ScrollReveal>
@@ -37,7 +38,8 @@ export const AboutSection = () => {
           align="left"
           variant="muted"
           enableBlur={true}
-          staggerDelay={0.03}
+          blurStrength={20}
+          baseRotation={0}
         >
           I'm a developer who enjoys turning ideas into working software. I
           focus on writing clean, maintainable code and building things that
@@ -48,7 +50,8 @@ export const AboutSection = () => {
           align="left"
           variant="muted"
           enableBlur={true}
-          staggerDelay={0.03}
+          blurStrength={20}
+          baseRotation={0}
         >
           When I'm not coding, I'm usually learning something new or exploring
           different ways to solve problems. I believe good software comes from
@@ -60,7 +63,8 @@ export const AboutSection = () => {
           align="left"
           variant="muted"
           enableBlur={true}
-          staggerDelay={0.03}
+          blurStrength={20}
+          baseRotation={0}
         >
           I'm always open to interesting projects and conversations. If you'd
           like to work together or just chat about technology, feel free to

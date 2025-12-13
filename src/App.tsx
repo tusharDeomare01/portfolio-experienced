@@ -17,17 +17,47 @@ import { TourProvider, useTourContext } from "./components/Tour/TourContext";
 
 // Lazy load section components
 const Header = lazy(() => import("./components/Header/Header"));
-const HeroSection = lazy(() => import("./components/HeroSection/HeroSection").then(module => ({ default: module.HeroSection })));
-const AboutSection = lazy(() => import("./components/AboutSection/AboutSection").then(module => ({ default: module.AboutSection })));
-const ProjectsSection = lazy(() => import("./components/ProjectsSection/ProjectsSection").then(module => ({ default: module.ProjectsSection })));
-const EducationSection = lazy(() => import("./components/EducationSection/EducationSection").then(module => ({ default: module.EducationSection })));
-const CareerTimeline = lazy(() => import("./components/CareerSection/CareerTimeline").then(module => ({ default: module.CareerTimeline })));
-const AchievementsSection = lazy(() => import("./components/AchievementsSection/AchievementsSection").then(module => ({ default: module.AchievementsSection })));
-const ContactSection = lazy(() => import("./components/ContactSection/ContactSection").then(module => ({ default: module.ContactSection })));
+const HeroSection = lazy(() =>
+  import("./components/HeroSection/HeroSection").then((module) => ({
+    default: module.HeroSection,
+  }))
+);
+const AboutSection = lazy(() =>
+  import("./components/AboutSection/AboutSection").then((module) => ({
+    default: module.AboutSection,
+  }))
+);
+const ProjectsSection = lazy(() =>
+  import("./components/ProjectsSection/ProjectsSection").then((module) => ({
+    default: module.ProjectsSection,
+  }))
+);
+const EducationSection = lazy(() =>
+  import("./components/EducationSection/EducationSection").then((module) => ({
+    default: module.EducationSection,
+  }))
+);
+const CareerTimeline = lazy(() =>
+  import("./components/CareerSection/CareerTimeline").then((module) => ({
+    default: module.CareerTimeline,
+  }))
+);
+const AchievementsSection = lazy(() =>
+  import("./components/AchievementsSection/AchievementsSection").then(
+    (module) => ({ default: module.AchievementsSection })
+  )
+);
+const ContactSection = lazy(() =>
+  import("./components/ContactSection/ContactSection").then((module) => ({
+    default: module.ContactSection,
+  }))
+);
 
 // Lazy load other components
 const AIAssistant = lazy(() => import("./components/AIAssistant/AIAssistant"));
-const Tour = lazy(() => import("./components/Tour/Tour").then(module => ({ default: module.Tour })));
+const Tour = lazy(() =>
+  import("./components/Tour/Tour").then((module) => ({ default: module.Tour }))
+);
 const Dock = lazy(() => import("./components/lightswind/dock"));
 
 const FallBeamBackground = lazy(

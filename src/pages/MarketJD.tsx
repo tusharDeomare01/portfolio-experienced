@@ -37,9 +37,9 @@ import {
 const RaysBackground = lazy(
   () => import("../components/lightswind/rays-background")
 );
-const FallBeamBackground = lazy(
-  () => import("../components/lightswind/fall-beam-background")
-);
+// const FallBeamBackground = lazy(
+//   () => import("../components/lightswind/fall-beam-background")
+// );
 
 const MarketJD = () => {
   const navigate = useNavigate();
@@ -316,7 +316,7 @@ const MarketJD = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <FallBeamBackground className="fixed z-1" beamCount={5} />
+      {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
       <RaysBackground className="fixed z-0" />
 
       <motion.div
@@ -359,8 +359,9 @@ const MarketJD = () => {
                 align="left"
                 variant="default"
                 enableBlur={true}
-                staggerDelay={0.05}
                 containerClassName="mb-3"
+                blurStrength={20}
+                baseRotation={0}
               >
                 MarketJD
               </ScrollReveal>
@@ -369,8 +370,9 @@ const MarketJD = () => {
                 align="left"
                 variant="muted"
                 enableBlur={true}
-                staggerDelay={0.03}
                 containerClassName="mb-2"
+                blurStrength={20}
+                baseRotation={0}
               >
                 SEO Admin Portal • Enterprise Platform
               </ScrollReveal>
@@ -392,8 +394,9 @@ const MarketJD = () => {
             align="left"
             variant="muted"
             enableBlur={true}
-            staggerDelay={0.03}
             containerClassName="max-w-4xl"
+            blurStrength={20}
+            baseRotation={0}
           >
             A comprehensive SEO insights and analytics platform with 20+
             third-party API integrations, advanced authentication, dynamic
@@ -413,8 +416,9 @@ const MarketJD = () => {
                 align="left"
                 variant="default"
                 enableBlur={true}
-                staggerDelay={0.05}
                 containerClassName="inline-block"
+                blurStrength={20}
+                baseRotation={0}
               >
                 Technology Stack
               </ScrollReveal>
@@ -424,7 +428,8 @@ const MarketJD = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              staggerDelay={0.03}
+              blurStrength={20}
+              baseRotation={0}
             >
               Modern, scalable technologies powering the platform
             </ScrollReveal>
@@ -467,8 +472,9 @@ const MarketJD = () => {
                 align="left"
                 variant="default"
                 enableBlur={true}
-                staggerDelay={0.05}
                 containerClassName="inline-block"
+                blurStrength={20}
+                baseRotation={0}
               >
                 Third-Party Integrations
               </ScrollReveal>
@@ -478,7 +484,8 @@ const MarketJD = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              staggerDelay={0.03}
+              blurStrength={20}
+              baseRotation={0}
             >
               20+ seamless API integrations for comprehensive data insights
             </ScrollReveal>
@@ -548,8 +555,9 @@ const MarketJD = () => {
                 align="left"
                 variant="default"
                 enableBlur={true}
-                staggerDelay={0.05}
                 containerClassName="inline-block"
+                blurStrength={20}
+                baseRotation={0}
               >
                 Key Features & Capabilities
               </ScrollReveal>
@@ -559,7 +567,8 @@ const MarketJD = () => {
               align="left"
               variant="muted"
               enableBlur={true}
-              staggerDelay={0.03}
+              blurStrength={20}
+              baseRotation={0}
             >
               Major development achievements and platform capabilities
             </ScrollReveal>

@@ -253,7 +253,7 @@ const Portfolio = () => {
         {/* Hero Header */}
         <motion.div variants={itemVariants} className="mb-16">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center min-w-[120px] h-[120px]">
+            <div className="p-4 rounded-2xl bg-transparent flex items-center justify-center min-w-[120px] h-[120px]">
               <img
                 src={
                   isDarkMode

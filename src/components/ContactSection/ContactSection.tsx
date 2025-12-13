@@ -158,21 +158,21 @@ export const ContactSection = () => {
   return (
     <motion.section
       id="contact"
-      className="text-foreground max-w-4xl mx-auto w-full px-6 py-12 sm:py-16 md:py-20 max-h-screen flex flex-col justify-center"
+      className="text-foreground max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 min-h-screen flex flex-col justify-center"
       initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.2 }}
     >
       <motion.div
-        className="text-center mb-8"
+        className="text-center mb-6 sm:mb-8"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true }}
       >
-        <div className="mb-2 flex items-baseline justify-center gap-4">
-          <Mail className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
+        <div className="mb-2 sm:mb-3 flex items-baseline justify-center gap-2 sm:gap-4">
+          <Mail className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
           <ScrollReveal
             size="xl"
             align="center"
@@ -189,26 +189,27 @@ export const ContactSection = () => {
           variant="muted"
           enableBlur={true}
           staggerDelay={0.03}
+          containerClassName="px-2 sm:px-0"
         >
           Have a project in mind or want to discuss opportunities? I'd love to hear from you!
         </ScrollReveal>
       </motion.div>
 
-      <Card className="backdrop-blur-xl bg-background/80 border-2">
-        <CardHeader>
-          <CardTitle>Contact Me</CardTitle>
-          <CardDescription>
+      <Card className="backdrop-blur-xl bg-background/80 border-2 w-full">
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl">Contact Me</CardTitle>
+          <CardDescription className="text-xs sm:text-sm mt-2">
             Fill out the form below and I'll get back to you as soon as
             possible.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="p-4 sm:p-6 pt-0">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-4">
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="block text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2"
                 >
                   Name <span className="text-red-500">*</span>
                 </label>
@@ -219,7 +220,7 @@ export const ContactSection = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   placeholder="Your Name"
                 />
               </div>
@@ -227,7 +228,7 @@ export const ContactSection = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="block text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2"
                 >
                   Email <span className="text-red-500">*</span>
                 </label>
@@ -238,7 +239,7 @@ export const ContactSection = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -247,7 +248,7 @@ export const ContactSection = () => {
             <div>
               <label
                 htmlFor="company"
-                className="block text-sm font-medium text-foreground mb-2"
+                className="block text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2"
               >
                 Company / Organization
               </label>
@@ -257,7 +258,7 @@ export const ContactSection = () => {
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 placeholder="Company Name (Optional)"
               />
             </div>
@@ -265,7 +266,7 @@ export const ContactSection = () => {
             <div>
               <label
                 htmlFor="subject"
-                className="block text-sm font-medium text-foreground mb-2"
+                className="block text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2"
               >
                 Subject <span className="text-red-500">*</span>
               </label>
@@ -276,7 +277,7 @@ export const ContactSection = () => {
                 required
                 value={formData.subject}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 placeholder="What's this about?"
               />
             </div>
@@ -284,7 +285,7 @@ export const ContactSection = () => {
             <div>
               <label
                 htmlFor="message"
-                className="block text-sm font-medium text-foreground mb-2"
+                className="block text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2"
               >
                 Message <span className="text-red-500">*</span>
               </label>
@@ -292,10 +293,10 @@ export const ContactSection = () => {
                 id="message"
                 name="message"
                 required
-                rows={6}
+                rows={5}
                 value={formData.message}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
                 placeholder="Tell me about your project, opportunity, or just say hello..."
               />
             </div>
@@ -304,19 +305,19 @@ export const ContactSection = () => {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`p-4 rounded-lg flex items-start gap-3 ${
+                className={`p-3 sm:p-4 rounded-lg flex items-start gap-2 sm:gap-3 ${
                   submitStatus.type === "success"
                     ? "bg-green-500/10 border border-green-500/20"
                     : "bg-red-500/10 border border-red-500/20"
                 }`}
               >
                 {submitStatus.type === "success" ? (
-                  <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 ) : (
-                  <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 mt-0.5 flex-shrink-0" />
                 )}
                 <p
-                  className={`text-sm ${
+                  className={`text-xs sm:text-sm ${
                     submitStatus.type === "success"
                       ? "text-green-500"
                       : "text-red-500"
@@ -330,7 +331,7 @@ export const ContactSection = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full md:w-auto min-w-[150px]"
+              className="w-full md:w-auto min-w-[150px] text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-2.5"
             >
               {isSubmitting ? (
                 <>

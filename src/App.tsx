@@ -27,6 +27,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import AIAssistant from "./components/AIAssistant/AIAssistant";
 import { useIsMobile } from "./components/hooks/use-mobile";
+import { Tour } from "./components/Tour/Tour";
+import { TourProvider, useTourContext } from "./components/Tour/TourContext";
 
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
@@ -46,17 +48,22 @@ function HomePage() {
   const [showDock, setShowDock] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = useIsMobile();
+  const tour = useTourContext();
 
   // Track scroll direction
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // scrolling down -> show Dock
+      // Show dock if scrolling down OR if tour is active and on dock step
+      const shouldShowDock = 
+        (currentScrollY > lastScrollY && currentScrollY > 100) ||
+        (tour.isTourActive && tour.currentStep === 8); // Step 8 is the dock step
+
+      if (shouldShowDock) {
         setShowDock(true);
-      } else if (currentScrollY < lastScrollY) {
-        // scrolling up -> hide Dock
+      } else if (currentScrollY < lastScrollY && !tour.isTourActive) {
+        // scrolling up -> hide Dock (unless tour is active)
         setShowDock(false);
       }
 
@@ -64,10 +71,16 @@ function HomePage() {
     };
 
     window.addEventListener("scroll", handleScroll);
+    
+    // Show dock if tour is on dock step
+    if (tour.isTourActive && tour.currentStep === 8) {
+      setShowDock(true);
+    }
+    
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY]);
+  }, [lastScrollY, tour.isTourActive, tour.currentStep]);
 
   // Helper for smooth scroll using native browser API
   const scrollToSection = (id: string) => {
@@ -147,11 +160,14 @@ function HomePage() {
       <AnimatePresence>
         {showDock && (
           <motion.div
+            data-dock
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-[999] w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0"
+            className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 ${
+              tour.isTourActive && tour.currentStep === 8 ? "z-[10001]" : "z-[999]"
+            }`}
           >
             <Dock
               items={dockItems}
@@ -164,12 +180,23 @@ function HomePage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Tour Component */}
+      <Tour
+        isActive={tour.isTourActive}
+        currentStep={tour.currentStep}
+        onNext={tour.nextStep}
+        onPrev={tour.prevStep}
+        onSkip={tour.skipTour}
+        onClose={tour.endTour}
+      />
     </div>
   );
 }
 
 function App() {
   return (
+    <TourProvider>
     <BrowserRouter>
       <Routes>
         {/* MarketJD Project Detail Page */}
@@ -206,6 +233,7 @@ function App() {
       {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
       <FallBeamBackground className="fixed z-0" />
     </BrowserRouter>
+    </TourProvider>
   );
 }
 

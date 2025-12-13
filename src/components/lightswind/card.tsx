@@ -44,9 +44,9 @@ interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
   ({ className, spacing = "default", ...props }, ref) => {
     const spacingClasses = {
-      compact: "flex flex-col space-y-1 p-4",
-      default: "flex flex-col space-y-1.5 p-6",
-      relaxed: "flex flex-col space-y-2 p-8",
+      compact: "flex flex-col space-y-1 p-3 sm:p-4",
+      default: "flex flex-col space-y-1.5 p-4 sm:p-6",
+      relaxed: "flex flex-col space-y-2 p-6 sm:p-8",
     };
 
     return (
@@ -71,9 +71,9 @@ const CardTitle = React.forwardRef<HTMLParagraphElement, CardTitleProps>(
   ({ className, as = "h3", size = "default", ...props }, ref) => {
     const Component = as;
     const sizeClasses = {
-      sm: "text-lg",
-      default: "text-2xl",
-      lg: "text-3xl",
+      sm: "text-base sm:text-lg",
+      default: "text-xl sm:text-2xl",
+      lg: "text-2xl sm:text-3xl",
     };
 
     return (
@@ -131,9 +131,9 @@ const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
   ) => {
     const paddingClasses = {
       none: "p-0",
-      sm: "px-4 py-3",
-      default: "p-6",
-      lg: "p-8",
+      sm: "px-3 sm:px-4 py-2 sm:py-3",
+      default: "p-4 sm:p-6",
+      lg: "p-6 sm:p-8",
     };
 
     return (

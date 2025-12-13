@@ -7,7 +7,7 @@ export const AboutSection = () => {
   return (
     <motion.div
       id="about"
-      className="text-foreground max-w-7xl mx-auto w-full px-6 py-12 sm:py-16 md:py-20 space-y-6 min-h-screen flex flex-col justify-center"
+      className="text-foreground max-w-7xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 space-y-4 sm:space-y-6 min-h-screen flex flex-col justify-center"
       initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       transition={{ duration: 1.8, ease: "easeOut" }}
@@ -27,7 +27,7 @@ export const AboutSection = () => {
       </div>
       
       <motion.div
-        className="space-y-4 text-muted-foreground text-sm max-w-3xl leading-relaxed"
+        className="space-y-3 sm:space-y-4 text-muted-foreground text-xs sm:text-sm max-w-3xl leading-relaxed"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}

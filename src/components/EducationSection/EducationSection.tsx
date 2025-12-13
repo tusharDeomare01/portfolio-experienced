@@ -9,7 +9,7 @@ export const EducationSection = () => {
   return (
     <motion.section
       id="education"
-      className="text-foreground max-w-7xl mx-auto w-full px-6 py-12 sm:py-16 md:py-20 space-y-10 min-h-screen flex flex-col justify-center"
+      className="text-foreground max-w-7xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 space-y-6 sm:space-y-10 min-h-screen flex flex-col justify-center"
       initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -31,7 +31,7 @@ export const EducationSection = () => {
         </div>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-1 gap-8"
+          className="grid grid-cols-1 md:grid-cols-1 gap-4 sm:gap-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}

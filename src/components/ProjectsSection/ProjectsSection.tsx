@@ -76,7 +76,7 @@ export const ProjectsSection = () => {
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.2 }}
     >
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-16 w-full">
         <motion.div
           className="text-center mb-8 sm:mb-16"
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -131,16 +131,16 @@ export const ProjectsSection = () => {
                 tailwindBgClass="bg-background/90 backdrop-blur-xl border border-border/60 shadow-xl hover:shadow-2xl transition-shadow duration-500"
               >
                 {/* Image Section with Enhanced Overlay */}
-                <div className={`relative w-full h-52 sm:h-64 overflow-hidden ${
+                <div className={`relative w-full overflow-hidden flex items-center justify-center ${
                   project.image.endsWith(".svg")
-                    ? "bg-muted/30 dark:bg-background/50"
-                    : "bg-background/50"
+                    ? "bg-transparent h-[200px] sm:h-64 md:h-64"
+                    : "bg-background/50 h-52 sm:h-64"
                 }`}>
                   {project.image.endsWith(".svg") ? (
                     <motion.img
                       src={getLogoPath(project.title)}
                       alt={project.title}
-                      className="w-full h-full object-contain p-4"
+                      className="w-full h-full max-w-full max-h-full sm:max-w-[80%] sm:max-h-[70%] md:max-w-[75%] md:max-h-[65%] object-contain px-4 py-2 sm:px-4 sm:py-4 md:px-4 md:py-4"
                       animate={{
                         scale: hoveredProject === project.id ? 1.1 : 1,
                       }}
@@ -157,9 +157,6 @@ export const ProjectsSection = () => {
                       transition={{ duration: 0.6, ease: "easeOut" }}
                     />
                   )}
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-
                   {/* Status Badge */}
                   <div className="absolute top-4 right-4 z-10">
                     <Badge
@@ -174,16 +171,6 @@ export const ProjectsSection = () => {
                       {project.status}
                     </Badge>
                   </div>
-
-                  {/* Hover Overlay Effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-primary/10"
-                    initial={{ opacity: 0 }}
-                    animate={{
-                      opacity: hoveredProject === project.id ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3 }}
-                  />
                 </div>
 
                 {/* Content Section */}

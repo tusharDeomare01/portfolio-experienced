@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants, MotionProps } from "framer-motion";
-import { Menu, X, Sun, Moon, BookCheckIcon } from "lucide-react";
+import { Menu, X, Sun, Moon, BookCheckIcon, Maximize2, Minimize2, HelpCircle } from "lucide-react";
 import { BorderBeam } from "../lightswind/border-beam";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleTheme } from "@/store/slices/themeSlice";
+import { useTourContext } from "../Tour/TourContext";
 
 const navItems = [
   { name: "Home", href: "#hero" },
@@ -22,6 +23,15 @@ export default function Header() {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  
+  // Tour context - wrapped in try-catch in case TourProvider is not available
+  let tour: ReturnType<typeof useTourContext> | null = null;
+  try {
+    tour = useTourContext();
+  } catch {
+    // TourProvider not available, tour will be null
+  }
 
   // Apply theme on mount (in case Redux Persist hasn't hydrated yet)
   useEffect(() => {
@@ -50,6 +60,25 @@ export default function Header() {
     };
   }, [lastScrollY]);
 
+  // Fullscreen change listener
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+    };
+  }, []);
+
   const handleScrollTo = (id: string) => {
     // Remove # if present and find the element
     const cleanId = id.replace("#", "");
@@ -65,6 +94,40 @@ export default function Header() {
       });
     }
     setIsMobileMenuOpen(false); // Close mobile menu on click
+  };
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+          await element.requestFullscreen();
+        } else if ((element as any).webkitRequestFullscreen) {
+          // Safari
+          await (element as any).webkitRequestFullscreen();
+        } else if ((element as any).mozRequestFullScreen) {
+          // Firefox
+          await (element as any).mozRequestFullScreen();
+        } else if ((element as any).msRequestFullscreen) {
+          // IE/Edge
+          await (element as any).msRequestFullscreen();
+        }
+      } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        } else if ((document as any).mozCancelFullScreen) {
+          await (document as any).mozCancelFullScreen();
+        } else if ((document as any).msExitFullscreen) {
+          await (document as any).msExitFullscreen();
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling fullscreen:", error);
+    }
   };
 
   // ✅ Typed variants
@@ -166,12 +229,61 @@ export default function Header() {
               </ul>
             </nav>
 
+            {/* Desktop Action Buttons */}
+            <div className="hidden md:flex items-center gap-2">
+              {/* Tour Restart Button */}
+              {tour && (
+                <motion.button
+                  onClick={tour.startTour}
+                  className="p-2 rounded-full text-sm font-semibold
+                  hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  title="Start Tour"
+                >
+                  <HelpCircle size={20} className="text-gray-800 dark:text-white" />
+                </motion.button>
+              )}
+              
+              {/* Fullscreen Toggle Button */}
+              <motion.button
+                onClick={toggleFullscreen}
+                className="p-2 rounded-full text-sm font-semibold
+                hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {isFullscreen ? (
+                    <motion.div
+                      key="minimize"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Minimize2 size={20} className="text-gray-800 dark:text-white" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="maximize"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Maximize2 size={20} className="text-gray-800 dark:text-white" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+
             {/* Theme Toggle Button */}
             <motion.button
               onClick={() => dispatch(toggleTheme())}
               className="p-2 rounded-full text-sm font-semibold
-              hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
-               hidden md:block"
+                hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
@@ -199,6 +311,7 @@ export default function Header() {
                 )}
               </AnimatePresence>
             </motion.button>
+            </div>
 
             {/* Mobile Menu Button - Hamburger */}
             <button
@@ -252,11 +365,77 @@ export default function Header() {
                       </a>
                     </motion.li>
                   ))}
-                  {/* Theme Toggle in Mobile Menu */}
+                  {/* Action Buttons in Mobile Menu */}
                   <motion.li
                     {...({ variants: itemVariants } as MotionProps)}
-                    className="mt-8"
+                    className="mt-8 flex items-center gap-4 flex-wrap justify-center"
                   >
+                    {/* Tour Restart Button */}
+                    {tour && (
+                      <motion.button
+                        onClick={() => {
+                          tour.startTour();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="p-4 rounded-full text-sm font-semibold
+                        hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
+                        bg-gray-200 dark:bg-gray-800"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        title="Start Tour"
+                      >
+                        <HelpCircle
+                          size={32}
+                          className="text-gray-800 dark:text-white"
+                        />
+                      </motion.button>
+                    )}
+                    
+                    {/* Fullscreen Toggle */}
+                    <motion.button
+                      onClick={() => {
+                        toggleFullscreen();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="p-4 rounded-full text-sm font-semibold
+                      hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
+                      bg-gray-200 dark:bg-gray-800"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                    >
+                      <AnimatePresence mode="wait" initial={false}>
+                        {isFullscreen ? (
+                          <motion.div
+                            key="minimize"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Minimize2
+                              size={32}
+                              className="text-gray-800 dark:text-white"
+                            />
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="maximize"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Maximize2
+                              size={32}
+                              className="text-gray-800 dark:text-white"
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.button>
+
+                    {/* Theme Toggle */}
                     <motion.button
                       onClick={() => dispatch(toggleTheme())}
                       className="p-4 rounded-full text-sm font-semibold

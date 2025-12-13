@@ -217,13 +217,14 @@ export default function AIAssistant() {
           >
             <motion.button
               onClick={handleToggle}
+              data-ai-assistant
               className={`
                 relative
                 h-14 w-14
                 sm:h-16 sm:w-16
                 rounded-full
                 shadow-2xl
-                border-2
+                border-[3px]
                 flex items-center justify-center
                 overflow-visible
                 group
@@ -231,23 +232,19 @@ export default function AIAssistant() {
                 touch-manipulation
                 ${
                   theme === "dark"
-                    ? "bg-gradient-to-br from-primary via-primary/90 to-primary/80 border-primary/30"
-                    : "bg-gradient-to-br from-pink-600 via-pink-500 to-pink-400 border-pink-400/30"
+                    ? "bg-black border-white"
+                    : "bg-white border-white"
                 }
               `}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              {/* Pulsing glow effect */}
+              {/* Subtle glow effect - Previous version style */}
               <motion.div
-                className={`absolute inset-0 rounded-full blur-xl ${
-                  theme === "dark"
-                    ? "bg-primary/40"
-                    : "bg-pink-500/40"
-                }`}
+                className="absolute inset-0 rounded-full blur-md bg-white/10"
                 animate={{
-                  scale: [1, 1.4, 1],
-                  opacity: [0.5, 0.8, 0.5],
+                  scale: [1, 1.2, 1],
+                  opacity: [0.3, 0.5, 0.3],
                 }}
                 transition={{
                   duration: 2,
@@ -256,24 +253,7 @@ export default function AIAssistant() {
                 }}
               />
               
-              {/* Animated background gradient */}
-              <motion.div
-                className={`absolute inset-0 bg-gradient-to-br rounded-full ${
-                  theme === "dark"
-                    ? "from-primary/20 via-primary/10 to-transparent"
-                    : "from-pink-500/20 via-pink-400/10 to-transparent"
-                }`}
-                animate={{
-                  rotate: [0, 360],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-              
-              {/* Sparkles icon with animation */}
+              {/* Sparkles icon with animation - Previous version style */}
               <motion.div
                 className="relative z-10"
                 animate={{
@@ -286,7 +266,10 @@ export default function AIAssistant() {
                   ease: "easeInOut",
                 }}
               >
-                <Sparkles className="h-6 w-6 sm:h-7 sm:w-7 text-white group-hover:text-white/90 transition-colors drop-shadow-lg" />
+                <Sparkles 
+                  className="h-6 w-6 sm:h-7 sm:w-7 text-white group-hover:text-white/90 transition-colors drop-shadow-lg" 
+                  strokeWidth={2}
+                />
               </motion.div>
               
               {/* Unread badge */}
@@ -301,16 +284,12 @@ export default function AIAssistant() {
                 </motion.div>
               )}
               
-              {/* Pulsing ring effect */}
+              {/* Subtle pulsing ring effect - Previous version style */}
               <motion.div
-                className={`absolute inset-0 rounded-full border-2 ${
-                  theme === "dark"
-                    ? "border-primary/50"
-                    : "border-pink-500/50"
-                }`}
+                className="absolute inset-0 rounded-full border-2 border-white/30"
                 animate={{
                   scale: [1, 1.3, 1],
-                  opacity: [0.6, 0, 0.6],
+                  opacity: [0.4, 0, 0.4],
                 }}
                 transition={{
                   duration: 2,

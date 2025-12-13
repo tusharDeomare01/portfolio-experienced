@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 export interface GlowingCardProps {
   children: React.ReactNode;
@@ -76,7 +76,6 @@ export const GlowingCards: React.FC<GlowingCardsProps> = ({
   glowRadius = 25,
   glowOpacity = 1,
   animationDuration = 400,
-  enableHover: _enableHover = true,
   gap = "2.5rem",
   maxWidth = "75rem",
   padding = "3rem 1.5rem",
@@ -87,7 +86,6 @@ export const GlowingCards: React.FC<GlowingCardsProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const [, setMousePosition] = useState({ x: 0, y: 0 });
   const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
@@ -101,7 +99,6 @@ export const GlowingCards: React.FC<GlowingCardsProps> = ({
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      setMousePosition({ x, y });
       setShowOverlay(true);
 
       // Using string concatenation for style properties
@@ -181,18 +178,18 @@ export const GlowingCards: React.FC<GlowingCardsProps> = ({
               )}
               style={{ padding: "var(--padding)" }} // String literal
             >
-              {React.Children.map(children, (child) => {
-                if (React.isValidElement(child) && child.type === GlowingCard) {
-                  const props = child.props as { glowColor?: string; className?: string; style?: React.CSSProperties };
-                  const cardGlowColor = props.glowColor || "#3b82f6";
-                  return React.cloneElement(child as React.ReactElement<any>, {
+              {React.Children.map(children, (_child, _index) => {
+                if (React.isValidElement(_child) && _child.type === GlowingCard) {
+                  const child = _child as React.ReactElement<{ glowColor?: string; className?: string; style?: React.CSSProperties }>;
+                  const cardGlowColor = child.props.glowColor || "#3b82f6";
+                  return React.cloneElement(child, {
                     className: cn(
-                      props.className,
+                      child.props.className,
                       "bg-opacity-15 dark:bg-opacity-15",
                       "border-opacity-100 dark:border-opacity-100"
                     ),
                     style: {
-                      ...props.style,
+                      ...child.props.style,
                       // String concatenation for background, border, and boxShadow
                       backgroundColor: cardGlowColor + "15",
                       borderColor: cardGlowColor,
@@ -200,7 +197,7 @@ export const GlowingCards: React.FC<GlowingCardsProps> = ({
                     },
                   });
                 }
-                return child;
+                return _child;
               })}
             </div>
           </div>

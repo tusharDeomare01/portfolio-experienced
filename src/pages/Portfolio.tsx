@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { lazy, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -31,9 +31,9 @@ import {
   MousePointerClick,
 } from "lucide-react";
 
-const RaysBackground = lazy(
-  () => import("../components/lightswind/rays-background")
-);
+// const RaysBackground = lazy(
+//   () => import("../components/lightswind/rays-background")
+// );
 // const FallBeamBackground = lazy(
 //   () => import("../components/lightswind/fall-beam-background")
 // );
@@ -225,7 +225,7 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background relative">
       {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
-      <RaysBackground className="fixed z-0" />
+      {/* <RaysBackground className="fixed z-0" /> */}
 
       <motion.div
         variants={containerVariants}

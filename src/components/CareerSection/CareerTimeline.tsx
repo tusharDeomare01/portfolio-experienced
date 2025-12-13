@@ -30,8 +30,8 @@ export const CareerTimeline = () => {
   }));
 
   return (
-    <div id="career" className="min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20">
-      <div className="text-center mb-8 px-4">
+    <div id="career" className="min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20 px-4 sm:px-6">
+      <div className="text-center mb-6 sm:mb-8">
         <div className="flex items-baseline justify-center gap-4 mb-4">
           <Briefcase className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
           <ScrollReveal

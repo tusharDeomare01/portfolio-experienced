@@ -10,6 +10,7 @@ import {
   FolderKanban,
   Trophy,
   Mail,
+  FileText,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIsMobile } from "./components/hooks/use-mobile";
@@ -46,6 +47,11 @@ const AchievementsSection = lazy(() =>
   import("./components/AchievementsSection/AchievementsSection").then(
     (module) => ({ default: module.AchievementsSection })
   )
+);
+const ResumeSection = lazy(() =>
+  import("./components/ResumeSection/ResumeSection").then((module) => ({
+    default: module.ResumeSection,
+  }))
 );
 const ContactSection = lazy(() =>
   import("./components/ContactSection/ContactSection").then((module) => ({
@@ -92,7 +98,7 @@ function HomePage() {
       // Show dock if scrolling down OR if tour is active and on dock step
       const shouldShowDock =
         (currentScrollY > lastScrollY && currentScrollY > 100) ||
-        (tour.isTourActive && tour.currentStep === 8); // Step 8 is the dock step
+        (tour.isTourActive && tour.currentStep === 9); // Step 9 is the dock step
 
       if (shouldShowDock) {
         setShowDock(true);
@@ -107,7 +113,7 @@ function HomePage() {
     window.addEventListener("scroll", handleScroll);
 
     // Show dock if tour is on dock step
-    if (tour.isTourActive && tour.currentStep === 8) {
+    if (tour.isTourActive && tour.currentStep === 9) {
       setShowDock(true);
     }
 
@@ -165,6 +171,11 @@ function HomePage() {
       onClick: () => scrollToSection("achievements"),
     },
     {
+      icon: <FileText size={iconSize} />,
+      label: "Resume",
+      onClick: () => scrollToSection("resume"),
+    },
+    {
       icon: <Mail size={iconSize} />,
       label: "Contact",
       onClick: () => scrollToSection("contact"),
@@ -189,6 +200,7 @@ function HomePage() {
             <CareerTimeline />
             <ProjectsSection />
             <AchievementsSection />
+            <ResumeSection />
             <ContactSection />
           </Suspense>
         </div>
@@ -204,7 +216,7 @@ function HomePage() {
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
             className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 ${
-              tour.isTourActive && tour.currentStep === 8
+              tour.isTourActive && tour.currentStep === 9
                 ? "z-[10001]"
                 : "z-[999]"
             }`}

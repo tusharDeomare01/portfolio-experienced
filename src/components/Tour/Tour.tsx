@@ -14,6 +14,7 @@ import {
   Mail,
   Bot,
   Maximize2,
+  FileText,
 } from "lucide-react";
 import { Button } from "../lightswind/button";
 import { BorderBeam } from "../lightswind/border-beam";
@@ -90,6 +91,15 @@ const TOUR_STEPS: TourStep[] = [
       "View my notable achievements and recognitions. This includes awards, certifications, and other milestones in my professional journey.",
     position: "top",
     icon: <Trophy className="w-5 h-5" />,
+  },
+  {
+    id: "resume",
+    target: "#resume",
+    title: "View My Resume",
+    content:
+      "Explore my professional resume with interactive PDF viewer. You can zoom, search, download, or print the document. Use the toolbar controls for navigation and viewing options.",
+    position: "top",
+    icon: <FileText className="w-5 h-5" />,
   },
   {
     id: "contact",

@@ -159,7 +159,7 @@ export const HeroSection = () => {
             <Button
               onClick={() => scrollToSection("contact")}
               variant="outline"
-              className="border-2 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300"
+              className="border-2 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-pink-600 font-semibold px-6 py-3 rounded-lg transition-all duration-300"
             >
               Get In Touch
             </Button>

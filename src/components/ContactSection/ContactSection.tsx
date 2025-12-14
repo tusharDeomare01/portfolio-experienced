@@ -188,7 +188,7 @@ export const ContactSection = () => {
           variant="muted"
           enableBlur={true}
           blurStrength={5}
-            baseRotation={0}
+          baseRotation={0}
           containerClassName="px-2 sm:px-0"
         >
           Have a project in mind or want to discuss opportunities? I'd love to

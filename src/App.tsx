@@ -15,6 +15,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useIsMobile } from "./components/hooks/use-mobile";
 import { TourProvider, useTourContext } from "./components/Tour/TourContext";
+import ParticlesBackground from "./components/lightswind/particles-background";
 
 // Lazy load section components
 const Header = lazy(() => import("./components/Header/Header"));
@@ -297,6 +298,7 @@ function App() {
         simulationResolution={256}
       /> */}
         {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
+        <ParticlesBackground />
         <FallBeamBackground beamCount={5} />
       </BrowserRouter>
     </TourProvider>

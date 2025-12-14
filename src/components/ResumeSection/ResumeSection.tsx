@@ -26,7 +26,6 @@ const getPluginInstance = () => {
         ],
       });
     } catch (error) {
-      console.error("Error creating PDF viewer plugin:", error);
       globalPluginInstance = defaultLayoutPlugin();
     }
   }
@@ -37,6 +36,7 @@ export const ResumeSection = () => {
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [viewerKey, setViewerKey] = useState(0); // Key for forcing re-render
+  const [isAppFullscreen, setIsAppFullscreen] = useState(false);
   const isMobile = useIsMobile();
   const isMountedRef = useRef(true);
 
@@ -46,6 +46,47 @@ export const ResumeSection = () => {
     return () => {
       isMountedRef.current = false;
     };
+  }, []);
+
+  // Detect application-level fullscreen (from Header component)
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsAppFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+    // Initial check
+    setIsAppFullscreen(!!document.fullscreenElement);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+    };
+  }, []);
+
+  // Helper function to exit application fullscreen
+  const exitAppFullscreen = useCallback(async (): Promise<void> => {
+    if (document.fullscreenElement) {
+      try {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        } else if ((document as any).mozCancelFullScreen) {
+          await (document as any).mozCancelFullScreen();
+        } else if ((document as any).msExitFullscreen) {
+          await (document as any).msExitFullscreen();
+        }
+      } catch (error) {
+        // Silently handle errors - fullscreen might already be exiting
+      }
+    }
   }, []);
 
   // Get the stable plugin instance (created outside component)
@@ -86,6 +127,56 @@ export const ResumeSection = () => {
     setViewerKey((prev) => prev + 1);
   }, []);
 
+  // Intercept PDF viewer fullscreen button clicks when app is in fullscreen
+  useEffect(() => {
+    if (!isAppFullscreen) return; // Only intercept when app is in fullscreen
+
+    const handleFullscreenButtonClick = (e: Event) => {
+      const mouseEvent = e as MouseEvent;
+      const target = mouseEvent.target as HTMLElement;
+      
+      // Check if clicked element is PDF viewer's fullscreen button
+      const isFullscreenButton =
+        target.closest('button[aria-label*="Full screen" i]') ||
+        target.closest('button[aria-label*="fullscreen" i]') ||
+        target.closest('[data-testid*="fullscreen" i]') ||
+        target.closest('.rpv-full-screen-button') ||
+        target.closest('button[title*="Full screen" i]') ||
+        target.closest('button[title*="fullscreen" i]');
+
+      if (isFullscreenButton) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Exit app fullscreen first, then trigger PDF viewer fullscreen
+        void (async () => {
+          await exitAppFullscreen();
+          
+          // Wait for fullscreen to exit and DOM to update
+          await new Promise((resolve) => setTimeout(resolve, 150));
+          
+          // Then trigger PDF viewer fullscreen by clicking the button again
+          const button = isFullscreenButton as HTMLButtonElement;
+          if (button && !document.fullscreenElement) {
+            // Use a small delay to ensure app fullscreen has fully exited
+            setTimeout(() => {
+              button.click();
+            }, 100);
+          }
+        })();
+      }
+    };
+
+    const container = document.querySelector('.resume-pdf-viewer');
+    if (container) {
+      // Use capture phase to catch the event before PDF viewer handles it
+      container.addEventListener('click', handleFullscreenButtonClick, true);
+      return () => {
+        container.removeEventListener('click', handleFullscreenButtonClick, true);
+      };
+    }
+  }, [isAppFullscreen, exitAppFullscreen]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -106,10 +197,51 @@ export const ResumeSection = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Check if browser supports dvh units
+  const supportsDvh = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return CSS.supports('height', '100dvh');
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Calculate responsive height based on mobile and fullscreen state
+  const getViewerHeight = () => {
+    if (isAppFullscreen) {
+      // In fullscreen, use almost full viewport height
+      return "calc(100vh - 80px)";
+    }
+    if (isMobile) {
+      // Mobile: use dvh for better mobile browser support (accounts for browser UI)
+      // Fallback to vh for browsers that don't support dvh
+      return supportsDvh ? "calc(100dvh - 200px)" : "calc(100vh - 200px)";
+    }
+    // Desktop: more space for header and padding
+    return "calc(100vh - 320px)";
+  };
+
+  const getMinHeight = () => {
+    if (isAppFullscreen) {
+      return "600px";
+    }
+    return isMobile ? "400px" : "600px";
+  };
+
+  const getMaxHeight = () => {
+    if (isAppFullscreen) {
+      return "100vh";
+    }
+    return isMobile ? "800px" : "900px";
+  };
+
   return (
     <motion.section
       id="resume"
-      className="text-foreground max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 min-h-screen flex flex-col justify-center"
+      className={`text-foreground max-w-4xl mx-auto w-full px-2 sm:px-4 md:px-6 py-8 sm:py-12 md:py-16 lg:py-20 min-h-screen flex flex-col justify-center overflow-x-hidden ${
+        isAppFullscreen ? "app-fullscreen-resume" : ""
+      }`}
       initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -164,7 +296,7 @@ export const ResumeSection = () => {
           <CardContent className="p-0">
             {/* Loading State - Only show if PDF viewer hasn't loaded yet */}
             {isLoading && !pdfError && viewerKey === 0 && (
-              <div className="flex items-center justify-center min-h-[600px] bg-muted/20">
+              <div className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] bg-muted/20">
                 <div className="text-center space-y-4">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
                   <p className="text-muted-foreground">Loading resume...</p>
@@ -174,13 +306,13 @@ export const ResumeSection = () => {
 
             {/* Error State */}
             {pdfError && (
-              <div className="flex flex-col items-center justify-center min-h-[600px] bg-muted/20 p-8 space-y-4">
+              <div className="flex flex-col items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] bg-muted/20 p-8 space-y-4">
                 <AlertCircle className="w-16 h-16 text-destructive" />
                 <div className="text-center space-y-2">
                   <h3 className="text-lg font-semibold text-foreground">
                     Failed to Load Resume
                   </h3>
-                  <p className="text-sm text-muted-foreground max-w-md">
+                  <p className="text-base sm:text-sm text-muted-foreground max-w-md">
                     {pdfError}
                   </p>
                 </div>
@@ -198,13 +330,13 @@ export const ResumeSection = () => {
 
             {/* PDF Viewer - Always render container to avoid cleanup issues */}
             <div
-              className="w-full pdf-viewer-container resume-pdf-viewer"
+              className={`w-full pdf-viewer-container resume-pdf-viewer ${
+                isAppFullscreen ? "app-fullscreen-viewer" : ""
+              }`}
               style={{
-                height: isMobile
-                  ? "calc(100vh - 200px)"
-                  : "calc(100vh - 300px)",
-                minHeight: isMobile ? "500px" : "600px",
-                maxHeight: isMobile ? "700px" : "900px",
+                height: getViewerHeight(),
+                minHeight: getMinHeight(),
+                maxHeight: getMaxHeight(),
                 display: pdfError ? "none" : "block",
               }}
               role="region"
@@ -227,7 +359,7 @@ export const ResumeSection = () => {
                             <h3 className="text-lg font-semibold text-foreground">
                               Error Loading PDF
                             </h3>
-                            <p className="text-sm text-muted-foreground max-w-md">
+                            <p className="text-base sm:text-sm text-muted-foreground max-w-md">
                               {error?.message ||
                                 "An error occurred while loading the PDF."}
                             </p>

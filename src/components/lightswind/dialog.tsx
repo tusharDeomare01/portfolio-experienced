@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { HTMLMotionProps } from "framer-motion";
 
 interface DialogContextType {
@@ -144,7 +144,8 @@ type OmittedDialogContentHTMLAttributes = Omit<
 const DialogContent = React.forwardRef<
   HTMLDivElement,
   OmittedDialogContentHTMLAttributes
->(({ className, children, ...props }, ref) => { // Use the new type here
+>(({ className, children, ...props }, ref) => {
+  // Use the new type here
   const context = React.useContext(DialogContext);
   if (!context) {
     throw new Error("DialogContent must be used within a Dialog");
@@ -153,7 +154,7 @@ const DialogContent = React.forwardRef<
   const { open, setOpen } = context;
 
   return (
-    <AnimatePresence>
+    <>
       {open && ( // Conditionally render the motion components based on `open` state
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Backdrop Overlay */}
@@ -194,7 +195,7 @@ const DialogContent = React.forwardRef<
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </>
   );
 });
 DialogContent.displayName = "DialogContent";

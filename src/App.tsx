@@ -10,9 +10,8 @@ import {
   FolderKanban,
   Trophy,
   Mail,
-  FileText,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useIsMobile } from "./components/hooks/use-mobile";
 import { TourProvider, useTourContext } from "./components/Tour/TourContext";
 import ParticlesBackground from "./components/lightswind/particles-background";
@@ -48,11 +47,6 @@ const AchievementsSection = lazy(() =>
   import("./components/AchievementsSection/AchievementsSection").then(
     (module) => ({ default: module.AchievementsSection })
   )
-);
-const ResumeSection = lazy(() =>
-  import("./components/ResumeSection/ResumeSection").then((module) => ({
-    default: module.ResumeSection,
-  }))
 );
 const ContactSection = lazy(() =>
   import("./components/ContactSection/ContactSection").then((module) => ({
@@ -99,7 +93,7 @@ function HomePage() {
       // Show dock if scrolling down OR if tour is active and on dock step
       const shouldShowDock =
         (currentScrollY > lastScrollY && currentScrollY > 100) ||
-        (tour.isTourActive && tour.currentStep === 9); // Step 9 is the dock step
+        (tour.isTourActive && tour.currentStep === 8); // Step 8 is the dock step
 
       if (shouldShowDock) {
         setShowDock(true);
@@ -114,7 +108,7 @@ function HomePage() {
     window.addEventListener("scroll", handleScroll);
 
     // Show dock if tour is on dock step
-    if (tour.isTourActive && tour.currentStep === 9) {
+    if (tour.isTourActive && tour.currentStep === 8) {
       setShowDock(true);
     }
 
@@ -172,11 +166,6 @@ function HomePage() {
       onClick: () => scrollToSection("achievements"),
     },
     {
-      icon: <FileText size={iconSize} />,
-      label: "Resume",
-      onClick: () => scrollToSection("resume"),
-    },
-    {
       icon: <Mail size={iconSize} />,
       label: "Contact",
       onClick: () => scrollToSection("contact"),
@@ -201,40 +190,38 @@ function HomePage() {
             <CareerTimeline />
             <ProjectsSection />
             <AchievementsSection />
-            <ResumeSection />
             <ContactSection />
           </Suspense>
         </div>
       </div>
 
       {/* Dock with smooth show/hide animation */}
-      <AnimatePresence>
-        {showDock && (
-          <motion.div
-            data-dock
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-            className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 ${
-              tour.isTourActive && tour.currentStep === 9
-                ? "z-[10001]"
-                : "z-[999]"
-            }`}
-          >
-            <Suspense fallback={null}>
-              <Dock
-                items={dockItems}
-                position="bottom"
-                magnification={isMobile ? 60 : 85}
-                baseItemSize={isMobile ? 40 : 50}
-                distance={isMobile ? 120 : 200}
-                panelHeight={isMobile ? 56 : 64}
-              />
-            </Suspense>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+      {showDock && (
+        <motion.div
+          data-dock
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 ${
+            tour.isTourActive && tour.currentStep === 8
+              ? "z-[10001]"
+              : "z-[999]"
+          }`}
+        >
+          <Suspense fallback={null}>
+            <Dock
+              items={dockItems}
+              position="bottom"
+              magnification={isMobile ? 60 : 85}
+              baseItemSize={isMobile ? 40 : 50}
+              distance={isMobile ? 120 : 200}
+              panelHeight={isMobile ? 56 : 64}
+            />
+          </Suspense>
+        </motion.div>
+      )}
 
       {/* Tour Component */}
       <Suspense fallback={null}>

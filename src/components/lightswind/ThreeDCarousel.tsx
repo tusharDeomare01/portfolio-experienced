@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../lightswind/button";
 
@@ -119,107 +119,104 @@ export default function ThreeDCarousel({
           isMobile ? "" : "perspective-1000"
         }`}
       >
-        <AnimatePresence mode="wait">
-          {items.map((item, index) => {
-            const offset = index - activeIndex;
-            const absOffset = Math.abs(offset);
-            const isActive = index === activeIndex;
+        {items.map((item, index) => {
+          const offset = index - activeIndex;
+          const absOffset = Math.abs(offset);
+          const isActive = index === activeIndex;
 
-            // Mobile: Show only active card, Desktop: Show 3D effect
-            if (isMobile && absOffset > 0) {
-              return null;
-            }
+          // Mobile: Show only active card, Desktop: Show 3D effect
+          if (isMobile && absOffset > 0) {
+            return null;
+          }
 
-            // Calculate 3D transform values
-            const translateX = offset * translateXMultiplier;
-            const translateZ = -Math.abs(offset) * translateZMultiplier;
-            const rotateY = isMobile ? 0 : offset * rotateYMultiplier;
-            const scale = isActive ? 1 : 0.85;
-            const opacity =
-              absOffset > maxVisibleCards ? 0 : isActive ? 1 : 0.6;
+          // Calculate 3D transform values
+          const translateX = offset * translateXMultiplier;
+          const translateZ = -Math.abs(offset) * translateZMultiplier;
+          const rotateY = isMobile ? 0 : offset * rotateYMultiplier;
+          const scale = isActive ? 1 : 0.85;
+          const opacity = absOffset > maxVisibleCards ? 0 : isActive ? 1 : 0.6;
 
-            return (
-              <motion.div
-                key={item.id}
-                className="absolute inset-0 flex items-center justify-center cursor-pointer"
-                initial={false}
-                animate={{
-                  x: translateX,
-                  z: translateZ,
-                  rotateY: rotateY,
-                  scale: scale,
-                  opacity: opacity,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30,
-                  mass: 0.8,
-                }}
-                style={{
-                  transformStyle: "preserve-3d",
-                  backfaceVisibility: "hidden",
-                }}
-                onClick={() => {
-                  if (isActive && onItemClick) {
-                    onItemClick(item);
-                  } else if (!isActive) {
-                    goToSlide(index);
-                  }
-                }}
+          return (
+            <motion.div
+              key={item.id}
+              className="absolute inset-0 flex items-center justify-center cursor-pointer"
+              initial={false}
+              animate={{
+                x: translateX,
+                z: translateZ,
+                rotateY: rotateY,
+                scale: scale,
+                opacity: opacity,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                mass: 0.8,
+              }}
+              style={{
+                transformStyle: "preserve-3d",
+                backfaceVisibility: "hidden",
+              }}
+              onClick={() => {
+                if (isActive && onItemClick) {
+                  onItemClick(item);
+                } else if (!isActive) {
+                  goToSlide(index);
+                }
+              }}
+            >
+              <div
+                className={`relative ${
+                  isMobile ? "w-[280px] h-[350px]" : "w-[400px] h-[500px]"
+                } rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ${
+                  isActive
+                    ? "ring-4 ring-primary/50 shadow-primary/20"
+                    : "ring-2 ring-border/50"
+                } ${
+                  isActive && onItemClick
+                    ? "hover:scale-[1.02] cursor-pointer"
+                    : ""
+                }`}
               >
-                <div
-                  className={`relative ${
-                    isMobile ? "w-[280px] h-[350px]" : "w-[400px] h-[500px]"
-                  } rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ${
-                    isActive
-                      ? "ring-4 ring-primary/50 shadow-primary/20"
-                      : "ring-2 ring-border/50"
-                  } ${
-                    isActive && onItemClick
-                      ? "hover:scale-[1.02] cursor-pointer"
-                      : ""
-                  }`}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title || `Achievement ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src =
-                        "https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&w=800";
-                    }}
-                  />
-                  {(item.title || item.description) && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 md:p-6">
-                      {item.title && (
-                        <h3
-                          className={`${
-                            isMobile ? "text-lg" : "text-xl"
-                          } font-bold text-white mb-2`}
-                        >
-                          {item.title}
-                        </h3>
-                      )}
-                      {item.description && (
-                        <p
-                          className={`${
-                            isMobile ? "text-xs" : "text-sm"
-                          } text-white/90 ${
-                            isMobile ? "line-clamp-1" : "line-clamp-2"
-                          }`}
-                        >
-                          {item.description}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                <img
+                  src={item.image}
+                  alt={item.title || `Achievement ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src =
+                      "https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&w=800";
+                  }}
+                />
+                {(item.title || item.description) && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 md:p-6">
+                    {item.title && (
+                      <h3
+                        className={`${
+                          isMobile ? "text-lg" : "text-xl"
+                        } font-bold text-white mb-2`}
+                      >
+                        {item.title}
+                      </h3>
+                    )}
+                    {item.description && (
+                      <p
+                        className={`${
+                          isMobile ? "text-xs" : "text-sm"
+                        } text-white/90 ${
+                          isMobile ? "line-clamp-1" : "line-clamp-2"
+                        }`}
+                      >
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Navigation Arrows */}

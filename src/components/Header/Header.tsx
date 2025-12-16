@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Variants, MotionProps } from "framer-motion";
 import {
   Menu,
@@ -23,7 +23,6 @@ const navItems = [
   { name: "Career", href: "#career" },
   { name: "Projects", href: "#projects" },
   { name: "Achievements", href: "#achievements" },
-  { name: "Resume", href: "#resume" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -196,7 +195,7 @@ export default function Header() {
   };
 
   return (
-    <AnimatePresence>
+    <>
       {showHeader && (
         <motion.header
           initial={{ y: -100, top: 20, opacity: 0 }}
@@ -276,35 +275,33 @@ export default function Header() {
                 whileTap={{ scale: 0.9 }}
                 title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
               >
-                <AnimatePresence mode="wait" initial={false}>
-                  {isFullscreen ? (
-                    <motion.div
-                      key="minimize"
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Minimize2
-                        size={20}
-                        className="text-gray-800 dark:text-white"
-                      />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="maximize"
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Maximize2
-                        size={20}
-                        className="text-gray-800 dark:text-white"
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {isFullscreen ? (
+                  <motion.div
+                    key="minimize"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Minimize2
+                      size={20}
+                      className="text-gray-800 dark:text-white"
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="maximize"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Maximize2
+                      size={20}
+                      className="text-gray-800 dark:text-white"
+                    />
+                  </motion.div>
+                )}
               </motion.button>
 
               {/* Theme Toggle Button */}
@@ -315,35 +312,27 @@ export default function Header() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <AnimatePresence mode="wait" initial={false}>
-                  {theme === "dark" ? (
-                    <motion.div
-                      key="moon"
-                      initial={{ y: -20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: 20, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Moon
-                        size={20}
-                        className="text-gray-800 dark:text-white"
-                      />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="sun"
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -20, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Sun
-                        size={20}
-                        className="text-gray-800 dark:text-white"
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {theme === "dark" ? (
+                  <motion.div
+                    key="moon"
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 20, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Moon size={20} className="text-gray-800 dark:text-white" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="sun"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -20, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Sun size={20} className="text-gray-800 dark:text-white" />
+                  </motion.div>
+                )}
               </motion.button>
             </div>
 
@@ -357,166 +346,161 @@ export default function Header() {
           </div>
 
           {/* Mobile Sidebar */}
-          <AnimatePresence>
-            {isMobileMenuOpen && (
-              <motion.div
-                {...({
-                  initial: "closed",
-                  animate: "open",
-                  exit: "closed",
-                  variants: menuVariants,
-                } as MotionProps)}
-                className="fixed inset-0 z-[9999] bg-background dark:bg-background-dark md:hidden flex flex-col items-center justify-center"
+
+          {isMobileMenuOpen && (
+            <motion.div
+              {...({
+                initial: "closed",
+                animate: "open",
+                exit: "closed",
+                variants: menuVariants,
+              } as MotionProps)}
+              className="fixed inset-0 z-[9999] bg-background dark:bg-background-dark md:hidden flex flex-col items-center justify-center"
+            >
+              {/* Close Button inside the sidebar */}
+              <motion.button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="absolute top-8 right-8 text-gray-800 dark:text-white"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ delay: 0.2 }}
               >
-                {/* Close Button inside the sidebar */}
-                <motion.button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="absolute top-8 right-8 text-gray-800 dark:text-white"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <X size={32} />
-                </motion.button>
+                <X size={32} />
+              </motion.button>
 
-                <motion.ul
-                  {...({
-                    variants: listVariants,
-                  } as MotionProps)}
-                  className="flex flex-col items-center justify-center h-full space-y-8"
-                >
-                  {navItems.map((item) => (
-                    <motion.li
-                      key={item.name}
-                      {...({ variants: itemVariants } as MotionProps)}
-                    >
-                      <a
-                        onClick={() => handleScrollTo(item.href)}
-                        className="text-4xl font-bold text-gray-800 dark:text-white cursor-pointer"
-                      >
-                        {item.name}
-                      </a>
-                    </motion.li>
-                  ))}
-                  {/* Action Buttons in Mobile Menu */}
+              <motion.ul
+                {...({
+                  variants: listVariants,
+                } as MotionProps)}
+                className="flex flex-col items-center justify-center h-full space-y-8"
+              >
+                {navItems.map((item) => (
                   <motion.li
+                    key={item.name}
                     {...({ variants: itemVariants } as MotionProps)}
-                    className="mt-8 flex items-center gap-4 flex-wrap justify-center"
                   >
-                    {/* Tour Restart Button */}
-                    {tour && (
-                      <motion.button
-                        onClick={() => {
-                          tour.startTour();
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="p-4 rounded-full text-sm font-semibold
-                        hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
-                        bg-gray-200 dark:bg-gray-800"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        title="Start Tour"
-                      >
-                        <HelpCircle
-                          size={32}
-                          className="text-gray-800 dark:text-white"
-                        />
-                      </motion.button>
-                    )}
-
-                    {/* Fullscreen Toggle */}
+                    <a
+                      onClick={() => handleScrollTo(item.href)}
+                      className="text-4xl font-bold text-gray-800 dark:text-white cursor-pointer"
+                    >
+                      {item.name}
+                    </a>
+                  </motion.li>
+                ))}
+                {/* Action Buttons in Mobile Menu */}
+                <motion.li
+                  {...({ variants: itemVariants } as MotionProps)}
+                  className="mt-8 flex items-center gap-4 flex-wrap justify-center"
+                >
+                  {/* Tour Restart Button */}
+                  {tour && (
                     <motion.button
                       onClick={() => {
-                        toggleFullscreen();
+                        tour.startTour();
                         setIsMobileMenuOpen(false);
                       }}
                       className="p-4 rounded-full text-sm font-semibold
-                      hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
-                      bg-gray-200 dark:bg-gray-800"
+                        hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
+                        bg-gray-200 dark:bg-gray-800"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      title={
-                        isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"
-                      }
+                      title="Start Tour"
                     >
-                      <AnimatePresence mode="wait" initial={false}>
-                        {isFullscreen ? (
-                          <motion.div
-                            key="minimize"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <Minimize2
-                              size={32}
-                              className="text-gray-800 dark:text-white"
-                            />
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="maximize"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <Maximize2
-                              size={32}
-                              className="text-gray-800 dark:text-white"
-                            />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      <HelpCircle
+                        size={32}
+                        className="text-gray-800 dark:text-white"
+                      />
                     </motion.button>
+                  )}
 
-                    {/* Theme Toggle */}
-                    <motion.button
-                      onClick={() => dispatch(toggleTheme())}
-                      className="p-4 rounded-full text-sm font-semibold
+                  {/* Fullscreen Toggle */}
+                  <motion.button
+                    onClick={() => {
+                      toggleFullscreen();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="p-4 rounded-full text-sm font-semibold
                       hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
                       bg-gray-200 dark:bg-gray-800"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <AnimatePresence mode="wait" initial={false}>
-                        {theme === "dark" ? (
-                          <motion.div
-                            key="moon"
-                            initial={{ y: -20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: 20, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <Moon
-                              size={32}
-                              className="text-gray-800 dark:text-white"
-                            />
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="sun"
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -20, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <Sun
-                              size={32}
-                              className="text-gray-800 dark:text-white"
-                            />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.button>
-                  </motion.li>
-                </motion.ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    title={
+                      isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"
+                    }
+                  >
+                    {isFullscreen ? (
+                      <motion.div
+                        key="minimize"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Minimize2
+                          size={32}
+                          className="text-gray-800 dark:text-white"
+                        />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="maximize"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Maximize2
+                          size={32}
+                          className="text-gray-800 dark:text-white"
+                        />
+                      </motion.div>
+                    )}
+                  </motion.button>
+
+                  {/* Theme Toggle */}
+                  <motion.button
+                    onClick={() => dispatch(toggleTheme())}
+                    className="p-4 rounded-full text-sm font-semibold
+                      hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
+                      bg-gray-200 dark:bg-gray-800"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    {theme === "dark" ? (
+                      <motion.div
+                        key="moon"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 20, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Moon
+                          size={32}
+                          className="text-gray-800 dark:text-white"
+                        />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="sun"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -20, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Sun
+                          size={32}
+                          className="text-gray-800 dark:text-white"
+                        />
+                      </motion.div>
+                    )}
+                  </motion.button>
+                </motion.li>
+              </motion.ul>
+            </motion.div>
+          )}
         </motion.header>
       )}
-    </AnimatePresence>
+    </>
   );
 }

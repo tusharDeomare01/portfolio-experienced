@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   X,
   ChevronRight,
@@ -14,7 +14,6 @@ import {
   Mail,
   Bot,
   Maximize2,
-  FileText,
 } from "lucide-react";
 import { Button } from "../lightswind/button";
 import { BorderBeam } from "../lightswind/border-beam";
@@ -91,15 +90,6 @@ const TOUR_STEPS: TourStep[] = [
       "View my notable achievements and recognitions. This includes awards, certifications, and other milestones in my professional journey.",
     position: "top",
     icon: <Trophy className="w-5 h-5" />,
-  },
-  {
-    id: "resume",
-    target: "#resume",
-    title: "View My Resume",
-    content:
-      "Explore my professional resume with interactive PDF viewer. You can zoom, search, download, or print the document. Use the toolbar controls for navigation and viewing options.",
-    position: "top",
-    icon: <FileText className="w-5 h-5" />,
   },
   {
     id: "contact",
@@ -767,261 +757,259 @@ export function Tour({
       };
 
   return (
-    <AnimatePresence mode="wait">
-      <div className="fixed inset-0 z-[10000] pointer-events-none">
-        {/* Overlay */}
-        <motion.div
-          key={`overlay-${currentStep}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{
-            duration: 0.4,
-            ease: [0.4, 0, 0.2, 1],
-          }}
-          className="bg-black/60 backdrop-blur-sm transition-opacity duration-300"
-          style={{ clipPath: overlayClipPath }}
-        />
+    <div className="fixed inset-0 z-[10000] pointer-events-none">
+      {/* Overlay */}
+      <motion.div
+        key={`overlay-${currentStep}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          duration: 0.4,
+          ease: [0.4, 0, 0.2, 1],
+        }}
+        className="bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+        style={{ clipPath: overlayClipPath }}
+      />
 
-        {/* Arrow */}
-        {arrowPosition && (
-          <motion.div
-            key={`arrow-${currentStep}`}
-            initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            exit={{ opacity: 0, scale: 0.5, rotate: 180 }}
-            transition={{
-              type: "spring",
-              stiffness: 350,
-              damping: 28,
-              delay: 0.2,
-            }}
-            className="pointer-events-none"
-            style={{
-              position: "fixed",
-              top: `${arrowPosition.top}px`,
-              left: `${arrowPosition.left}px`,
-              width: "24px",
-              height: "24px",
-            }}
-          >
-            <div
-              className={`w-0 h-0 border-[12px] transition-all duration-300 ${
-                arrowPosition.direction === "top"
-                  ? "border-t-primary border-r-transparent border-b-transparent border-l-transparent"
-                  : arrowPosition.direction === "bottom"
-                  ? "border-b-primary border-r-transparent border-t-transparent border-l-transparent"
-                  : arrowPosition.direction === "left"
-                  ? "border-l-primary border-r-transparent border-t-transparent border-b-transparent"
-                  : "border-r-primary border-l-transparent border-t-transparent border-b-transparent"
-              }`}
-            />
-          </motion.div>
-        )}
-
-        {/* Tooltip with BorderBeam */}
+      {/* Arrow */}
+      {arrowPosition && (
         <motion.div
-          key={`tooltip-${currentStep}`}
-          ref={tooltipRef}
-          initial={{ opacity: 0, scale: 0.92, y: 20, filter: "blur(4px)" }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            filter: "blur(0px)",
-          }}
-          exit={{
-            opacity: 0,
-            scale: 0.92,
-            y: 20,
-            filter: "blur(4px)",
-          }}
+          key={`arrow-${currentStep}`}
+          initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          exit={{ opacity: 0, scale: 0.5, rotate: 180 }}
           transition={{
             type: "spring",
-            stiffness: 450,
-            damping: 32,
-            mass: 0.75,
+            stiffness: 350,
+            damping: 28,
+            delay: 0.2,
           }}
-          className="pointer-events-auto relative bg-background/95 backdrop-blur-md border-2 border-primary/50 rounded-xl shadow-2xl p-4 sm:p-5 md:p-6 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-          style={tooltipStyle}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={`tour-title-${currentStep}`}
-          aria-describedby={`tour-content-${currentStep}`}
-          tabIndex={-1}
+          className="pointer-events-none"
+          style={{
+            position: "fixed",
+            top: `${arrowPosition.top}px`,
+            left: `${arrowPosition.left}px`,
+            width: "24px",
+            height: "24px",
+          }}
         >
-          {/* BorderBeam wrapper */}
-          <BorderBeam />
-          {/* Content wrapper with relative positioning for BorderBeam */}
-          <div className="relative z-10">
-            {/* Header */}
-            <motion.div
-              className="flex items-start justify-between gap-3 mb-4"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.3 }}
-            >
-              <div className="flex items-start gap-3 flex-1 min-w-0">
-                {step.icon && (
-                  <motion.div
-                    className="p-2 rounded-lg bg-primary/10 text-primary flex-shrink-0 transition-all duration-300 hover:bg-primary/20 hover:scale-105"
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 20,
-                      delay: 0.15,
-                    }}
-                  >
-                    {step.icon}
-                  </motion.div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <motion.h3
-                    id={`tour-title-${currentStep}`}
-                    className="text-base sm:text-lg font-bold text-foreground leading-tight mb-1 break-words"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2, duration: 0.3 }}
-                  >
-                    {step.title}
-                  </motion.h3>
-                  <motion.span
-                    className="text-xs text-muted-foreground"
-                    aria-live="polite"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3, duration: 0.3 }}
-                  >
-                    Step {currentStep + 1} of {TOUR_STEPS.length}
-                  </motion.span>
-                </div>
-              </div>
-              <motion.button
-                onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-muted transition-all duration-200 flex-shrink-0 touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 active:scale-95"
-                aria-label="Close tour"
-                type="button"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.25, type: "spring", stiffness: 300 }}
-              >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-              </motion.button>
-            </motion.div>
+          <div
+            className={`w-0 h-0 border-[12px] transition-all duration-300 ${
+              arrowPosition.direction === "top"
+                ? "border-t-primary border-r-transparent border-b-transparent border-l-transparent"
+                : arrowPosition.direction === "bottom"
+                ? "border-b-primary border-r-transparent border-t-transparent border-l-transparent"
+                : arrowPosition.direction === "left"
+                ? "border-l-primary border-r-transparent border-t-transparent border-b-transparent"
+                : "border-r-primary border-l-transparent border-t-transparent border-b-transparent"
+            }`}
+          />
+        </motion.div>
+      )}
 
-            {/* Content */}
-            <motion.p
-              id={`tour-content-${currentStep}`}
-              className="text-sm text-muted-foreground mb-6 leading-relaxed break-words"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.4 }}
-            >
-              {step.content}
-            </motion.p>
-
-            {/* Actions */}
-            <motion.div
-              className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
-            >
-              <Button
-                variant="outline"
-                onClick={onSkip}
-                className="text-xs sm:text-sm h-9 sm:h-10 order-2 sm:order-1 w-full sm:w-auto transition-all duration-200 hover:scale-105 active:scale-95"
-                type="button"
-                aria-label="Skip tour"
-              >
-                Skip Tour
-              </Button>
-              <div className="flex items-center gap-2 order-1 sm:order-2 w-full sm:w-auto">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    if (!isNavigatingRef.current) {
-                      isNavigatingRef.current = true;
-                      onPrev();
-                      setTimeout(() => {
-                        isNavigatingRef.current = false;
-                      }, 500);
-                    }
-                  }}
-                  disabled={currentStep === 0 || isPositioning}
-                  className="text-xs sm:text-sm flex items-center gap-1 h-9 sm:h-10 flex-1 sm:flex-initial transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  type="button"
-                  aria-label={`Go to previous step${
-                    currentStep === 0 ? " (disabled)" : ""
-                  }`}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span className="hidden sm:inline">Previous</span>
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (!isNavigatingRef.current) {
-                      isNavigatingRef.current = true;
-                      onNext();
-                      setTimeout(() => {
-                        isNavigatingRef.current = false;
-                      }, 500);
-                    }
-                  }}
-                  disabled={isPositioning}
-                  className="text-xs sm:text-sm flex items-center gap-1 h-9 sm:h-10 flex-1 sm:flex-initial transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  type="button"
-                  aria-label={
-                    currentStep === TOUR_STEPS.length - 1
-                      ? "Finish tour"
-                      : "Go to next step"
-                  }
-                >
-                  <span>
-                    {currentStep === TOUR_STEPS.length - 1 ? "Finish" : "Next"}
-                  </span>
-                  {currentStep < TOUR_STEPS.length - 1 && (
-                    <ChevronRight className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
-            </motion.div>
-
-            {/* Progress */}
-            <motion.div
-              className="flex items-center justify-center gap-1.5 sm:gap-2 mt-4 pt-4 border-t border-border"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.35, duration: 0.4 }}
-            >
-              {TOUR_STEPS.map((_, index) => (
+      {/* Tooltip with BorderBeam */}
+      <motion.div
+        key={`tooltip-${currentStep}`}
+        ref={tooltipRef}
+        initial={{ opacity: 0, scale: 0.92, y: 20, filter: "blur(4px)" }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          filter: "blur(0px)",
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.92,
+          y: 20,
+          filter: "blur(4px)",
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 450,
+          damping: 32,
+          mass: 0.75,
+        }}
+        className="pointer-events-auto relative bg-background/95 backdrop-blur-md border-2 border-primary/50 rounded-xl shadow-2xl p-4 sm:p-5 md:p-6 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        style={tooltipStyle}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`tour-title-${currentStep}`}
+        aria-describedby={`tour-content-${currentStep}`}
+        tabIndex={-1}
+      >
+        {/* BorderBeam wrapper */}
+        <BorderBeam />
+        {/* Content wrapper with relative positioning for BorderBeam */}
+        <div className="relative z-10">
+          {/* Header */}
+          <motion.div
+            className="flex items-start justify-between gap-3 mb-4"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.3 }}
+          >
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              {step.icon && (
                 <motion.div
-                  key={index}
-                  className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 flex-shrink-0 ${
-                    index === currentStep
-                      ? "w-5 sm:w-6 md:w-8 bg-primary"
-                      : index < currentStep
-                      ? "w-1.5 sm:w-2 bg-primary/50"
-                      : "w-1.5 sm:w-2 bg-muted"
-                  }`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
+                  className="p-2 rounded-lg bg-primary/10 text-primary flex-shrink-0 transition-all duration-300 hover:bg-primary/20 hover:scale-105"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
                   transition={{
-                    delay: 0.4 + index * 0.02,
                     type: "spring",
                     stiffness: 300,
-                    damping: 25,
+                    damping: 20,
+                    delay: 0.15,
                   }}
-                />
-              ))}
-            </motion.div>
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+                >
+                  {step.icon}
+                </motion.div>
+              )}
+              <div className="flex-1 min-w-0">
+                <motion.h3
+                  id={`tour-title-${currentStep}`}
+                  className="text-base sm:text-lg font-bold text-foreground leading-tight mb-1 break-words"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2, duration: 0.3 }}
+                >
+                  {step.title}
+                </motion.h3>
+                <motion.span
+                  className="text-xs text-muted-foreground"
+                  aria-live="polite"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.3 }}
+                >
+                  Step {currentStep + 1} of {TOUR_STEPS.length}
+                </motion.span>
+              </div>
+            </div>
+            <motion.button
+              onClick={onClose}
+              className="p-1.5 rounded-lg hover:bg-muted transition-all duration-200 flex-shrink-0 touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 active:scale-95"
+              aria-label="Close tour"
+              type="button"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.25, type: "spring", stiffness: 300 }}
+            >
+              <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+            </motion.button>
+          </motion.div>
+
+          {/* Content */}
+          <motion.p
+            id={`tour-content-${currentStep}`}
+            className="text-sm text-muted-foreground mb-6 leading-relaxed break-words"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.4 }}
+          >
+            {step.content}
+          </motion.p>
+
+          {/* Actions */}
+          <motion.div
+            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
+          >
+            <Button
+              variant="outline"
+              onClick={onSkip}
+              className="text-xs sm:text-sm h-9 sm:h-10 order-2 sm:order-1 w-full sm:w-auto transition-all duration-200 hover:scale-105 active:scale-95"
+              type="button"
+              aria-label="Skip tour"
+            >
+              Skip Tour
+            </Button>
+            <div className="flex items-center gap-2 order-1 sm:order-2 w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (!isNavigatingRef.current) {
+                    isNavigatingRef.current = true;
+                    onPrev();
+                    setTimeout(() => {
+                      isNavigatingRef.current = false;
+                    }, 500);
+                  }
+                }}
+                disabled={currentStep === 0 || isPositioning}
+                className="text-xs sm:text-sm flex items-center gap-1 h-9 sm:h-10 flex-1 sm:flex-initial transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                type="button"
+                aria-label={`Go to previous step${
+                  currentStep === 0 ? " (disabled)" : ""
+                }`}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Previous</span>
+              </Button>
+              <Button
+                onClick={() => {
+                  if (!isNavigatingRef.current) {
+                    isNavigatingRef.current = true;
+                    onNext();
+                    setTimeout(() => {
+                      isNavigatingRef.current = false;
+                    }, 500);
+                  }
+                }}
+                disabled={isPositioning}
+                className="text-xs sm:text-sm flex items-center gap-1 h-9 sm:h-10 flex-1 sm:flex-initial transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                type="button"
+                aria-label={
+                  currentStep === TOUR_STEPS.length - 1
+                    ? "Finish tour"
+                    : "Go to next step"
+                }
+              >
+                <span>
+                  {currentStep === TOUR_STEPS.length - 1 ? "Finish" : "Next"}
+                </span>
+                {currentStep < TOUR_STEPS.length - 1 && (
+                  <ChevronRight className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Progress */}
+          <motion.div
+            className="flex items-center justify-center gap-1.5 sm:gap-2 mt-4 pt-4 border-t border-border"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35, duration: 0.4 }}
+          >
+            {TOUR_STEPS.map((_, index) => (
+              <motion.div
+                key={index}
+                className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 flex-shrink-0 ${
+                  index === currentStep
+                    ? "w-5 sm:w-6 md:w-8 bg-primary"
+                    : index < currentStep
+                    ? "w-1.5 sm:w-2 bg-primary/50"
+                    : "w-1.5 sm:w-2 bg-muted"
+                }`}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  delay: 0.4 + index * 0.02,
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 25,
+                }}
+              />
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, DragControls } from "framer-motion";
+import { motion, DragControls } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
@@ -430,11 +430,10 @@ export default function ChatInterface({
               </div>
             ) : (
               <>
-                <AnimatePresence>
-                  {messages.map((message) => (
-                    <MessageBubble key={message.id} message={message} />
-                  ))}
-                </AnimatePresence>
+                {messages.map((message) => (
+                  <MessageBubble key={message.id} message={message} />
+                ))}
+
                 {isStreaming && (
                   <motion.div
                     initial={{ opacity: 0 }}

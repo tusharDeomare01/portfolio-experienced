@@ -3,7 +3,6 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
-  AnimatePresence,
   MotionValue,
 } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -96,21 +95,20 @@ function DockItem({
           {badgeCount > 99 ? "99+" : badgeCount}
         </span>
       )}
-      <AnimatePresence>
-        {showLabel && (
-          <motion.div
-            initial={{ opacity: 0, y: 0 }}
-            animate={{ opacity: 1, y: -10 }}
-            exit={{ opacity: 0, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute -top-6 left-1/2 w-fit whitespace-pre rounded-md border bg-[#060606] px-2 py-0.5 text-xs text-white"
-            style={{ x: "-50%" }}
-            role="tooltip"
-          >
-            {label}
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+      {showLabel && (
+        <motion.div
+          initial={{ opacity: 0, y: 0 }}
+          animate={{ opacity: 1, y: -10 }}
+          exit={{ opacity: 0, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="absolute -top-6 left-1/2 w-fit whitespace-pre rounded-md border bg-[#060606] px-2 py-0.5 text-xs text-white"
+          style={{ x: "-50%" }}
+          role="tooltip"
+        >
+          {label}
+        </motion.div>
+      )}
     </motion.div>
   );
 }

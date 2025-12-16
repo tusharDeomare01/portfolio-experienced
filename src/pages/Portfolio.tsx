@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@/components/lightswind/card";
 import { Badge } from "@/components/lightswind/badge";
 import { ScrollReveal } from "@/components/lightswind/scroll-reveal";
-import { BackgroundSkeleton } from "@/components/Loading/LoadingComponents";
+// import { BackgroundSkeleton } from "@/components/Loading/LoadingComponents";
 import {
   ArrowLeft,
   Code,
@@ -31,9 +31,9 @@ import {
   MousePointerClick,
 } from "lucide-react";
 
-const RaysBackground = lazy(
-  () => import("../components/lightswind/rays-background")
-);
+// const RaysBackground = lazy(
+//   () => import("../components/lightswind/rays-background")
+// );
 // const FallBeamBackground = lazy(
 //   () => import("../components/lightswind/fall-beam-background")
 // );
@@ -192,7 +192,6 @@ const Portfolio = () => {
     window.scrollTo(0, 0);
   }, []);
 
-
   const colorMap: Record<string, { bg: string; text: string }> = {
     blue: { bg: "bg-blue-500/10", text: "text-blue-500" },
     purple: { bg: "bg-purple-500/10", text: "text-purple-500" },
@@ -211,9 +210,9 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background relative">
       {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
-      <Suspense fallback={<BackgroundSkeleton />}>
+      {/* <Suspense fallback={<BackgroundSkeleton />}>
         <RaysBackground className="fixed z-0" />
-      </Suspense>
+      </Suspense> */}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button */}
@@ -382,10 +381,7 @@ const Portfolio = () => {
             {features.map((feature, idx) => {
               const Icon = feature.icon;
               return (
-                <div
-                  key={idx}
-                  className="group"
-                >
+                <div key={idx} className="group">
                   <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
                     <CardHeader>
                       <div className="flex items-start gap-4">

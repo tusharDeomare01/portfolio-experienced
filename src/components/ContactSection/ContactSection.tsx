@@ -1,4 +1,5 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useCallback, useMemo, memo } from "react";
+import type { FormEvent } from "react";
 import {
   Card,
   CardHeader,
@@ -18,14 +19,92 @@ declare global {
   }
 }
 
-export const ContactSection = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    subject: "",
-    message: "",
-  });
+// Performance tiers for device optimization
+const PERFORMANCE_TIERS = {
+  LOW: "low",
+  MID: "mid",
+  HIGH: "high",
+} as const;
+
+// Device performance detection (optimized for low-end devices)
+const detectDevicePerformance = (): typeof PERFORMANCE_TIERS[keyof typeof PERFORMANCE_TIERS] => {
+  if (typeof window === "undefined") return PERFORMANCE_TIERS.MID;
+  
+  // Check hardware concurrency (CPU cores)
+  const cores = navigator.hardwareConcurrency || 2;
+  
+  // Check device memory (if available)
+  const memory = (navigator as any).deviceMemory || 4;
+  
+  // Check if it's a mobile device
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+  
+  // Low-end: mobile with <= 2 cores or <= 2GB RAM
+  if (isMobileDevice && (cores <= 2 || memory <= 2)) {
+    return PERFORMANCE_TIERS.LOW;
+  }
+  
+  // Mid-range: 2-4 cores or 2-4GB RAM, or mobile with more resources
+  if (cores <= 4 || memory <= 4 || isMobileDevice) {
+    return PERFORMANCE_TIERS.MID;
+  }
+  
+  // High-end: > 4 cores and > 4GB RAM
+  return PERFORMANCE_TIERS.HIGH;
+};
+
+// Extract className strings to constants
+const CONTAINER_CLASSES =
+  "text-foreground max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 min-h-screen flex flex-col justify-center";
+const HEADING_CONTAINER_CLASSES = "text-center mb-6 sm:mb-8";
+const HEADER_CLASSES = "mb-2 sm:mb-3 flex items-baseline justify-center gap-2 sm:gap-4";
+const ICON_CLASSES =
+  "w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2";
+
+// Extract ScrollReveal props to constants
+const TITLE_REVEAL_PROPS = {
+  size: "xl" as const,
+  align: "center" as const,
+  variant: "default" as const,
+  baseRotation: 0,
+} as const;
+
+const SUBTITLE_REVEAL_PROPS = {
+  size: "sm" as const,
+  align: "center" as const,
+  variant: "muted" as const,
+  baseRotation: 0,
+  containerClassName: "px-2 sm:px-0",
+} as const;
+
+// Initial form data constant
+const INITIAL_FORM_DATA = {
+  name: "",
+  email: "",
+  company: "",
+  subject: "",
+  message: "",
+} as const;
+
+const ContactSectionComponent = () => {
+  // Device performance detection (memoized, only runs once)
+  const devicePerformance = useMemo(() => detectDevicePerformance(), []);
+
+  // Check for reduced motion preference
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  }, []);
+
+  // Determine if confetti should be enabled
+  const shouldEnableConfetti = useMemo(() => {
+    // Disable confetti on low-end devices or if reduced motion is preferred
+    return devicePerformance !== PERFORMANCE_TIERS.LOW && !prefersReducedMotion;
+  }, [devicePerformance, prefersReducedMotion]);
+
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error" | null;
@@ -33,8 +112,20 @@ export const ContactSection = () => {
   }>({ type: null, message: "" });
   const [confettiLoaded, setConfettiLoaded] = useState(false);
 
-  // Load confetti script dynamically
+  // Memoize blur settings based on device performance
+  const blurSettings = useMemo(() => {
+    if (devicePerformance === PERFORMANCE_TIERS.LOW || prefersReducedMotion) {
+      return { enableBlur: false, blurStrength: 0 };
+    }
+    return { enableBlur: true, blurStrength: devicePerformance === PERFORMANCE_TIERS.MID ? 3 : 5 };
+  }, [devicePerformance, prefersReducedMotion]);
+
+  // Load confetti script dynamically (only if enabled)
   useEffect(() => {
+    if (!shouldEnableConfetti) {
+      return;
+    }
+
     if (!window.confetti) {
       const script = document.createElement("script");
       script.src =
@@ -51,30 +142,44 @@ export const ContactSection = () => {
     } else {
       setConfettiLoaded(true);
     }
-  }, []);
+  }, [shouldEnableConfetti]);
 
-  // Trigger confetti on successful submission
+  // Trigger confetti on successful submission (optimized for device performance)
   useEffect(() => {
-    if (confettiLoaded && submitStatus.type === "success" && window.confetti) {
+    if (
+      shouldEnableConfetti &&
+      confettiLoaded &&
+      submitStatus.type === "success" &&
+      window.confetti
+    ) {
+      // Reduce particle count based on device performance
+      const particleCount =
+        devicePerformance === PERFORMANCE_TIERS.LOW
+          ? 50
+          : devicePerformance === PERFORMANCE_TIERS.MID
+          ? 150
+          : 250;
+
       // Trigger confetti from the center of the screen
       window.confetti({
-        particleCount: 250,
-        spread: 70,
+        particleCount,
+        spread: devicePerformance === PERFORMANCE_TIERS.LOW ? 50 : 70,
         origin: { x: 0.5, y: 0.5 },
       });
     }
-  }, [confettiLoaded, submitStatus.type]);
+  }, [shouldEnableConfetti, confettiLoaded, submitStatus.type, devicePerformance]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      }));
+    },
+    []
+  );
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: "" });
@@ -131,13 +236,7 @@ export const ContactSection = () => {
             "Thank you! Your message has been sent successfully. I'll get back to you soon.",
         });
         // Reset form
-        setFormData({
-          name: "",
-          email: "",
-          company: "",
-          subject: "",
-          message: "",
-        });
+        setFormData(INITIAL_FORM_DATA);
       }
     } catch (error: any) {
       console.error("Email sending failed:", error);
@@ -150,42 +249,43 @@ export const ContactSection = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [formData]);
+
+  // Optimize card backdrop blur based on device performance
+  const cardBackdropBlur = useMemo(() => {
+    if (devicePerformance === PERFORMANCE_TIERS.LOW) {
+      return "backdrop-blur-0"; // Remove blur on low-end devices
+    }
+    return "backdrop-blur-xl";
+  }, [devicePerformance]);
 
   return (
     <section
       id="contact"
-      className="text-foreground max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 min-h-screen flex flex-col justify-center"
+      className={`${CONTAINER_CLASSES} transform-gpu will-change-transform`}
     >
-      <div className="text-center mb-6 sm:mb-8">
-        <div className="mb-2 sm:mb-3 flex items-baseline justify-center gap-2 sm:gap-4">
-          <Mail className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
+      <div className={HEADING_CONTAINER_CLASSES}>
+        <div className={HEADER_CLASSES}>
+          <Mail className={ICON_CLASSES} />
           <ScrollReveal
-            size="xl"
-            align="center"
-            variant="default"
-            enableBlur={true}
-            blurStrength={5}
-            baseRotation={0}
+            {...TITLE_REVEAL_PROPS}
+            enableBlur={blurSettings.enableBlur}
+            blurStrength={blurSettings.blurStrength}
           >
             Get In Touch
           </ScrollReveal>
         </div>
         <ScrollReveal
-          size="sm"
-          align="center"
-          variant="muted"
-          enableBlur={true}
-          blurStrength={5}
-          baseRotation={0}
-          containerClassName="px-2 sm:px-0"
+          {...SUBTITLE_REVEAL_PROPS}
+          enableBlur={blurSettings.enableBlur}
+          blurStrength={blurSettings.blurStrength}
         >
           Have a project in mind or want to discuss opportunities? I'd love to
           hear from you!
         </ScrollReveal>
       </div>
 
-      <Card className="backdrop-blur-xl bg-background/80 border-2 w-full">
+      <Card className={`${cardBackdropBlur} bg-background/80 border-2 w-full`}>
         <CardHeader className="p-4 sm:p-6">
           <CardTitle className="text-xl sm:text-2xl">Contact Me</CardTitle>
           <CardDescription className="text-xs sm:text-sm mt-2">
@@ -339,3 +439,6 @@ export const ContactSection = () => {
     </section>
   );
 };
+
+// Memoize component to prevent unnecessary re-renders
+export const ContactSection = memo(ContactSectionComponent);

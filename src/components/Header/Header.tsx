@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import type { Variants, MotionProps } from "framer-motion";
 import {
@@ -26,13 +26,60 @@ const navItems = [
   { name: "Contact", href: "#contact" },
 ];
 
+// Move variants outside component to prevent recreation on every render
+const menuVariants: Variants = {
+  open: {
+    clipPath: "circle(1200px at 90% 5%)",
+    transition: {
+      type: "spring",
+      stiffness: 20,
+      restDelta: 2,
+    },
+  },
+  closed: {
+    clipPath: "circle(20px at 90% 5%)",
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 40,
+    },
+  },
+};
+
+const listVariants: Variants = {
+  open: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.2 },
+  },
+  closed: {
+    transition: { staggerChildren: 0.05, staggerDirection: -1 },
+  },
+};
+
+const itemVariants: Variants = {
+  open: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      y: { stiffness: 1000, velocity: -100 },
+    },
+  },
+  closed: {
+    y: 50,
+    opacity: 0,
+    transition: {
+      y: { stiffness: 1000 },
+    },
+  },
+};
+
 export default function Header() {
   const theme = useAppSelector((state) => state.theme.theme);
   const dispatch = useAppDispatch();
   const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const scrollTimeoutRef = useRef<number | null>(null);
 
   // Tour context - wrapped in try-catch in case TourProvider is not available
   let tour: ReturnType<typeof useTourContext> | null = null;
@@ -51,23 +98,36 @@ export default function Header() {
     }
   }, [theme]);
 
-  // Scroll listener for hide/show header
+  // Scroll listener for hide/show header - optimized with useRef and throttling
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setShowHeader(false); // Scrolling down
-      } else {
-        setShowHeader(true); // Scrolling up
+      // Clear existing timeout
+      if (scrollTimeoutRef.current !== null) {
+        cancelAnimationFrame(scrollTimeoutRef.current);
       }
-      setLastScrollY(currentScrollY);
+
+      // Throttle using requestAnimationFrame
+      scrollTimeoutRef.current = requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        const lastScrollY = lastScrollYRef.current;
+
+        if (currentScrollY > lastScrollY && currentScrollY > 80) {
+          setShowHeader(false); // Scrolling down
+        } else {
+          setShowHeader(true); // Scrolling up
+        }
+        lastScrollYRef.current = currentScrollY;
+      });
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current !== null) {
+        cancelAnimationFrame(scrollTimeoutRef.current);
+      }
     };
-  }, [lastScrollY]);
+  }, []);
 
   // Fullscreen change listener
   useEffect(() => {
@@ -97,7 +157,7 @@ export default function Header() {
     };
   }, []);
 
-  const handleScrollTo = (id: string) => {
+  const handleScrollTo = useCallback((id: string) => {
     // Remove # if present and find the element
     const cleanId = id.replace("#", "");
     const el = document.getElementById(cleanId) || document.querySelector(id);
@@ -112,9 +172,9 @@ export default function Header() {
       });
     }
     setIsMobileMenuOpen(false); // Close mobile menu on click
-  };
+  }, []);
 
-  const toggleFullscreen = async () => {
+  const toggleFullscreen = useCallback(async () => {
     try {
       if (!document.fullscreenElement) {
         // Enter fullscreen
@@ -146,53 +206,26 @@ export default function Header() {
     } catch (error) {
       console.error("Error toggling fullscreen:", error);
     }
-  };
+  }, []);
 
-  // ✅ Typed variants
-  const menuVariants: Variants = {
-    open: {
-      clipPath: "circle(1200px at 90% 5%)",
-      transition: {
-        type: "spring",
-        stiffness: 20,
-        restDelta: 2,
-      },
-    },
-    closed: {
-      clipPath: "circle(20px at 90% 5%)",
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40,
-      },
-    },
-  };
+  const handleThemeToggle = useCallback(() => {
+    dispatch(toggleTheme());
+  }, [dispatch]);
 
-  const listVariants: Variants = {
-    open: {
-      transition: { staggerChildren: 0.07, delayChildren: 0.2 },
-    },
-    closed: {
-      transition: { staggerChildren: 0.05, staggerDirection: -1 },
-    },
-  };
+  const handleMobileMenuOpen = useCallback(() => {
+    setIsMobileMenuOpen(true);
+  }, []);
 
-  const itemVariants: Variants = {
-    open: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        y: { stiffness: 1000, velocity: -100 },
-      },
-    },
-    closed: {
-      y: 50,
-      opacity: 0,
-      transition: {
-        y: { stiffness: 1000 },
-      },
-    },
-  };
+  const handleMobileMenuClose = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  const handleTourStart = useCallback(() => {
+    if (tour) {
+      tour.startTour();
+      setIsMobileMenuOpen(false);
+    }
+  }, [tour]);
 
   return (
     <>
@@ -216,6 +249,7 @@ export default function Header() {
             <a
               onClick={() => handleScrollTo("#hero")}
               className="cursor-pointer font-bold text-lg text-gray-800 dark:text-white"
+              aria-label="Go to home"
             >
               <BookCheckIcon />
             </a>
@@ -306,7 +340,7 @@ export default function Header() {
 
               {/* Theme Toggle Button */}
               <motion.button
-                onClick={() => dispatch(toggleTheme())}
+                onClick={handleThemeToggle}
                 className="p-2 rounded-full text-sm font-semibold
                 hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors"
                 whileHover={{ scale: 1.1 }}
@@ -338,8 +372,9 @@ export default function Header() {
 
             {/* Mobile Menu Button - Hamburger */}
             <button
-              onClick={() => setIsMobileMenuOpen(true)}
+              onClick={handleMobileMenuOpen}
               className="md:hidden text-gray-800 dark:text-white"
+              aria-label="Open menu"
             >
               <Menu size={24} />
             </button>
@@ -359,12 +394,13 @@ export default function Header() {
             >
               {/* Close Button inside the sidebar */}
               <motion.button
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={handleMobileMenuClose}
                 className="absolute top-8 right-8 text-gray-800 dark:text-white"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ delay: 0.2 }}
+                aria-label="Close menu"
               >
                 <X size={32} />
               </motion.button>
@@ -396,10 +432,7 @@ export default function Header() {
                   {/* Tour Restart Button */}
                   {tour && (
                     <motion.button
-                      onClick={() => {
-                        tour.startTour();
-                        setIsMobileMenuOpen(false);
-                      }}
+                      onClick={handleTourStart}
                       className="p-4 rounded-full text-sm font-semibold
                         hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
                         bg-gray-200 dark:bg-gray-800"
@@ -418,7 +451,7 @@ export default function Header() {
                   <motion.button
                     onClick={() => {
                       toggleFullscreen();
-                      setIsMobileMenuOpen(false);
+                      handleMobileMenuClose();
                     }}
                     className="p-4 rounded-full text-sm font-semibold
                       hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
@@ -460,7 +493,7 @@ export default function Header() {
 
                   {/* Theme Toggle */}
                   <motion.button
-                    onClick={() => dispatch(toggleTheme())}
+                    onClick={handleThemeToggle}
                     className="p-4 rounded-full text-sm font-semibold
                       hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
                       bg-gray-200 dark:bg-gray-800"

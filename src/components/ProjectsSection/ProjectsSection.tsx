@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 // @ts-ignore - interactive-card is a JS file without type definitions
@@ -70,22 +69,12 @@ export const ProjectsSection = () => {
   };
 
   return (
-    <motion.div
+    <div
       id="projects"
       className="min-h-screen flex flex-col justify-center"
-      initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.2 }}
     >
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-16 w-full">
-        <motion.div
-          className="text-center mb-8 sm:mb-16"
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
+        <div className="text-center mb-8 sm:mb-16">
           <div className="mb-4 flex items-baseline justify-center gap-4">
             <FolderKanban className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-primary flex-shrink-0 mt-1.5 md:mt-2 lg:mt-2.5" />
             <ScrollReveal
@@ -109,20 +98,12 @@ export const ProjectsSection = () => {
           >
             Explore my latest work...
           </ScrollReveal>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 justify-items-center">
-          {projects.map((project, index) => (
-            <motion.div
+          {projects.map((project) => (
+            <div
               key={project.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.6,
-                delay: index * 0.15,
-                ease: [0.22, 1, 0.36, 1],
-              }}
               className="w-full max-w-md project-card-wrapper group"
               onMouseEnter={() => setHoveredProject(project.id)}
               onMouseLeave={() => setHoveredProject(null)}
@@ -143,24 +124,20 @@ export const ProjectsSection = () => {
                   }`}
                 >
                   {project.image.endsWith(".svg") ? (
-                    <motion.img
+                    <img
                       src={getLogoPath(project.title)}
                       alt={project.title}
-                      className="w-full h-full max-w-full max-h-full sm:max-w-[80%] sm:max-h-[70%] md:max-w-[75%] md:max-h-[65%] object-contain px-4 py-2 sm:px-4 sm:py-4 md:px-4 md:py-4"
-                      animate={{
-                        scale: hoveredProject === project.id ? 1.1 : 1,
-                      }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      className={`w-full h-full max-w-full max-h-full sm:max-w-[80%] sm:max-h-[70%] md:max-w-[75%] md:max-h-[65%] object-contain px-4 py-2 sm:px-4 sm:py-4 md:px-4 md:py-4 transition-transform duration-300 ${
+                        hoveredProject === project.id ? "scale-110" : "scale-100"
+                      }`}
                     />
                   ) : (
-                    <motion.img
+                    <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover"
-                      animate={{
-                        scale: hoveredProject === project.id ? 1.1 : 1,
-                      }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      className={`w-full h-full object-cover transition-transform duration-300 ${
+                        hoveredProject === project.id ? "scale-110" : "scale-100"
+                      }`}
                     />
                   )}
                   {/* Status Badge */}
@@ -183,18 +160,15 @@ export const ProjectsSection = () => {
                 <div className="flex-1 flex flex-col p-6 sm:p-7 space-y-5">
                   {/* Title and Date */}
                   <div className="space-y-3">
-                    <motion.h3
-                      className="text-2xl sm:text-3xl font-bold text-foreground leading-tight"
-                      animate={{
-                        color:
-                          hoveredProject === project.id
-                            ? "hsl(var(--primary))"
-                            : "hsl(var(--foreground))",
-                      }}
-                      transition={{ duration: 0.3 }}
+                    <h3
+                      className={`text-2xl sm:text-3xl font-bold leading-tight transition-colors duration-300 ${
+                        hoveredProject === project.id
+                          ? "text-primary"
+                          : "text-foreground"
+                      }`}
                     >
                       {project.title}
-                    </motion.h3>
+                    </h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
                       <span className="font-medium">{project.date}</span>
@@ -209,13 +183,7 @@ export const ProjectsSection = () => {
                   {/* Technology Tags */}
                   <div className="flex flex-wrap gap-2 pt-2">
                     {project.technologies.map((tech, techIndex) => (
-                      <motion.div
-                        key={techIndex}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.15 + techIndex * 0.05 }}
-                      >
+                      <div key={techIndex}>
                         <Badge
                           variant="outline"
                           size="sm"
@@ -223,16 +191,12 @@ export const ProjectsSection = () => {
                         >
                           {tech}
                         </Badge>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
 
                   {/* CTA Button */}
-                  <motion.div
-                    className="pt-2"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
+                  <div className="pt-2">
                     <Button
                       variant="outline"
                       size="lg"
@@ -241,41 +205,20 @@ export const ProjectsSection = () => {
                     >
                       <span className="relative z-10 flex items-center justify-center gap-2 font-semibold">
                         Explore Project ...
-                        <motion.div
-                          animate={{
-                            x: hoveredProject === project.id ? 4 : 0,
-                          }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <ArrowRight className="w-4 h-4" />
-                        </motion.div>
+                        <ArrowRight
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            hoveredProject === project.id ? "translate-x-1" : ""
+                          }`}
+                        />
                       </span>
-                      {/* Button Hover Effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-primary"
-                        initial={{ x: "-100%" }}
-                        whileHover={{ x: 0 }}
-                        transition={{ duration: 0.3 }}
-                      />
-                      <motion.span
-                        className="absolute inset-0 flex items-center justify-center text-primary-foreground font-semibold"
-                        initial={{ opacity: 0 }}
-                        whileHover={{ opacity: 1 }}
-                        transition={{ duration: 0.2, delay: 0.1 }}
-                      >
-                        <span className="flex items-center gap-2">
-                          Explore Project
-                          <ArrowRight className="w-4 h-4" />
-                        </span>
-                      </motion.span>
                     </Button>
-                  </motion.div>
+                  </div>
                 </div>
               </InteractiveCard>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
-    </motion.div>
+    </div>
   );
 };

@@ -1,4 +1,4 @@
-import { StrictMode, useEffect } from "react";
+import { StrictMode, useEffect, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -8,6 +8,7 @@ import "./index.css";
 import App from "./App.tsx";
 import "@fontsource/geist-sans/400.css"; // Specific weight
 import "@fontsource/geist-sans/700.css"; // Bold
+import { PageLoader } from "./components/Loading/LoadingComponents";
 
 // Component to handle theme sync across tabs
 function ThemeSync() {
@@ -40,9 +41,11 @@ function ThemeSync() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={<PageLoader />} persistor={persistor}>
         <ThemeSync />
-    <App />
+        <Suspense fallback={<PageLoader />}>
+          <App />
+        </Suspense>
       </PersistGate>
     </Provider>
   </StrictMode>

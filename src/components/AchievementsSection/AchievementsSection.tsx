@@ -71,13 +71,7 @@ export const AchievementsSection = () => {
       viewport={{ once: true, amount: 0.2 }}
     >
       {/* Centered Heading */}
-      <motion.div
-        className="flex flex-col items-center justify-center mb-8 sm:mb-12"
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        viewport={{ once: true }}
-      >
+      <div className="flex flex-col items-center justify-center mb-8 sm:mb-12">
         <div className="flex items-baseline justify-center gap-4 mb-3 sm:mb-4">
           <Trophy className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
           <ScrollReveal
@@ -102,16 +96,10 @@ export const AchievementsSection = () => {
         >
           Showcasing career milestones, awards, and notable accomplishments
         </ScrollReveal>
-      </motion.div>
+      </div>
 
       {/* 3D Carousel */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-        viewport={{ once: true }}
-        className="w-full overflow-hidden"
-      >
+      <div className="w-full overflow-hidden">
         <ThreeDCarousel
           items={achievements}
           autoRotate={true}
@@ -119,7 +107,7 @@ export const AchievementsSection = () => {
           onItemClick={handleItemClick}
           pauseAutoRotate={!!selectedAchievement}
         />
-      </motion.div>
+      </div>
 
       {/* Detailed View Modal */}
 

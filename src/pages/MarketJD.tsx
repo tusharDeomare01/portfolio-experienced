@@ -1,5 +1,4 @@
-import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -26,6 +25,7 @@ import {
 } from "lucide-react";
 import ScrollReveal from "@/components/lightswind/scroll-reveal";
 import { Badge } from "@/components/lightswind/badge";
+import { BackgroundSkeleton } from "@/components/Loading/LoadingComponents";
 import {
   Card,
   CardContent,
@@ -34,9 +34,9 @@ import {
   CardTitle,
 } from "@/components/lightswind/card";
 
-// const RaysBackground = lazy(
-//   () => import("../components/lightswind/rays-background")
-// );
+const RaysBackground = lazy(
+  () => import("../components/lightswind/rays-background")
+);
 // const FallBeamBackground = lazy(
 //   () => import("../components/lightswind/fall-beam-background")
 // );
@@ -288,20 +288,6 @@ const MarketJD = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
 
   const colorMap: Record<string, { bg: string; text: string }> = {
     blue: { bg: "bg-blue-500/10", text: "text-blue-500" },
@@ -317,30 +303,25 @@ const MarketJD = () => {
   return (
     <div className="min-h-screen bg-background relative">
       {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
-      {/* <RaysBackground className="fixed z-0" /> */}
+      <Suspense fallback={<BackgroundSkeleton />}>
+        <RaysBackground className="fixed z-0" />
+      </Suspense>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12"
-      >
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button */}
-        <motion.button
+        <button
           onClick={() => navigate(-1)}
           className="mb-8 flex items-center gap-2 text-foreground hover:text-primary transition-colors group"
-          whileHover={{ x: -5 }}
-          whileTap={{ scale: 0.95 }}
         >
           <ArrowLeft
             size={20}
             className="group-hover:-translate-x-1 transition-transform"
           />
           <span>Back to TechShowcase</span>
-        </motion.button>
+        </button>
 
         {/* Hero Header */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-transparent flex items-center justify-center min-w-[120px] h-[120px]">
               <img
@@ -404,10 +385,10 @@ const MarketJD = () => {
             TypeScript, Prisma, and modern best practices for enterprise-scale
             applications.
           </ScrollReveal>
-        </motion.div>
+        </div>
 
         {/* Tech Stack */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Cpu className="w-8 h-8 text-primary" />
@@ -438,9 +419,8 @@ const MarketJD = () => {
             {Object.entries(techStack).map(([key, tech]) => {
               const Icon = tech.icon;
               return (
-                <motion.div
+                <div
                   key={key}
-                  whileHover={{ y: -5, scale: 1.02 }}
                   className="p-6 rounded-xl border bg-background/50 backdrop-blur-xl hover:bg-background/80 transition-all duration-300 hover:shadow-lg"
                 >
                   <div className="flex items-start gap-4">
@@ -456,14 +436,14 @@ const MarketJD = () => {
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* API Integrations */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Webhook className="w-8 h-8 text-primary" />
@@ -494,10 +474,8 @@ const MarketJD = () => {
             {integrations.map((integration, idx) => {
               const Icon = integration.icon;
               return (
-                <motion.div
+                <div
                   key={idx}
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02 }}
                 >
                   <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full">
                     <CardHeader>
@@ -539,14 +517,14 @@ const MarketJD = () => {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* Key Features */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Zap className="w-8 h-8 text-primary" />
@@ -577,10 +555,8 @@ const MarketJD = () => {
             {features.map((feature, idx) => {
               const Icon = feature.icon;
               return (
-                <motion.div
+                <div
                   key={idx}
-                  variants={itemVariants}
-                  whileHover={{ y: -5 }}
                   className="group"
                 >
                   <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
@@ -608,14 +584,14 @@ const MarketJD = () => {
                       </div>
                     </CardHeader>
                   </Card>
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* Automation & Cron Jobs */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <Card className="backdrop-blur-xl bg-background/80">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -629,11 +605,8 @@ const MarketJD = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {cronJobs.map((job, idx) => (
-                  <motion.div
+                  <div
                     key={idx}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.05 }}
                     className="p-4 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors"
                   >
                     <h4 className="font-semibold text-sm text-foreground mb-1">
@@ -642,15 +615,15 @@ const MarketJD = () => {
                     <p className="text-xs text-muted-foreground">
                       {job.description}
                     </p>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Additional Technologies */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <Card className="backdrop-blur-xl bg-background/80">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -696,10 +669,10 @@ const MarketJD = () => {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Project Summary */}
-        <motion.div variants={itemVariants} className="mb-12">
+        <div className="mb-12">
           <Card className="backdrop-blur-xl bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardHeader>
               <CardTitle>Project Summary</CardTitle>
@@ -741,8 +714,8 @@ const MarketJD = () => {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };

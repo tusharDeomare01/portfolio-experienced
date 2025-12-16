@@ -14,7 +14,14 @@ import {
 import { motion } from "framer-motion";
 import { useIsMobile } from "./components/hooks/use-mobile";
 import { TourProvider, useTourContext } from "./components/Tour/TourContext";
-import ParticlesBackground from "./components/lightswind/particles-background";
+import {
+  PageLoader,
+  SectionLoader,
+  ComponentLoader,
+  HeaderLoader,
+  BackgroundLoader,
+  AIAssistantLoader,
+} from "./components/Loading/LoadingComponents";
 
 // Lazy load section components
 const Header = lazy(() => import("./components/Header/Header"));
@@ -61,6 +68,10 @@ const Tour = lazy(() =>
 );
 const Dock = lazy(() => import("./components/lightswind/dock"));
 
+const ParticlesBackground = lazy(
+  () => import("./components/lightswind/particles-background")
+);
+
 const FallBeamBackground = lazy(
   () => import("./components/lightswind/fall-beam-background")
 );
@@ -68,16 +79,6 @@ const FallBeamBackground = lazy(
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
-
-// Loading component for lazy-loaded routes
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-      <p className="text-muted-foreground">Loading...</p>
-    </div>
-  </div>
-);
 
 function HomePage() {
   const [showDock, setShowDock] = useState(false);
@@ -173,7 +174,7 @@ function HomePage() {
   ];
   return (
     <div className="bg-background min-h-screen w-full">
-      <Suspense fallback={null}>
+      <Suspense fallback={<HeaderLoader />}>
         <Header />
       </Suspense>
 
@@ -183,7 +184,7 @@ function HomePage() {
       >
         <div className="z-[111]">
           {/* Sections with IDs for smooth scrolling navigation */}
-          <Suspense fallback={null}>
+          <Suspense fallback={<SectionLoader />}>
             <HeroSection />
             <AboutSection />
             <EducationSection />
@@ -210,7 +211,7 @@ function HomePage() {
               : "z-[999]"
           }`}
         >
-          <Suspense fallback={null}>
+          <Suspense fallback={<ComponentLoader />}>
             <Dock
               items={dockItems}
               position="bottom"
@@ -224,7 +225,7 @@ function HomePage() {
       )}
 
       {/* Tour Component */}
-      <Suspense fallback={null}>
+      <Suspense fallback={<ComponentLoader />}>
         <Tour
           isActive={tour.isTourActive}
           currentStep={tour.currentStep}
@@ -275,7 +276,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
         </Routes>
         {/* AI Assistant - Available on all routes */}
-        <Suspense fallback={null}>
+        <Suspense fallback={<AIAssistantLoader />}>
           <AIAssistant />
         </Suspense>
         {/* <SmokeyCursor
@@ -285,8 +286,12 @@ function App() {
         simulationResolution={256}
       /> */}
         {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
-        <ParticlesBackground />
-        <FallBeamBackground beamCount={5} />
+        <Suspense fallback={<BackgroundLoader />}>
+          <ParticlesBackground />
+        </Suspense>
+        <Suspense fallback={<BackgroundLoader />}>
+          <FallBeamBackground beamCount={5} />
+        </Suspense>
       </BrowserRouter>
     </TourProvider>
   );

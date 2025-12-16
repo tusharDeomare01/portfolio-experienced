@@ -1,16 +1,11 @@
-import { motion } from "framer-motion";
 import { User } from "lucide-react";
 import ScrollReveal from "../lightswind/scroll-reveal";
 
 export const AboutSection = () => {
   return (
-    <motion.div
+    <div
       id="about"
       className="text-foreground max-w-7xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 space-y-4 sm:space-y-6 min-h-screen flex flex-col justify-center"
-      initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 1.8, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.2 }}
     >
       <div className="flex items-baseline gap-4 mb-2">
         <User className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
@@ -26,13 +21,7 @@ export const AboutSection = () => {
         </ScrollReveal>
       </div>
 
-      <motion.div
-        className="space-y-3 sm:space-y-4 text-muted-foreground text-xs sm:text-sm max-w-3xl leading-relaxed"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-        viewport={{ once: true }}
-      >
+      <div className="space-y-3 sm:space-y-4 text-muted-foreground text-xs sm:text-sm max-w-3xl leading-relaxed">
         <ScrollReveal
           size="sm"
           align="left"
@@ -70,7 +59,7 @@ export const AboutSection = () => {
           like to work together or just chat about technology, feel free to
           reach out.
         </ScrollReveal>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };

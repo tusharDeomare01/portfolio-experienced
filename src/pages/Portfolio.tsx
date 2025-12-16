@@ -1,5 +1,4 @@
-import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -11,6 +10,7 @@ import {
 } from "@/components/lightswind/card";
 import { Badge } from "@/components/lightswind/badge";
 import { ScrollReveal } from "@/components/lightswind/scroll-reveal";
+import { BackgroundSkeleton } from "@/components/Loading/LoadingComponents";
 import {
   ArrowLeft,
   Code,
@@ -31,9 +31,9 @@ import {
   MousePointerClick,
 } from "lucide-react";
 
-// const RaysBackground = lazy(
-//   () => import("../components/lightswind/rays-background")
-// );
+const RaysBackground = lazy(
+  () => import("../components/lightswind/rays-background")
+);
 // const FallBeamBackground = lazy(
 //   () => import("../components/lightswind/fall-beam-background")
 // );
@@ -192,20 +192,6 @@ const Portfolio = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
 
   const colorMap: Record<string, { bg: string; text: string }> = {
     blue: { bg: "bg-blue-500/10", text: "text-blue-500" },
@@ -225,30 +211,25 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background relative">
       {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
-      {/* <RaysBackground className="fixed z-0" /> */}
+      <Suspense fallback={<BackgroundSkeleton />}>
+        <RaysBackground className="fixed z-0" />
+      </Suspense>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12"
-      >
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button */}
-        <motion.button
+        <button
           onClick={() => navigate(-1)}
           className="mb-8 flex items-center gap-2 text-foreground hover:text-primary transition-colors group"
-          whileHover={{ x: -5 }}
-          whileTap={{ scale: 0.95 }}
         >
           <ArrowLeft
             size={20}
             className="group-hover:-translate-x-1 transition-transform"
           />
           <span>Back to TechShowcase</span>
-        </motion.button>
+        </button>
 
         {/* Hero Header */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-transparent flex items-center justify-center min-w-[120px] h-[120px]">
               <img
@@ -312,10 +293,10 @@ const Portfolio = () => {
             responsive design. Built with React 19, TypeScript, Framer Motion,
             and cutting-edge UI libraries for an exceptional user experience.
           </ScrollReveal>
-        </motion.div>
+        </div>
 
         {/* Tech Stack */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Cpu className="w-8 h-8 text-primary" />
@@ -346,9 +327,8 @@ const Portfolio = () => {
             {Object.entries(techStack).map(([key, tech]) => {
               const Icon = tech.icon;
               return (
-                <motion.div
+                <div
                   key={key}
-                  whileHover={{ y: -5, scale: 1.02 }}
                   className="p-6 rounded-xl border bg-background/50 backdrop-blur-xl hover:bg-background/80 transition-all duration-300 hover:shadow-lg"
                 >
                   <div className="flex items-start gap-4">
@@ -364,14 +344,14 @@ const Portfolio = () => {
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* Key Features */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Zap className="w-8 h-8 text-primary" />
@@ -402,10 +382,8 @@ const Portfolio = () => {
             {features.map((feature, idx) => {
               const Icon = feature.icon;
               return (
-                <motion.div
+                <div
                   key={idx}
-                  variants={itemVariants}
-                  whileHover={{ y: -5 }}
                   className="group"
                 >
                   <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
@@ -433,14 +411,14 @@ const Portfolio = () => {
                       </div>
                     </CardHeader>
                   </Card>
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* UI Components */}
-        <motion.div variants={itemVariants} className="mb-16">
+        <div className="mb-16">
           <Card className="backdrop-blur-xl bg-background/80">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -465,10 +443,10 @@ const Portfolio = () => {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Project Summary */}
-        <motion.div variants={itemVariants} className="mb-12">
+        <div className="mb-12">
           <Card className="backdrop-blur-xl bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardHeader>
               <CardTitle>Project Summary</CardTitle>
@@ -508,8 +486,8 @@ const Portfolio = () => {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };

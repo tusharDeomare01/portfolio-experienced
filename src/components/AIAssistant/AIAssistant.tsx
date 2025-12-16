@@ -297,14 +297,9 @@ export default function AIAssistant() {
 
             {/* Unread badge */}
             {unreadCount > 0 && getNotificationPreferences().badgeEnabled && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className="absolute -top-1 -right-1 z-20 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-lg border-2 border-background"
-              >
+              <div className="absolute -top-1 -right-1 z-20 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-lg border-2 border-background">
                 {unreadCount > 99 ? "99+" : unreadCount}
-              </motion.div>
+              </div>
             )}
 
             {/* Subtle pulsing ring effect */}
@@ -324,14 +319,10 @@ export default function AIAssistant() {
             />
 
             {/* Tooltip text */}
-            <motion.div
-              className="absolute -top-12 right-0 bg-foreground/90 text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50"
-              initial={{ opacity: 0, y: 5 }}
-              whileHover={{ opacity: 1, y: 0 }}
-            >
+            <div className="absolute -top-12 right-0 bg-foreground/90 text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
               AI Assistant
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground/90" />
-            </motion.div>
+            </div>
           </motion.button>
         </motion.div>
       )}

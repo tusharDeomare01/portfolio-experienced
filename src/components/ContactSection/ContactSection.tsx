@@ -1,5 +1,4 @@
 import { useState, useEffect, type FormEvent } from "react";
-import { motion } from "framer-motion";
 import {
   Card,
   CardHeader,
@@ -154,21 +153,11 @@ export const ContactSection = () => {
   };
 
   return (
-    <motion.section
+    <section
       id="contact"
       className="text-foreground max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 min-h-screen flex flex-col justify-center"
-      initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.2 }}
     >
-      <motion.div
-        className="text-center mb-6 sm:mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        viewport={{ once: true }}
-      >
+      <div className="text-center mb-6 sm:mb-8">
         <div className="mb-2 sm:mb-3 flex items-baseline justify-center gap-2 sm:gap-4">
           <Mail className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
           <ScrollReveal
@@ -194,7 +183,7 @@ export const ContactSection = () => {
           Have a project in mind or want to discuss opportunities? I'd love to
           hear from you!
         </ScrollReveal>
-      </motion.div>
+      </div>
 
       <Card className="backdrop-blur-xl bg-background/80 border-2 w-full">
         <CardHeader className="p-4 sm:p-6">
@@ -303,9 +292,7 @@ export const ContactSection = () => {
             </div>
 
             {submitStatus.type && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
+              <div
                 className={`p-3 sm:p-4 rounded-lg flex items-start gap-2 sm:gap-3 ${
                   submitStatus.type === "success"
                     ? "bg-green-500/10 border border-green-500/20"
@@ -326,7 +313,7 @@ export const ContactSection = () => {
                 >
                   {submitStatus.message}
                 </p>
-              </motion.div>
+              </div>
             )}
 
             <Button
@@ -349,6 +336,6 @@ export const ContactSection = () => {
           </form>
         </CardContent>
       </Card>
-    </motion.section>
+    </section>
   );
 };

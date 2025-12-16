@@ -4,7 +4,7 @@ import {
   CardTitle,
   CardContent,
 } from "../lightswind/card.tsx";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { CountUp } from "../lightswind/count-up.tsx";
 import { Progress } from "../lightswind/progress.tsx";
@@ -90,26 +90,24 @@ export default function ProfessionalProfile() {
               <CardTitle>Soft Skills</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
-              <AnimatePresence>
-                {[
-                  "Leadership",
-                  "Problem Solving",
-                  "Agile Methodologies",
-                  "Mentorship",
-                  "Strategic Thinking",
-                  "Cross-Team Collaboration",
-                ].map((skill, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                    viewport={{ once: true }}
-                  >
-                    <Badge className="bg-pink-500">{skill}</Badge>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+              {[
+                "Leadership",
+                "Problem Solving",
+                "Agile Methodologies",
+                "Mentorship",
+                "Strategic Thinking",
+                "Cross-Team Collaboration",
+              ].map((skill, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                  viewport={{ once: true }}
+                >
+                  <Badge className="bg-pink-500">{skill}</Badge>
+                </motion.div>
+              ))}
             </CardContent>
           </Card>
         </div>

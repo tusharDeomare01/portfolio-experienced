@@ -1,10 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useDragControls,
-} from "framer-motion";
+import { motion, useMotionValue, useDragControls } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   openChat,
@@ -225,24 +220,24 @@ export default function AIAssistant() {
       )}
 
       {/* Floating Button */}
-      <AnimatePresence>
-        {!isOpen && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="
+
+      {!isOpen && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          className="
         fixed z-[999]
         bottom-20 right-3     /* Mobile: 80px from bottom, 12px from right */
         sm:bottom-22 sm:right-4 /* Small screens: 88px from bottom, 16px from right */
         md:bottom-7 md:right-7  /* Medium and up: 28px from bottom, 28px from right */
       "
-          >
-            <motion.button
-              onClick={handleToggle}
-              data-ai-assistant
-              className={`
+        >
+          <motion.button
+            onClick={handleToggle}
+            data-ai-assistant
+            className={`
                 relative
                 h-14 w-14
                 sm:h-16 sm:w-16
@@ -260,132 +255,130 @@ export default function AIAssistant() {
                     : "bg-pink-500 border-pink-500"
                 }
               `}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {/* Subtle glow effect */}
+            <motion.div
+              className={`absolute inset-0 rounded-full blur-md ${
+                theme === "dark" ? "bg-white/10" : "bg-pink-400/20"
+              }`}
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.5, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+
+            {/* Sparkles icon with animation */}
+            <motion.div
+              className="relative z-10"
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             >
-              {/* Subtle glow effect */}
-              <motion.div
-                className={`absolute inset-0 rounded-full blur-md ${
-                  theme === "dark" ? "bg-white/10" : "bg-pink-400/20"
+              <Sparkles
+                className={`h-6 w-6 sm:h-7 sm:w-7 group-hover:opacity-90 transition-colors drop-shadow-lg ${
+                  theme === "dark" ? "text-white" : "text-white"
                 }`}
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.3, 0.5, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+                strokeWidth={2}
               />
+            </motion.div>
 
-              {/* Sparkles icon with animation */}
+            {/* Unread badge */}
+            {unreadCount > 0 && getNotificationPreferences().badgeEnabled && (
               <motion.div
-                className="relative z-10"
-                animate={{
-                  scale: [1, 1.1, 1],
-                  rotate: [0, 5, -5, 0],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                className="absolute -top-1 -right-1 z-20 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-lg border-2 border-background"
               >
-                <Sparkles
-                  className={`h-6 w-6 sm:h-7 sm:w-7 group-hover:opacity-90 transition-colors drop-shadow-lg ${
-                    theme === "dark" ? "text-white" : "text-white"
-                  }`}
-                  strokeWidth={2}
-                />
+                {unreadCount > 99 ? "99+" : unreadCount}
               </motion.div>
+            )}
 
-              {/* Unread badge */}
-              {unreadCount > 0 && getNotificationPreferences().badgeEnabled && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  className="absolute -top-1 -right-1 z-20 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-lg border-2 border-background"
-                >
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </motion.div>
-              )}
+            {/* Subtle pulsing ring effect */}
+            <motion.div
+              className={`absolute inset-0 rounded-full border-2 ${
+                theme === "dark" ? "border-white/30" : "border-pink-400/40"
+              }`}
+              animate={{
+                scale: [1, 1.3, 1],
+                opacity: [0.4, 0, 0.4],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeOut",
+              }}
+            />
 
-              {/* Subtle pulsing ring effect */}
-              <motion.div
-                className={`absolute inset-0 rounded-full border-2 ${
-                  theme === "dark" ? "border-white/30" : "border-pink-400/40"
-                }`}
-                animate={{
-                  scale: [1, 1.3, 1],
-                  opacity: [0.4, 0, 0.4],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeOut",
-                }}
-              />
-
-              {/* Tooltip text */}
-              <motion.div
-                className="absolute -top-12 right-0 bg-foreground/90 text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50"
-                initial={{ opacity: 0, y: 5 }}
-                whileHover={{ opacity: 1, y: 0 }}
-              >
-                AI Assistant
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground/90" />
-              </motion.div>
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {/* Tooltip text */}
+            <motion.div
+              className="absolute -top-12 right-0 bg-foreground/90 text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50"
+              initial={{ opacity: 0, y: 5 }}
+              whileHover={{ opacity: 1, y: 0 }}
+            >
+              AI Assistant
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground/90" />
+            </motion.div>
+          </motion.button>
+        </motion.div>
+      )}
 
       {/* Chat Widget */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            ref={widgetRef}
-            drag={dragEnabled}
-            dragMomentum={false}
-            dragConstraints={getDragConstraints()}
-            dragElastic={0.05}
+
+      {isOpen && (
+        <motion.div
+          ref={widgetRef}
+          drag={dragEnabled}
+          dragMomentum={false}
+          dragConstraints={getDragConstraints()}
+          dragElastic={0.05}
+          dragControls={dragControls}
+          dragListener={false}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ duration: 0.2 }}
+          style={{
+            cursor: dragEnabled
+              ? isDragging
+                ? "grabbing"
+                : "default"
+              : "default",
+            x: dragEnabled ? x : 0,
+            y: dragEnabled ? y : 0,
+            touchAction: dragEnabled ? "none" : "auto",
+          }}
+          className={`${
+            isFullscreen
+              ? "fixed inset-2 sm:inset-4 z-[19999]"
+              : "fixed bottom-20 right-2 sm:bottom-28 sm:right-4 w-[calc(100vw-1rem)] sm:w-96 h-[calc(100vh-6rem)] sm:h-[600px] max-w-sm sm:max-w-none z-[19999] flex flex-col"
+          } flex flex-col`}
+        >
+          <ChatInterface
+            isFullscreen={isFullscreen}
+            dragEnabled={dragEnabled}
             dragControls={dragControls}
-            dragListener={false}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.2 }}
-            style={{
-              cursor: dragEnabled
-                ? isDragging
-                  ? "grabbing"
-                  : "default"
-                : "default",
-              x: dragEnabled ? x : 0,
-              y: dragEnabled ? y : 0,
-              touchAction: dragEnabled ? "none" : "auto",
-            }}
-            className={`${
-              isFullscreen
-                ? "fixed inset-2 sm:inset-4 z-[19999]"
-                : "fixed bottom-20 right-2 sm:bottom-28 sm:right-4 w-[calc(100vw-1rem)] sm:w-96 h-[calc(100vh-6rem)] sm:h-[600px] max-w-sm sm:max-w-none z-[19999] flex flex-col"
-            } flex flex-col`}
-          >
-            <ChatInterface
-              isFullscreen={isFullscreen}
-              dragEnabled={dragEnabled}
-              dragControls={dragControls}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          />
+        </motion.div>
+      )}
     </>
   );
 }

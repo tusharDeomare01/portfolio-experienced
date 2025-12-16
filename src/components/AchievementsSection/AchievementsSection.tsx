@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import ThreeDCarousel from "../lightswind/ThreeDCarousel";
 import type { ThreeDCarouselItem } from "../lightswind/ThreeDCarousel";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
@@ -122,98 +122,97 @@ export const AchievementsSection = () => {
       </motion.div>
 
       {/* Detailed View Modal */}
-      <AnimatePresence>
-        {selectedAchievement && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[100] bg-black/60 dark:bg-black/80 backdrop-blur-sm"
-              onClick={closeModal}
-            />
 
-            {/* Modal Content */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                duration: 0.3,
-              }}
-              className="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-6 md:p-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative w-full max-w-5xl max-h-[92vh] bg-background dark:bg-background rounded-xl shadow-2xl dark:shadow-black/50 overflow-hidden flex flex-col border border-border dark:border-border/50">
-                {/* Close Button */}
-                <button
-                  onClick={closeModal}
-                  className="absolute top-4 right-4 z-10 p-1.5 rounded-md bg-background/80 dark:bg-background/60 hover:bg-muted dark:hover:bg-muted/80 transition-colors duration-200 cursor-pointer border border-border/50 dark:border-border/30"
-                  aria-label="Close modal"
-                >
-                  <X className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-foreground transition-colors" />
-                </button>
+      {selectedAchievement && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[100] bg-black/60 dark:bg-black/80 backdrop-blur-sm"
+            onClick={closeModal}
+          />
 
-                {/* Image Section */}
-                <div className="relative w-full bg-gradient-to-b from-muted/40 via-muted/30 to-muted/40 dark:from-muted/30 dark:via-muted/20 dark:to-muted/30">
-                  <div className="w-full h-[45vh] sm:h-[55vh] md:h-[60vh] flex items-center justify-center p-8 sm:p-12 md:p-16">
-                    <motion.div
-                      className="relative w-full h-full flex items-center justify-center"
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                    >
-                      <img
-                        src={selectedAchievement.image}
-                        alt={selectedAchievement.title || "Achievement"}
-                        className="max-w-full max-h-full w-auto h-auto object-contain brightness-105 contrast-105 dark:brightness-100 dark:contrast-100 drop-shadow-2xl dark:drop-shadow-lg"
-                        style={{
-                          filter:
-                            "brightness(1.05) contrast(1.05) saturate(1.02)",
-                        }}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src =
-                            "https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&w=800";
-                        }}
-                      />
-                    </motion.div>
-                  </div>
-                </div>
+          {/* Modal Content */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+              duration: 0.3,
+            }}
+            className="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-6 md:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative w-full max-w-5xl max-h-[92vh] bg-background dark:bg-background rounded-xl shadow-2xl dark:shadow-black/50 overflow-hidden flex flex-col border border-border dark:border-border/50">
+              {/* Close Button */}
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 z-10 p-1.5 rounded-md bg-background/80 dark:bg-background/60 hover:bg-muted dark:hover:bg-muted/80 transition-colors duration-200 cursor-pointer border border-border/50 dark:border-border/30"
+                aria-label="Close modal"
+              >
+                <X className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-foreground transition-colors" />
+              </button>
 
-                {/* Content Section */}
-                <div className="flex-1 overflow-y-auto px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-background">
+              {/* Image Section */}
+              <div className="relative w-full bg-gradient-to-b from-muted/40 via-muted/30 to-muted/40 dark:from-muted/30 dark:via-muted/20 dark:to-muted/30">
+                <div className="w-full h-[45vh] sm:h-[55vh] md:h-[60vh] flex items-center justify-center p-8 sm:p-12 md:p-16">
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15, duration: 0.3 }}
-                    className="space-y-3 sm:space-y-4 max-w-3xl mx-auto"
+                    className="relative w-full h-full flex items-center justify-center"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   >
-                    {/* Title */}
-                    {selectedAchievement.title && (
-                      <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground leading-tight tracking-tight">
-                        {selectedAchievement.title}
-                      </h2>
-                    )}
-
-                    {/* Description */}
-                    {selectedAchievement.description && (
-                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                        {selectedAchievement.description}
-                      </p>
-                    )}
+                    <img
+                      src={selectedAchievement.image}
+                      alt={selectedAchievement.title || "Achievement"}
+                      className="max-w-full max-h-full w-auto h-auto object-contain brightness-105 contrast-105 dark:brightness-100 dark:contrast-100 drop-shadow-2xl dark:drop-shadow-lg"
+                      style={{
+                        filter:
+                          "brightness(1.05) contrast(1.05) saturate(1.02)",
+                      }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src =
+                          "https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&w=800";
+                      }}
+                    />
                   </motion.div>
                 </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+
+              {/* Content Section */}
+              <div className="flex-1 overflow-y-auto px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-background">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15, duration: 0.3 }}
+                  className="space-y-3 sm:space-y-4 max-w-3xl mx-auto"
+                >
+                  {/* Title */}
+                  {selectedAchievement.title && (
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground leading-tight tracking-tight">
+                      {selectedAchievement.title}
+                    </h2>
+                  )}
+
+                  {/* Description */}
+                  {selectedAchievement.description && (
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                      {selectedAchievement.description}
+                    </p>
+                  )}
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
     </motion.section>
   );
 };

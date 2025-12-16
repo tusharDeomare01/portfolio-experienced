@@ -4,7 +4,6 @@ import {
   CardTitle,
   CardContent,
 } from "../lightswind/card.tsx";
-import { motion } from "framer-motion";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { CountUp } from "../lightswind/count-up.tsx";
 import { Progress } from "../lightswind/progress.tsx";
@@ -12,27 +11,12 @@ import { Badge } from "../lightswind/badge.tsx";
 
 export default function ProfessionalProfile() {
   return (
-    <motion.section
+    <section
       id="skills"
       className="space-y-12"
-      initial={{ opacity: 0 }}
-      whileInView={{
-        opacity: 1,
-        transition: {
-          staggerChildren: 0.2,
-          delayChildren: 0.3,
-        },
-      }}
-      viewport={{ once: true, amount: 0.2 }}
     >
       {/* Skills Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        viewport={{ once: true }}
-        className="your-child-class"
-      >
+      <div className="your-child-class">
         <ScrollReveal
           size="xl"
           align="left"
@@ -57,13 +41,7 @@ export default function ProfessionalProfile() {
                 { name: "Database (MongoDB / PostgreSQL)", level: 88 },
                 { name: "Cloud (AWS / Azure)", level: 85 },
               ].map((skill, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  viewport={{ once: true, amount: 0.8 }}
-                >
+                <div key={i}>
                   <div
                     className="flex items-center justify-between text-sm 
                   font-medium mb-1"
@@ -80,7 +58,7 @@ export default function ProfessionalProfile() {
                     />
                   </div>
                   <Progress value={skill.level} />
-                </motion.div>
+                </div>
               ))}
             </CardContent>
           </Card>
@@ -98,22 +76,16 @@ export default function ProfessionalProfile() {
                 "Strategic Thinking",
                 "Cross-Team Collaboration",
               ].map((skill, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                  viewport={{ once: true }}
-                >
+                <div key={i}>
                   <Badge className="bg-pink-500">{skill}</Badge>
-                </motion.div>
+                </div>
               ))}
             </CardContent>
           </Card>
         </div>
-      </motion.div>
+      </div>
 
       {/* Rest of your component remains unchanged */}
-    </motion.section>
+    </section>
   );
 }

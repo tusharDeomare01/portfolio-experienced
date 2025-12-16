@@ -1,19 +1,14 @@
 import { Card, CardHeader, CardTitle } from "../lightswind/card";
 import ProfessionalProfile from "./SkillCategory";
-import { motion } from "framer-motion";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { portfolioData } from "@/lib/portfolioData";
 import { MapPin, GraduationCap } from "lucide-react";
 
 export const EducationSection = () => {
   return (
-    <motion.section
+    <section
       id="education"
       className="text-foreground max-w-7xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 space-y-6 sm:space-y-10 min-h-screen flex flex-col justify-center"
-      initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.2 }}
     >
       {/* Education */}
       <div>
@@ -31,13 +26,7 @@ export const EducationSection = () => {
           </ScrollReveal>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-1 gap-4 sm:gap-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 sm:gap-8">
           {portfolioData.education.map((edu, index) => (
             <Card key={index}>
               <CardHeader>
@@ -82,10 +71,10 @@ export const EducationSection = () => {
             </CardContent> */}
             </Card>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       <ProfessionalProfile />
-    </motion.section>
+    </section>
   );
 };

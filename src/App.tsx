@@ -264,8 +264,6 @@ function HomePage() {
 }
 
 function App() {
-  const isMobile = useIsMobile();
-
   return (
     <TourProvider>
       <BrowserRouter>
@@ -312,16 +310,12 @@ function App() {
         simulationResolution={256}
       /> */}
         {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
-        {!isMobile && (
-          <>
-            <Suspense fallback={<BackgroundLoader />}>
-              <ParticlesBackground />
-            </Suspense>
-            <Suspense fallback={<BackgroundLoader />}>
-              <FallBeamBackground beamCount={5} />
-            </Suspense>
-          </>
-        )}
+        <Suspense fallback={<BackgroundLoader />}>
+          <ParticlesBackground />
+        </Suspense>
+        <Suspense fallback={<BackgroundLoader />}>
+          <FallBeamBackground beamCount={5} />
+        </Suspense>
       </BrowserRouter>
     </TourProvider>
   );

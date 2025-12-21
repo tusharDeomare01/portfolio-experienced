@@ -69,13 +69,6 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     minify: 'esbuild', // Fast minification with parallel processing
     sourcemap: false, // Disable sourcemaps in production for smaller bundle
-    // Enable parallel processing for terser/esbuild
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
-      },
-    },
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
@@ -123,5 +116,6 @@ export default defineConfig(({ mode }) => ({
     logOverride: { 'this-is-undefined-in-esm': 'silent' },
     legalComments: 'none',
     treeShaking: true,
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
   },
 }));

@@ -21,8 +21,8 @@ export default function ProfessionalProfile() {
           size="xl"
           align="left"
           variant="default"
-          enableBlur={true}
-          blurStrength={5}
+          enableBlur={false}
+          blurStrength={0}
           baseRotation={0}
           containerClassName="mb-6"
         >

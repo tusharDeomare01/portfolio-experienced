@@ -262,9 +262,9 @@ const Portfolio = () => {
                 size="2xl"
                 align="left"
                 variant="default"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="mb-3"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 TechShowcase
@@ -273,9 +273,9 @@ const Portfolio = () => {
                 size="md"
                 align="left"
                 variant="muted"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="mb-2"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 Modern Interactive Portfolio • React + TypeScript
@@ -297,9 +297,9 @@ const Portfolio = () => {
             size="md"
             align="left"
             variant="muted"
-            enableBlur={true}
+            enableBlur={false}
             containerClassName="max-w-4xl"
-            blurStrength={5}
+            blurStrength={0}
             baseRotation={0}
           >
             TechShowcase is a modern, interactive portfolio website showcasing
@@ -319,9 +319,9 @@ const Portfolio = () => {
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 Technology Stack
@@ -331,8 +331,8 @@ const Portfolio = () => {
               size="sm"
               align="left"
               variant="muted"
-              enableBlur={true}
-              blurStrength={5}
+              enableBlur={false}
+              blurStrength={0}
               baseRotation={0}
             >
               Modern technologies powering this portfolio
@@ -374,9 +374,9 @@ const Portfolio = () => {
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 Key Features & Capabilities
@@ -386,8 +386,8 @@ const Portfolio = () => {
               size="sm"
               align="left"
               variant="muted"
-              enableBlur={true}
-              blurStrength={5}
+              enableBlur={false}
+              blurStrength={0}
               baseRotation={0}
             >
               Major features and development achievements

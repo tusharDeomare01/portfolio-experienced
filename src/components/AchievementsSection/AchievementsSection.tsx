@@ -78,7 +78,7 @@ export const AchievementsSection = () => {
             size="xl"
             align="center"
             variant="default"
-            enableBlur={true}
+            enableBlur={false}
             staggerDelay={0.05}
           >
             Achievements
@@ -88,7 +88,7 @@ export const AchievementsSection = () => {
           size="sm"
           align="center"
           variant="muted"
-          enableBlur={true}
+          enableBlur={false}
           staggerDelay={0.03}
           containerClassName="max-w-2xl px-4"
         >

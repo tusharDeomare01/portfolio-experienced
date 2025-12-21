@@ -354,9 +354,9 @@ const MarketJD = () => {
                 size="2xl"
                 align="left"
                 variant="default"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="mb-3"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 MarketJD
@@ -365,9 +365,9 @@ const MarketJD = () => {
                 size="md"
                 align="left"
                 variant="muted"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="mb-2"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 SEO Admin Portal • Enterprise Platform
@@ -389,9 +389,9 @@ const MarketJD = () => {
             size="md"
             align="left"
             variant="muted"
-            enableBlur={true}
+            enableBlur={false}
             containerClassName="max-w-4xl"
-            blurStrength={5}
+            blurStrength={0}
             baseRotation={0}
           >
             A comprehensive SEO insights and analytics platform with 20+
@@ -411,9 +411,9 @@ const MarketJD = () => {
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 Technology Stack
@@ -423,8 +423,8 @@ const MarketJD = () => {
               size="sm"
               align="left"
               variant="muted"
-              enableBlur={true}
-              blurStrength={5}
+              enableBlur={false}
+              blurStrength={0}
               baseRotation={0}
             >
               Modern, scalable technologies powering the platform
@@ -466,9 +466,9 @@ const MarketJD = () => {
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 Third-Party Integrations
@@ -478,8 +478,8 @@ const MarketJD = () => {
               size="sm"
               align="left"
               variant="muted"
-              enableBlur={true}
-              blurStrength={5}
+              enableBlur={false}
+              blurStrength={0}
               baseRotation={0}
             >
               20+ seamless API integrations for comprehensive data insights
@@ -545,9 +545,9 @@ const MarketJD = () => {
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={true}
+                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={5}
+                blurStrength={0}
                 baseRotation={0}
               >
                 Key Features & Capabilities
@@ -557,8 +557,8 @@ const MarketJD = () => {
               size="sm"
               align="left"
               variant="muted"
-              enableBlur={true}
-              blurStrength={5}
+              enableBlur={false}
+              blurStrength={0}
               baseRotation={0}
             >
               Major development achievements and platform capabilities

@@ -78,8 +78,8 @@ export const ProjectsSection = () => {
               size="2xl"
               align="center"
               variant="default"
-              enableBlur={true}
-              blurStrength={5}
+              enableBlur={false}
+              blurStrength={0}
               baseRotation={0}
             >
               Projects
@@ -89,8 +89,8 @@ export const ProjectsSection = () => {
             size="sm"
             align="center"
             variant="muted"
-            enableBlur={true}
-            blurStrength={5}
+            enableBlur={false}
+            blurStrength={0}
             baseRotation={0}
           >
             Explore my latest work...

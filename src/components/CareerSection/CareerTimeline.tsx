@@ -41,8 +41,8 @@ export const CareerTimeline = () => {
             size="xl"
             align="center"
             variant="default"
-            enableBlur={true}
-            blurStrength={5}
+            enableBlur={false}
+            blurStrength={0}
             baseRotation={0}
           >
             Career Journey
@@ -52,8 +52,8 @@ export const CareerTimeline = () => {
           size="sm"
           align="center"
           variant="muted"
-          enableBlur={true}
-          blurStrength={5}
+          enableBlur={false}
+          blurStrength={0}
           baseRotation={0}
           containerClassName="max-w-2xl mx-auto"
         >

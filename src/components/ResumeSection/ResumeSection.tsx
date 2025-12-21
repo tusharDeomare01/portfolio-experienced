@@ -47,8 +47,8 @@ export function ResumeSection() {
               size="2xl"
               align="center"
               variant="default"
-              enableBlur={true}
-              blurStrength={5}
+              enableBlur={false}
+              blurStrength={0}
               baseRotation={0}
             >
               Resume
@@ -58,8 +58,8 @@ export function ResumeSection() {
             size="sm"
             align="center"
             variant="muted"
-            enableBlur={true}
-            blurStrength={5}
+            enableBlur={false}
+            blurStrength={0}
             baseRotation={0}
           >
             Download my professional resume or view key highlights of my career

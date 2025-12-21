@@ -8,6 +8,8 @@ export const HeroSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [leftSectionVisible, setLeftSectionVisible] = useState(false);
   const [rightSectionVisible, setRightSectionVisible] = useState(false);
+  const [hasHoveredEmail, setHasHoveredEmail] = useState(false);
+  const [isEmailHovered, setIsEmailHovered] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const leftSectionRef = useRef<HTMLDivElement>(null);
   const rightSectionRef = useRef<HTMLDivElement>(null);
@@ -417,6 +419,11 @@ export const HeroSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="hero-email-link flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-pink-500 transition-colors duration-300 group relative"
+              onMouseEnter={() => {
+                setHasHoveredEmail(true);
+                setIsEmailHovered(true);
+              }}
+              onMouseLeave={() => setIsEmailHovered(false)}
             >
               <Mail className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
               <span className="font-medium relative">
@@ -424,7 +431,13 @@ export const HeroSection = () => {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-pink-500 transition-all duration-300 group-hover:w-full"></span>
               </span>
               {/* Tooltip */}
-              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 whitespace-nowrap z-10 shadow-lg">
+              <span 
+                className={`absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-md pointer-events-none transition-opacity duration-300 whitespace-nowrap z-10 shadow-lg ${
+                  hasHoveredEmail 
+                    ? (isEmailHovered ? 'opacity-100' : 'opacity-0')
+                    : 'opacity-100'
+                }`}
+              >
                 Click to compose email message
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></span>
               </span>

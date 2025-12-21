@@ -109,7 +109,7 @@ function HomePage() {
       // Show dock if scrolling down OR if tour is active and on dock step
       const shouldShowDock =
         (currentScrollY > lastScrollY && currentScrollY > 100) ||
-        (tour.isTourActive && tour.currentStep === 8); // Step 8 is the dock step
+        (tour.isTourActive && tour.currentStep === 9); // Step 9 is the dock step
 
       if (shouldShowDock) {
         setShowDock(true);
@@ -126,7 +126,7 @@ function HomePage() {
     window.addEventListener("scroll", handleScroll);
 
     // Show dock if tour is on dock step
-    if (tour.isTourActive && tour.currentStep === 8) {
+    if (tour.isTourActive && tour.currentStep === 9) {
       setShowDock(true);
     }
 
@@ -229,7 +229,7 @@ function HomePage() {
               ? "translate-y-0 opacity-100 scale-100"
               : "translate-y-[100px] opacity-0 scale-95"
           } ${
-            tour.isTourActive && tour.currentStep === 8
+            tour.isTourActive && tour.currentStep === 9
               ? "z-[10001]"
               : "z-[999]"
           }`}

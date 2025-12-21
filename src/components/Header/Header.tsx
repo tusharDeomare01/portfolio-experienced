@@ -166,6 +166,18 @@ export default function Header() {
     dispatch(toggleTheme());
   }, [dispatch]);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
   const handleMobileMenuOpen = useCallback(() => {
     setIsMobileMenuOpen(true);
   }, []);
@@ -297,31 +309,43 @@ export default function Header() {
           </div>
 
           {/* Mobile Sidebar */}
-
           {isMobileMenuOpen && (
-            <div className="fixed inset-0 z-[9999] bg-background dark:bg-background-dark md:hidden flex flex-col items-center justify-center animate-menu-open">
+            <div 
+              className="fixed inset-0 z-[9999] bg-background/95 dark:bg-background-dark/95 backdrop-blur-md md:hidden flex flex-col items-center justify-center animate-menu-open"
+              onClick={handleMobileMenuClose}
+            >
+              {/* Backdrop overlay for better visual separation */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background/80 dark:via-background-dark/50 dark:to-background-dark/80" />
+              
               {/* Close Button inside the sidebar */}
               <button
                 onClick={handleMobileMenuClose}
-                className="absolute top-8 right-8 text-gray-800 dark:text-white animate-scale-fade-delayed"
+                className="absolute top-8 right-8 z-10 text-gray-800 dark:text-white animate-scale-fade-delayed p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110 active:scale-90"
                 aria-label="Close menu"
               >
                 <X size={32} />
               </button>
 
-              <ul className="flex flex-col items-center justify-center h-full space-y-8 animate-stagger-fade-in">
-                {navItems.map((item) => (
-                  <li key={item.name} className="animate-item-fade-in">
-                    <a
-                      onClick={() => handleScrollTo(item.href)}
-                      className="text-4xl font-bold text-gray-800 dark:text-white cursor-pointer"
-                    >
-                      {item.name}
-                    </a>
-                  </li>
-                ))}
+              {/* Menu Content Container */}
+              <div 
+                className="relative z-10 w-full flex flex-col items-center justify-center animate-menu-content"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ul className="flex flex-col items-center justify-center space-y-6 animate-stagger-fade-in">
+                  {navItems.map((item) => (
+                    <li key={item.name} className="mobile-menu-item">
+                      <a
+                        onClick={() => handleScrollTo(item.href)}
+                        className="text-4xl font-bold text-gray-800 dark:text-white cursor-pointer px-4 py-2 rounded-lg transition-all duration-300"
+                      >
+                        {item.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                
                 {/* Action Buttons in Mobile Menu */}
-                <li className="mt-8 flex items-center gap-4 flex-wrap justify-center">
+                <div className="mt-12 flex items-center gap-4 flex-wrap justify-center mobile-menu-actions">
                   {/* Tour Restart Button */}
                   {tour && (
                     <button
@@ -385,8 +409,8 @@ export default function Header() {
                       </div>
                     )}
                   </button>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
           )}
         </motion.header>

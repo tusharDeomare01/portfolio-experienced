@@ -9,53 +9,63 @@
 
 @import "./components/lightswind.css";
 
-@keyframes menu-open {
+/* Mobile Menu Backdrop Animation */
+@keyframes menu-backdrop-open {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    backdrop-filter: blur(8px);
   }
 }
 
 .animate-menu-open {
-  animation: menu-open 0.3s ease-out;
+  animation: menu-backdrop-open 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.animate-stagger-fade-in > li:nth-child(1) { animation-delay: 0.3s; }
-.animate-stagger-fade-in > li:nth-child(2) { animation-delay: 0.4s; }
-.animate-stagger-fade-in > li:nth-child(3) { animation-delay: 0.5s; }
-.animate-stagger-fade-in > li:nth-child(4) { animation-delay: 0.6s; }
-.animate-stagger-fade-in > li:nth-child(5) { animation-delay: 0.7s; }
-/* Add more as needed */
-
-.animate-stagger-fade-in > li {
-  animation: stagger-fade-in 0.4s ease-out both;
-}
-
-@keyframes item-fade-in {
+/* Mobile Menu Content Slide-in */
+@keyframes menu-content-slide {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-20px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-/* Apply to parent ul */
-.animate-stagger-fade-in > li {
-  animation: item-fade-in 0.4s ease-out both;
+.animate-menu-content {
+  animation: menu-content-slide 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
-.animate-stagger-fade-in > li:nth-child(1) { animation-delay: 0.3s; }
-.animate-stagger-fade-in > li:nth-child(2) { animation-delay: 0.4s; }
-.animate-stagger-fade-in > li:nth-child(3) { animation-delay: 0.5s; }
-.animate-stagger-fade-in > li:nth-child(4) { animation-delay: 0.6s; }
-.animate-stagger-fade-in > li:nth-child(5) { animation-delay: 0.7s; }
+/* Staggered Menu Items Animation */
+@keyframes menu-item-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-stagger-fade-in > li {
+  animation: menu-item-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-stagger-fade-in > li:nth-child(1) { animation-delay: 0.15s; }
+.animate-stagger-fade-in > li:nth-child(2) { animation-delay: 0.2s; }
+.animate-stagger-fade-in > li:nth-child(3) { animation-delay: 0.25s; }
+.animate-stagger-fade-in > li:nth-child(4) { animation-delay: 0.3s; }
+.animate-stagger-fade-in > li:nth-child(5) { animation-delay: 0.35s; }
+.animate-stagger-fade-in > li:nth-child(6) { animation-delay: 0.4s; }
+.animate-stagger-fade-in > li:nth-child(7) { animation-delay: 0.45s; }
+.animate-stagger-fade-in > li:nth-child(8) { animation-delay: 0.5s; }
+.animate-stagger-fade-in > li:nth-child(9) { animation-delay: 0.55s; }
 
 @keyframes scale-fade-in {
   from {
@@ -159,7 +169,41 @@
 }
 
 .animate-scale-fade-delayed {
-  animation: scale-fade-delayed 0.3s ease-out 0.2s both;
+  animation: scale-fade-delayed 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+/* Mobile Menu Item Hover Effect */
+@keyframes menu-item-hover {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.mobile-menu-item {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.mobile-menu-item:hover {
+  transform: scale(1.05);
+  color: rgb(219 39 119) !important; /* pink-600 */
+}
+
+.mobile-menu-item:active {
+  transform: scale(0.98);
+}
+
+/* Dark mode hover */
+.dark .mobile-menu-item:hover {
+  color: rgb(251 113 133) !important; /* pink-400 */
+}
+
+/* Action buttons animation in mobile menu */
+.mobile-menu-actions {
+  animation: menu-item-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
 }
 
 @keyframes menu-close {

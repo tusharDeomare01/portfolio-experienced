@@ -12,12 +12,14 @@ const TITLE_REVEAL_PROPS = {
   baseRotation: 0,
 } as const;
 
-const PARAGRAPH_REVEAL_PROPS = {
-  size: "sm" as const,
-  align: "left" as const,
-  variant: "muted" as const,
-  baseRotation: 0,
-} as const;
+// const PARAGRAPH_REVEAL_PROPS = {
+//   size: "sm" as const,
+//   align: "left" as const,
+//   variant: "muted" as const,
+//   enableBlur: true,
+//   blurStrength: 5,
+//   baseRotation: 0,
+// } as const;
 
 // Extract static text content to constants
 const ABOUT_TEXTS = [
@@ -40,9 +42,12 @@ const AboutSectionComponent = () => {
   const paragraphElements = useMemo(
     () =>
       ABOUT_TEXTS.map((text, index) => (
-        <ScrollReveal key={`paragraph-${index}`} {...PARAGRAPH_REVEAL_PROPS}>
+        // <ScrollReveal key={`paragraph-${index}`} {...PARAGRAPH_REVEAL_PROPS}>
+        //   {text}
+        // </ScrollReveal>
+        <div id={`${index}`} className="font-bold text-xl py-3">
           {text}
-        </ScrollReveal>
+        </div>
       )),
     []
   );

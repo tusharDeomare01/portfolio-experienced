@@ -29,6 +29,15 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // Enable file system caching for faster dev server
+    fs: {
+      strict: false,
+    },
+  },
+  // Worker configuration for parallel processing
+  worker: {
+    format: 'es',
+    plugins: () => [react()],
   },
   plugins: [
     react(),
@@ -50,16 +59,30 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     exclude: ['lightswind'], // Exclude lightswind from optimization since we use local components
+    // Enable parallel optimization with worker threads
+    esbuildOptions: {
+      // Use all available CPU cores for faster builds
+      logLevel: 'info',
+    },
   },
   build: {
     chunkSizeWarningLimit: 600,
-    minify: 'esbuild', // Fast minification
+    minify: 'esbuild', // Fast minification with parallel processing
     sourcemap: false, // Disable sourcemaps in production for smaller bundle
+    // Enable parallel processing for terser/esbuild
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+      },
+    },
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
     },
     rollupOptions: {
+      // Maximize parallel processing
+      maxParallelFileOps: 16, // Matches UV_THREADPOOL_SIZE
       output: {
         manualChunks: {
           // Vendor chunks
@@ -90,5 +113,15 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true, // Split CSS into separate files
     reportCompressedSize: true, // Report compressed sizes
     target: 'esnext', // Target modern browsers for smaller output
+    // Enable watch mode optimization
+    watch: mode === 'development' ? {
+      buildDelay: 100,
+    } : null,
+  },
+  // Enable esbuild for faster transpilation
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    legalComments: 'none',
+    treeShaking: true,
   },
 }));

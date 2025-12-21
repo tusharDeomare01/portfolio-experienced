@@ -45,6 +45,13 @@ ENV VITE_EMAILJS_TEMPLATE_ID=${VITE_EMAILJS_TEMPLATE_ID}
 ENV VITE_BASE_URL=${VITE_BASE_URL}
 ENV NODE_ENV=production
 
+# Performance optimization: Increase libuv thread pool size for better parallel I/O
+# Improves build performance by enabling concurrent file operations
+ENV UV_THREADPOOL_SIZE=16
+
+# Node.js memory optimization for large builds
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 # Build the application
 RUN npm run build
 

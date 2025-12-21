@@ -1,0 +1,156 @@
+import { Download, FileText, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { ScrollReveal } from "../lightswind/scroll-reveal";
+
+// Resume file configuration
+const RESUME_FILE_PATH = "/Tushar_Deomare.pdf";
+const RESUME_FILE_NAME = "Tushar_Deomare.pdf";
+
+// Main Resume Section Component
+export function ResumeSection() {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleDownload = () => {
+    setIsDownloading(true);
+
+    // Create a temporary anchor element
+    const link = document.createElement("a");
+    link.href = RESUME_FILE_PATH;
+    link.download = RESUME_FILE_NAME;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Reset downloading state after animation
+    setTimeout(() => setIsDownloading(false), 2000);
+  };
+
+  const handleView = () => {
+    window.open(RESUME_FILE_PATH, "_blank");
+  };
+
+  return (
+    <div
+      id="resume"
+      className="min-h-screen flex flex-col justify-center !bg-transparent"
+    >
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-16 w-full !bg-transparent">
+        {/* Section Header */}
+        <div className="text-center mb-8 sm:mb-16">
+          <div className="mb-4 flex items-baseline justify-center gap-4">
+            <FileText className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-primary flex-shrink-0 mt-1.5 md:mt-2 lg:mt-2.5" />
+            <ScrollReveal
+              size="2xl"
+              align="center"
+              variant="default"
+              enableBlur={true}
+              blurStrength={5}
+              baseRotation={0}
+            >
+              Resume
+            </ScrollReveal>
+          </div>
+          <ScrollReveal
+            size="sm"
+            align="center"
+            variant="muted"
+            enableBlur={true}
+            blurStrength={5}
+            baseRotation={0}
+          >
+            Download my professional resume or view key highlights of my career
+          </ScrollReveal>
+        </div>
+
+        {/* Resume Content */}
+        <div className="max-w-4xl mx-auto">
+          {/* PDF Preview Container */}
+          <div
+            className="relative w-full overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-500 group"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            {/* PDF Preview */}
+            <div className="relative aspect-[3/4] w-full overflow-hidden">
+              {/* Desktop: PDF Embed */}
+              <div className="hidden sm:block w-full h-full">
+                <iframe
+                  src={`${RESUME_FILE_PATH}#toolbar=0&navpanes=0&scrollbar=0&zoom=page-width`}
+                  className="w-[92%] h-[89%] flex justify-center items-center"
+                  title="Resume Preview"
+                  allowFullScreen={true}
+                  allowTransparency={false}
+                  key={"resume"}
+                  loading="eager"
+                />
+              </div>
+
+              {/* Mobile: Placeholder */}
+              <div className="sm:hidden flex items-center justify-center h-full bg-gradient-to-br from-primary/10 via-primary/5 to-background">
+                <iframe
+                  src={`${RESUME_FILE_PATH}#toolbar=0&navpanes=0&scrollbar=0&zoom=page-width`}
+                  className="w-[92.5%] h-[89.5%] flex justify-center items-center"
+                  title="Resume Preview"
+                  allowFullScreen={true}
+                  allowTransparency={false}
+                  key={"resume"}
+                  loading="eager"
+                />
+              </div>
+
+              {/* Desktop Hover Overlay */}
+              <div
+                className={`hidden lg:flex absolute inset-0 bg-background/80 transition-opacity duration-300 items-center justify-center gap-4 ${
+                  isHovered ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <button
+                  onClick={handleView}
+                  className="px-5 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  View Full
+                </button>
+                <button
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="px-5 py-3 bg-pink-500 hover:bg-pink-600 disabled:bg-pink-400 text-white rounded-xl text-sm font-semibold transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Download
+                    className={`w-4 h-4 ${
+                      isDownloading ? "animate-bounce" : ""
+                    }`}
+                  />
+                  {isDownloading ? "Downloading..." : "Download"}
+                </button>
+              </div>
+            </div>
+
+            {/* Action Buttons - Mobile */}
+            <div className="lg:hidden flex gap-3 p-6 bg-background/80">
+              <button
+                onClick={handleView}
+                className="flex-1 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95"
+              >
+                <ExternalLink className="w-4 h-4" />
+                View
+              </button>
+              <button
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="flex-1 px-4 py-3 bg-pink-500 hover:bg-pink-600 disabled:bg-pink-400 text-white rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Download
+                  className={`w-4 h-4 ${isDownloading ? "animate-bounce" : ""}`}
+                />
+                {isDownloading ? "..." : "Download"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

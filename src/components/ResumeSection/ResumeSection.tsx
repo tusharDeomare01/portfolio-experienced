@@ -1,6 +1,8 @@
 import { Download, FileText, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
+import { ShareButton } from "../Share";
+import { getBaseUrl } from "@/lib/shareUtils";
 
 // Resume file configuration
 const RESUME_FILE_PATH = "/Tushar_Deomare.pdf";
@@ -125,11 +127,25 @@ export function ResumeSection() {
                   />
                   {isDownloading ? "Downloading..." : "Download"}
                 </button>
+                <div className="flex justify-center">
+                  <ShareButton
+                    shareData={{
+                      title: "Tushar Deomare - Resume",
+                      description:
+                        "Check out my professional resume and career highlights",
+                      url: `${getBaseUrl()}/#resume`,
+                    }}
+                    variant="outline"
+                    size="md"
+                    showLabel={true}
+                    position="top"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Action Buttons - Mobile */}
-            <div className="lg:hidden flex gap-3 p-6 bg-background/80">
+            <div className="lg:hidden flex gap-3 p-6 bg-background/80 flex-wrap">
               <button
                 onClick={handleView}
                 className="flex-1 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95"
@@ -147,6 +163,19 @@ export function ResumeSection() {
                 />
                 {isDownloading ? "..." : "Download"}
               </button>
+
+              <ShareButton
+                shareData={{
+                  title: "Tushar Deomare - Resume",
+                  description:
+                    "Check out my professional resume and career highlights",
+                  url: `${getBaseUrl()}/#resume`,
+                }}
+                variant="outline"
+                size="lg"
+                showLabel={true}
+                position="top"
+              />
             </div>
           </div>
         </div>

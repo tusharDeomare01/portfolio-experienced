@@ -10,6 +10,8 @@ import {
 } from "@/components/lightswind/card";
 import { Badge } from "@/components/lightswind/badge";
 import { ScrollReveal } from "@/components/lightswind/scroll-reveal";
+import { ShareButton } from "@/components/Share";
+import { getCurrentUrl } from "@/lib/shareUtils";
 // import { BackgroundSkeleton } from "@/components/Loading/LoadingComponents";
 import {
   ArrowLeft,
@@ -215,17 +217,31 @@ const Portfolio = () => {
       </Suspense> */}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-8 flex items-center gap-2 text-foreground hover:text-primary transition-colors group"
-        >
-          <ArrowLeft
-            size={20}
-            className="group-hover:-translate-x-1 transition-transform"
+        {/* Back Button and Share */}
+        <div className="mb-8 flex items-center justify-between flex-wrap gap-3 sm:gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
+          >
+            <ArrowLeft
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
+            <span className="text-sm sm:text-base">Back to TechShowcase</span>
+          </button>
+          <ShareButton
+            shareData={{
+              title: "TechShowcase - Portfolio Website",
+              description: "Modern, interactive portfolio website featuring smooth animations, AI-powered assistant, 3D carousel, and responsive design.",
+              url: getCurrentUrl(),
+            }}
+            variant="outline"
+            size="md"
+            showLabel={true}
+            position="bottom"
+            className="shrink-0"
           />
-          <span>Back to TechShowcase</span>
-        </button>
+        </div>
 
         {/* Hero Header */}
         <div className="mb-16">

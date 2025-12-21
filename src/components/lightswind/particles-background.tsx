@@ -1,5 +1,4 @@
-"use client";
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from "react";
 
 declare global {
   interface Window {
@@ -18,19 +17,19 @@ interface ParticlesBackgroundProps {
 }
 
 const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
-  colors = ['#ff223e', '#5d1eb2', '#ff7300'],
+  colors = ["#ff223e", "#5d1eb2", "#ff7300"],
   size = 3,
   countDesktop = 60,
   countTablet = 50,
   countMobile = 40,
   zIndex = 0,
-  height = '100vh',
+  height = "100vh",
 }) => {
   useLayoutEffect(() => {
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js";
     script.onload = () => {
-      const particlesElement = document.getElementById('js-particles');
+      const particlesElement = document.getElementById("js-particles");
       if (particlesElement && window.particlesJS) {
         const getParticleCount = () => {
           const screenWidth = window.innerWidth;
@@ -39,7 +38,7 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
           return countMobile;
         };
 
-        window.particlesJS('js-particles', {
+        window.particlesJS("js-particles", {
           particles: {
             number: {
               value: getParticleCount(),
@@ -48,7 +47,7 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
               value: colors,
             },
             shape: {
-              type: 'circle',
+              type: "circle",
             },
             opacity: {
               value: 1,
@@ -64,14 +63,14 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
             move: {
               enable: true,
               speed: 2,
-              direction: 'none',
+              direction: "none",
               random: true,
               straight: false,
-              out_mode: 'out',
+              out_mode: "out",
             },
           },
           interactivity: {
-            detect_on: 'canvas',
+            detect_on: "canvas",
             events: {
               onhover: {
                 enable: false,
@@ -97,13 +96,13 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
     <div
       id="js-particles"
       style={{
-        width: '100%',
+        width: "100%",
         height: height,
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
         zIndex: zIndex,
-        pointerEvents: 'none',
+        pointerEvents: "none",
       }}
     >
       <style>{`

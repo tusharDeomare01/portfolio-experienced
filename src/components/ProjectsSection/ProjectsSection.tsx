@@ -69,10 +69,7 @@ export const ProjectsSection = () => {
   };
 
   return (
-    <div
-      id="projects"
-      className="min-h-screen flex flex-col justify-center"
-    >
+    <div id="projects" className="min-h-screen flex flex-col justify-center">
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-16 w-full">
         <div className="text-center mb-8 sm:mb-16">
           <div className="mb-4 flex items-baseline justify-center gap-4">
@@ -128,7 +125,9 @@ export const ProjectsSection = () => {
                       src={getLogoPath(project.title)}
                       alt={project.title}
                       className={`w-full h-full max-w-full max-h-full sm:max-w-[80%] sm:max-h-[70%] md:max-w-[75%] md:max-h-[65%] object-contain px-4 py-2 sm:px-4 sm:py-4 md:px-4 md:py-4 transition-transform duration-300 ${
-                        hoveredProject === project.id ? "scale-110" : "scale-100"
+                        hoveredProject === project.id
+                          ? "scale-110"
+                          : "scale-100"
                       }`}
                     />
                   ) : (
@@ -136,12 +135,15 @@ export const ProjectsSection = () => {
                       src={project.image}
                       alt={project.title}
                       className={`w-full h-full object-cover transition-transform duration-300 ${
-                        hoveredProject === project.id ? "scale-110" : "scale-100"
+                        hoveredProject === project.id
+                          ? "scale-110"
+                          : "scale-100"
                       }`}
                     />
                   )}
-                  {/* Status Badge */}
-                  <div className="absolute top-4 right-4 z-10">
+                  {/* Status Badge and Share Button */}
+                  <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+                    {/* Status Badge */}
                     <Badge
                       variant="success"
                       size="sm"

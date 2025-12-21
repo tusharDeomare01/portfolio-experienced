@@ -16,8 +16,6 @@ const PARAGRAPH_REVEAL_PROPS = {
   size: "sm" as const,
   align: "left" as const,
   variant: "muted" as const,
-  enableBlur: true,
-  blurStrength: 5,
   baseRotation: 0,
 } as const;
 

@@ -84,16 +84,9 @@ export const AchievementsSection = () => {
             Achievements
           </ScrollReveal>
         </div>
-        <ScrollReveal
-          size="sm"
-          align="center"
-          variant="muted"
-          enableBlur={false}
-          staggerDelay={0.03}
-          containerClassName="max-w-2xl px-4"
-        >
+        <p className="text-lg font-bold">
           Showcasing career milestones, awards, and notable accomplishments
-        </ScrollReveal>
+        </p>
       </div>
 
       {/* 3D Carousel */}
@@ -162,7 +155,7 @@ export const AchievementsSection = () => {
 
               {/* Content Section */}
               <div className="flex-1 overflow-y-auto px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-background">
-              <div className="space-y-3 sm:space-y-4 max-w-3xl mx-auto animate-fade-slide-up">
+                <div className="space-y-3 sm:space-y-4 max-w-3xl mx-auto animate-fade-slide-up">
                   {/* Title */}
                   {selectedAchievement.title && (
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground leading-tight tracking-tight">

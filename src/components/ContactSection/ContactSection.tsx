@@ -27,39 +27,42 @@ const PERFORMANCE_TIERS = {
 } as const;
 
 // Device performance detection (optimized for low-end devices)
-const detectDevicePerformance = (): typeof PERFORMANCE_TIERS[keyof typeof PERFORMANCE_TIERS] => {
-  if (typeof window === "undefined") return PERFORMANCE_TIERS.MID;
-  
-  // Check hardware concurrency (CPU cores)
-  const cores = navigator.hardwareConcurrency || 2;
-  
-  // Check device memory (if available)
-  const memory = (navigator as any).deviceMemory || 4;
-  
-  // Check if it's a mobile device
-  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
-  
-  // Low-end: mobile with <= 2 cores or <= 2GB RAM
-  if (isMobileDevice && (cores <= 2 || memory <= 2)) {
-    return PERFORMANCE_TIERS.LOW;
-  }
-  
-  // Mid-range: 2-4 cores or 2-4GB RAM, or mobile with more resources
-  if (cores <= 4 || memory <= 4 || isMobileDevice) {
-    return PERFORMANCE_TIERS.MID;
-  }
-  
-  // High-end: > 4 cores and > 4GB RAM
-  return PERFORMANCE_TIERS.HIGH;
-};
+const detectDevicePerformance =
+  (): (typeof PERFORMANCE_TIERS)[keyof typeof PERFORMANCE_TIERS] => {
+    if (typeof window === "undefined") return PERFORMANCE_TIERS.MID;
+
+    // Check hardware concurrency (CPU cores)
+    const cores = navigator.hardwareConcurrency || 2;
+
+    // Check device memory (if available)
+    const memory = (navigator as any).deviceMemory || 4;
+
+    // Check if it's a mobile device
+    const isMobileDevice =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+    // Low-end: mobile with <= 2 cores or <= 2GB RAM
+    if (isMobileDevice && (cores <= 2 || memory <= 2)) {
+      return PERFORMANCE_TIERS.LOW;
+    }
+
+    // Mid-range: 2-4 cores or 2-4GB RAM, or mobile with more resources
+    if (cores <= 4 || memory <= 4 || isMobileDevice) {
+      return PERFORMANCE_TIERS.MID;
+    }
+
+    // High-end: > 4 cores and > 4GB RAM
+    return PERFORMANCE_TIERS.HIGH;
+  };
 
 // Extract className strings to constants
 const CONTAINER_CLASSES =
   "text-foreground max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 md:py-20 min-h-screen flex flex-col justify-center";
 const HEADING_CONTAINER_CLASSES = "text-center mb-6 sm:mb-8";
-const HEADER_CLASSES = "mb-2 sm:mb-3 flex items-baseline justify-center gap-2 sm:gap-4";
+const HEADER_CLASSES =
+  "mb-2 sm:mb-3 flex items-baseline justify-center gap-2 sm:gap-4";
 const ICON_CLASSES =
   "w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2";
 
@@ -71,13 +74,13 @@ const TITLE_REVEAL_PROPS = {
   baseRotation: 0,
 } as const;
 
-const SUBTITLE_REVEAL_PROPS = {
-  size: "sm" as const,
-  align: "center" as const,
-  variant: "muted" as const,
-  baseRotation: 0,
-  containerClassName: "px-2 sm:px-0",
-} as const;
+// const SUBTITLE_REVEAL_PROPS = {
+//   size: "sm" as const,
+//   align: "center" as const,
+//   variant: "muted" as const,
+//   baseRotation: 0,
+//   containerClassName: "px-2 sm:px-0",
+// } as const;
 
 // Initial form data constant
 const INITIAL_FORM_DATA = {
@@ -95,7 +98,9 @@ const ContactSectionComponent = () => {
   // Check for reduced motion preference
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === "undefined") return false;
-    return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    return (
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
+    );
   }, []);
 
   // Determine if confetti should be enabled
@@ -117,7 +122,10 @@ const ContactSectionComponent = () => {
     if (devicePerformance === PERFORMANCE_TIERS.LOW || prefersReducedMotion) {
       return { enableBlur: false, blurStrength: 0 };
     }
-    return { enableBlur: true, blurStrength: devicePerformance === PERFORMANCE_TIERS.MID ? 3 : 5 };
+    return {
+      enableBlur: true,
+      blurStrength: devicePerformance === PERFORMANCE_TIERS.MID ? 3 : 5,
+    };
   }, [devicePerformance, prefersReducedMotion]);
 
   // Load confetti script dynamically (only if enabled)
@@ -167,7 +175,12 @@ const ContactSectionComponent = () => {
         origin: { x: 0.5, y: 0.5 },
       });
     }
-  }, [shouldEnableConfetti, confettiLoaded, submitStatus.type, devicePerformance]);
+  }, [
+    shouldEnableConfetti,
+    confettiLoaded,
+    submitStatus.type,
+    devicePerformance,
+  ]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -179,77 +192,84 @@ const ContactSectionComponent = () => {
     []
   );
 
-  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus({ type: null, message: "" });
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setIsSubmitting(true);
+      setSubmitStatus({ type: null, message: "" });
 
-    try {
-      // Dynamically import EmailJS
-      const emailjs = (await import("@emailjs/browser")).default;
+      try {
+        // Dynamically import EmailJS
+        const emailjs = (await import("@emailjs/browser")).default;
 
-      // Get environment variables
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+        // Get environment variables
+        const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+        const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+        const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 
-      if (!publicKey || !serviceId || !templateId) {
-        throw new Error(
-          "EmailJS configuration is missing. Please check your environment variables."
-        );
-      }
+        if (!publicKey || !serviceId || !templateId) {
+          throw new Error(
+            "EmailJS configuration is missing. Please check your environment variables."
+          );
+        }
 
-      // Initialize EmailJS with your public key
-      emailjs.init(publicKey);
+        // Initialize EmailJS with your public key
+        emailjs.init(publicKey);
 
-      // Prepare template parameters
-      const now = new Date();
-      const formattedTime = now.toLocaleString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short",
-      });
-
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        name: formData.name, // Alias for template compatibility
-        email: formData.email, // Alias for template compatibility
-        company: formData.company || "Not specified",
-        subject: formData.subject,
-        message: formData.message,
-        time: formattedTime,
-        to_email: "tdeomare1@gmail.com",
-      };
-
-      // Send email using EmailJS
-      const result = await emailjs.send(serviceId, templateId, templateParams);
-
-      if (result.status === 200 || result.text === "OK") {
-        setSubmitStatus({
-          type: "success",
-          message:
-            "Thank you! Your message has been sent successfully. I'll get back to you soon.",
+        // Prepare template parameters
+        const now = new Date();
+        const formattedTime = now.toLocaleString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short",
         });
-        // Reset form
-        setFormData(INITIAL_FORM_DATA);
+
+        const templateParams = {
+          from_name: formData.name,
+          from_email: formData.email,
+          name: formData.name, // Alias for template compatibility
+          email: formData.email, // Alias for template compatibility
+          company: formData.company || "Not specified",
+          subject: formData.subject,
+          message: formData.message,
+          time: formattedTime,
+          to_email: "tdeomare1@gmail.com",
+        };
+
+        // Send email using EmailJS
+        const result = await emailjs.send(
+          serviceId,
+          templateId,
+          templateParams
+        );
+
+        if (result.status === 200 || result.text === "OK") {
+          setSubmitStatus({
+            type: "success",
+            message:
+              "Thank you! Your message has been sent successfully. I'll get back to you soon.",
+          });
+          // Reset form
+          setFormData(INITIAL_FORM_DATA);
+        }
+      } catch (error: any) {
+        console.error("Email sending failed:", error);
+        setSubmitStatus({
+          type: "error",
+          message:
+            error.text ||
+            "Failed to send message. Please try again or contact me directly at tdeomare1@gmail.com",
+        });
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (error: any) {
-      console.error("Email sending failed:", error);
-      setSubmitStatus({
-        type: "error",
-        message:
-          error.text ||
-          "Failed to send message. Please try again or contact me directly at tdeomare1@gmail.com",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [formData]);
+    },
+    [formData]
+  );
 
   // Optimize card backdrop blur based on device performance
   const cardBackdropBlur = useMemo(() => {
@@ -275,14 +295,10 @@ const ContactSectionComponent = () => {
             Get In Touch
           </ScrollReveal>
         </div>
-        <ScrollReveal
-          {...SUBTITLE_REVEAL_PROPS}
-          enableBlur={blurSettings.enableBlur}
-          blurStrength={blurSettings.blurStrength}
-        >
+        <p className="text-lg font-bold">
           Have a project in mind or want to discuss opportunities? I'd love to
           hear from you!
-        </ScrollReveal>
+        </p>
       </div>
 
       <Card className={`${cardBackdropBlur} bg-background/80 border-2 w-full`}>

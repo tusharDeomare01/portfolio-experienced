@@ -324,7 +324,8 @@ const MarketJD = () => {
           <ShareButton
             shareData={{
               title: "MarketJD - SEO Insights Platform",
-              description: "Comprehensive SEO insights and analytics platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation.",
+              description:
+                "Comprehensive SEO insights and analytics platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation.",
               url: getCurrentUrl(),
             }}
             variant="outline"
@@ -419,16 +420,9 @@ const MarketJD = () => {
                 Technology Stack
               </ScrollReveal>
             </div>
-            <ScrollReveal
-              size="sm"
-              align="left"
-              variant="muted"
-              enableBlur={false}
-              blurStrength={0}
-              baseRotation={0}
-            >
+            <p className="text-lg font-bold">
               Modern, scalable technologies powering the platform
-            </ScrollReveal>
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {Object.entries(techStack).map(([key, tech]) => {
@@ -474,16 +468,9 @@ const MarketJD = () => {
                 Third-Party Integrations
               </ScrollReveal>
             </div>
-            <ScrollReveal
-              size="sm"
-              align="left"
-              variant="muted"
-              enableBlur={false}
-              blurStrength={0}
-              baseRotation={0}
-            >
-              20+ seamless API integrations for comprehensive data insights
-            </ScrollReveal>
+            <p className="text-lg font-bold">
+              10+ seamless API integrations for comprehensive data insights
+            </p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {integrations.map((integration, idx) => {
@@ -553,16 +540,9 @@ const MarketJD = () => {
                 Key Features & Capabilities
               </ScrollReveal>
             </div>
-            <ScrollReveal
-              size="sm"
-              align="left"
-              variant="muted"
-              enableBlur={false}
-              blurStrength={0}
-              baseRotation={0}
-            >
+            <p className="text-lg font-bold">
               Major development achievements and platform capabilities
-            </ScrollReveal>
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((feature, idx) => {

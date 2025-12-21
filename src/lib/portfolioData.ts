@@ -75,7 +75,7 @@ export const portfolioData: PortfolioData = {
     name: "Tushar Deomare",
     pronouns: "He/him",
     title: "Full-Stack Developer",
-    bio: "Passionate Full-Stack Developer with 2+ years of expertise building scalable web applications using MERN Stack, Next.js, and NestJS. Specialized in developing enterprise-grade solutions with advanced authentication, real-time analytics, and AI-powered automation. Proven track record of delivering high-performance applications with 20+ third-party API integrations, dynamic reporting systems, and seamless user experiences. Recognized as 'Above and Beyond Developer' and selected for Tech Star Team at Thinkitive Technologies.",
+    bio: "Passionate Full-Stack Developer with 2+ years of expertise building scalable web applications using MERN Stack, Next.js, and NestJS. Specialized in developing enterprise-grade solutions with advanced authentication, real-time analytics, and AI-powered automation. Proven track record of delivering high-performance applications with 10+ third-party API integrations, dynamic reporting systems, and seamless user experiences. Recognized as 'Above and Beyond Developer' and selected for Tech Star Team at Thinkitive Technologies.",
     email: "tdeomare1@gmail.com",
     location: "Pandharpur",
     // website: "https://yourwebsite.com",
@@ -231,7 +231,7 @@ export const portfolioData: PortfolioData = {
       name: "MarketJD",
       period: "2024 - Present",
       description:
-        "Comprehensive SEO insights and analytics platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with Next.js 14, TypeScript, Prisma, and modern best practices for enterprise-scale applications.",
+        "Comprehensive SEO insights and analytics platform with 10+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with Next.js 14, TypeScript, Prisma, and modern best practices for enterprise-scale applications.",
       technologies: [
         "Next.js",
         "TypeScript",
@@ -245,7 +245,7 @@ export const portfolioData: PortfolioData = {
         "Chart.js",
       ],
       features: [
-        "20+ third-party API integrations",
+        "10+ third-party API integrations",
         "Advanced authentication (Next-Auth, OAuth2.0)",
         "AI-powered automation",
         "Drag & drop dashboard builder",

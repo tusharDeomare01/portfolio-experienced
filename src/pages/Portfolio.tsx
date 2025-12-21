@@ -232,7 +232,8 @@ const Portfolio = () => {
           <ShareButton
             shareData={{
               title: "TechShowcase - Portfolio Website",
-              description: "Modern, interactive portfolio website featuring smooth animations, AI-powered assistant, 3D carousel, and responsive design.",
+              description:
+                "Modern, interactive portfolio website featuring smooth animations, AI-powered assistant, 3D carousel, and responsive design.",
               url: getCurrentUrl(),
             }}
             variant="outline"
@@ -327,16 +328,9 @@ const Portfolio = () => {
                 Technology Stack
               </ScrollReveal>
             </div>
-            <ScrollReveal
-              size="sm"
-              align="left"
-              variant="muted"
-              enableBlur={false}
-              blurStrength={0}
-              baseRotation={0}
-            >
+            <p className="text-lg font-bold">
               Modern technologies powering this portfolio
-            </ScrollReveal>
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {Object.entries(techStack).map(([key, tech]) => {
@@ -382,16 +376,9 @@ const Portfolio = () => {
                 Key Features & Capabilities
               </ScrollReveal>
             </div>
-            <ScrollReveal
-              size="sm"
-              align="left"
-              variant="muted"
-              enableBlur={false}
-              blurStrength={0}
-              baseRotation={0}
-            >
+            <p className="text-lg font-bold">
               Major features and development achievements
-            </ScrollReveal>
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((feature, idx) => {

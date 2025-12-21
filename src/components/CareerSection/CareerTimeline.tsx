@@ -48,17 +48,9 @@ export const CareerTimeline = () => {
             Career Journey
           </ScrollReveal>
         </div>
-        <ScrollReveal
-          size="sm"
-          align="center"
-          variant="muted"
-          enableBlur={false}
-          blurStrength={0}
-          baseRotation={0}
-          containerClassName="max-w-2xl mx-auto"
-        >
+        <p className="text-lg font-bold">
           An evolving path of leadership, innovation, and impact
-        </ScrollReveal>
+        </p>
       </div>
       <div className="[&_div.text-center]:hidden">
         <ScrollTimeline

@@ -85,16 +85,7 @@ export const ProjectsSection = () => {
               Projects
             </ScrollReveal>
           </div>
-          <ScrollReveal
-            size="sm"
-            align="center"
-            variant="muted"
-            enableBlur={false}
-            blurStrength={0}
-            baseRotation={0}
-          >
-            Explore my latest work...
-          </ScrollReveal>
+          <p className="text-lg font-bold">Explore my latest work...</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 justify-items-center">

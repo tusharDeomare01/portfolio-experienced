@@ -54,16 +54,9 @@ export function ResumeSection() {
               Resume
             </ScrollReveal>
           </div>
-          <ScrollReveal
-            size="sm"
-            align="center"
-            variant="muted"
-            enableBlur={false}
-            blurStrength={0}
-            baseRotation={0}
-          >
+          <p className="text-lg font-bold">
             Download my professional resume or view key highlights of my career
-          </ScrollReveal>
+          </p>
         </div>
 
         {/* Resume Content */}

@@ -11,7 +11,6 @@ import {
   Trophy,
   Mail,
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { useIsMobile } from "./components/hooks/use-mobile";
 import { TourProvider, useTourContext } from "./components/Tour/TourContext";
 import {
@@ -82,9 +81,19 @@ const Portfolio = lazy(() => import("./pages/Portfolio"));
 
 function HomePage() {
   const [showDock, setShowDock] = useState(false);
+  const [isDockVisible, setIsDockVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = useIsMobile();
   const tour = useTourContext();
+
+  // Sync visibility state with showDock for smooth animations
+  useEffect(() => {
+    if (showDock) {
+      setIsDockVisible(true);
+    } else {
+      setIsDockVisible(false);
+    }
+  }, [showDock]);
 
   // Track scroll direction
   useEffect(() => {
@@ -100,7 +109,9 @@ function HomePage() {
         setShowDock(true);
       } else if (currentScrollY < lastScrollY && !tour.isTourActive) {
         // scrolling up -> hide Dock (unless tour is active)
-        setShowDock(false);
+        setIsDockVisible(false);
+        // Remove from DOM after animation completes
+        setTimeout(() => setShowDock(false), 700);
       }
 
       setLastScrollY(currentScrollY);
@@ -199,17 +210,18 @@ function HomePage() {
       {/* Dock with smooth show/hide animation */}
 
       {showDock && (
-        <motion.div
+        <div
           data-dock
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 ${
+          className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isDockVisible
+              ? "translate-y-0 opacity-100 scale-100"
+              : "translate-y-[100px] opacity-0 scale-95"
+          } ${
             tour.isTourActive && tour.currentStep === 8
               ? "z-[10001]"
               : "z-[999]"
           }`}
+          style={{ willChange: "transform, opacity" }}
         >
           <Suspense fallback={<ComponentLoader />}>
             <Dock
@@ -221,7 +233,7 @@ function HomePage() {
               panelHeight={isMobile ? 56 : 64}
             />
           </Suspense>
-        </motion.div>
+        </div>
       )}
 
       {/* Tour Component */}

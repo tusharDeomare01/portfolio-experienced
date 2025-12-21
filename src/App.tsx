@@ -9,6 +9,7 @@ import {
   Briefcase,
   FolderKanban,
   Trophy,
+  FileText,
   Mail,
 } from "lucide-react";
 import { useIsMobile } from "./components/hooks/use-mobile";
@@ -57,6 +58,11 @@ const AchievementsSection = lazy(() =>
 const ContactSection = lazy(() =>
   import("./components/ContactSection/ContactSection").then((module) => ({
     default: module.ContactSection,
+  }))
+);
+const ResumeSection = lazy(() =>
+  import("./components/ResumeSection/ResumeSection").then((module) => ({
+    default: module.ResumeSection,
   }))
 );
 
@@ -178,6 +184,11 @@ function HomePage() {
       onClick: () => scrollToSection("achievements"),
     },
     {
+      icon: <FileText size={iconSize} />,
+      label: "Resume",
+      onClick: () => scrollToSection("resume"),
+    },
+    {
       icon: <Mail size={iconSize} />,
       label: "Contact",
       onClick: () => scrollToSection("contact"),
@@ -202,6 +213,7 @@ function HomePage() {
             <CareerTimeline />
             <ProjectsSection />
             <AchievementsSection />
+            <ResumeSection />
             <ContactSection />
           </Suspense>
         </div>

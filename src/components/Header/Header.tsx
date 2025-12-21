@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import type { Variants, MotionProps } from "framer-motion";
 import {
   Menu,
   X,
@@ -25,52 +24,6 @@ const navItems = [
   { name: "Achievements", href: "#achievements" },
   { name: "Contact", href: "#contact" },
 ];
-
-// Move variants outside component to prevent recreation on every render
-const menuVariants: Variants = {
-  open: {
-    clipPath: "circle(1200px at 90% 5%)",
-    transition: {
-      type: "spring",
-      stiffness: 20,
-      restDelta: 2,
-    },
-  },
-  closed: {
-    clipPath: "circle(20px at 90% 5%)",
-    transition: {
-      type: "spring",
-      stiffness: 400,
-      damping: 40,
-    },
-  },
-};
-
-const listVariants: Variants = {
-  open: {
-    transition: { staggerChildren: 0.07, delayChildren: 0.2 },
-  },
-  closed: {
-    transition: { staggerChildren: 0.05, staggerDirection: -1 },
-  },
-};
-
-const itemVariants: Variants = {
-  open: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      y: { stiffness: 1000, velocity: -100 },
-    },
-  },
-  closed: {
-    y: 50,
-    opacity: 0,
-    transition: {
-      y: { stiffness: 1000 },
-    },
-  },
-};
 
 export default function Header() {
   const theme = useAppSelector((state) => state.theme.theme);
@@ -258,7 +211,7 @@ export default function Header() {
             <nav className="hidden md:flex flex-1 justify-center">
               <ul className="flex space-x-6">
                 {navItems.map((item) => (
-                  <motion.li
+                  <li
                     key={item.name}
                     className="relative group text-sm font-medium text-gray-600 
                     dark:text-gray-300 transition-colors"
@@ -270,13 +223,8 @@ export default function Header() {
                     >
                       {item.name}
                     </a>
-                    <motion.span
-                      className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 rounded-full"
-                      initial={{ width: 0, x: "-50%" }}
-                      whileHover={{ width: "100%" }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </motion.li>
+                    <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 rounded-full -translate-x-1/2 transition-all duration-300 group-hover:w-full" />
+                  </li>
                 ))}
               </ul>
             </nav>
@@ -285,89 +233,56 @@ export default function Header() {
             <div className="hidden md:flex items-center gap-2">
               {/* Tour Restart Button */}
               {tour && (
-                <motion.button
+                <button
                   onClick={tour.startTour}
-                  className="p-2 rounded-full text-sm font-semibold
-                  hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
                   title="Start Tour"
                 >
                   <HelpCircle
                     size={20}
                     className="text-gray-800 dark:text-white"
                   />
-                </motion.button>
+                </button>
               )}
 
               {/* Fullscreen Toggle Button */}
-              <motion.button
+              <button
                 onClick={toggleFullscreen}
-                className="p-2 rounded-full text-sm font-semibold
-                hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                className="p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
                 title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
               >
                 {isFullscreen ? (
-                  <motion.div
-                    key="minimize"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <div key="minimize" className="animate-scale-fade-in">
                     <Minimize2
                       size={20}
                       className="text-gray-800 dark:text-white"
                     />
-                  </motion.div>
+                  </div>
                 ) : (
-                  <motion.div
-                    key="maximize"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <div key="maximize" className="animate-scale-fade-in">
                     <Maximize2
                       size={20}
                       className="text-gray-800 dark:text-white"
                     />
-                  </motion.div>
+                  </div>
                 )}
-              </motion.button>
+              </button>
 
               {/* Theme Toggle Button */}
-              <motion.button
+              <button
                 onClick={handleThemeToggle}
-                className="p-2 rounded-full text-sm font-semibold
-                hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                className="p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
               >
                 {theme === "dark" ? (
-                  <motion.div
-                    key="moon"
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: 20, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <div key="moon" className="animate-slide-fade-down">
                     <Moon size={20} className="text-gray-800 dark:text-white" />
-                  </motion.div>
+                  </div>
                 ) : (
-                  <motion.div
-                    key="sun"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -20, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <div key="sun" className="animate-slide-fade-up">
                     <Sun size={20} className="text-gray-800 dark:text-white" />
-                  </motion.div>
+                  </div>
                 )}
-              </motion.button>
+              </button>
             </div>
 
             {/* Mobile Menu Button - Hamburger */}
@@ -383,154 +298,95 @@ export default function Header() {
           {/* Mobile Sidebar */}
 
           {isMobileMenuOpen && (
-            <motion.div
-              {...({
-                initial: "closed",
-                animate: "open",
-                exit: "closed",
-                variants: menuVariants,
-              } as MotionProps)}
-              className="fixed inset-0 z-[9999] bg-background dark:bg-background-dark md:hidden flex flex-col items-center justify-center"
-            >
+            <div className="fixed inset-0 z-[9999] bg-background dark:bg-background-dark md:hidden flex flex-col items-center justify-center animate-menu-open">
               {/* Close Button inside the sidebar */}
-              <motion.button
+              <button
                 onClick={handleMobileMenuClose}
-                className="absolute top-8 right-8 text-gray-800 dark:text-white"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ delay: 0.2 }}
+                className="absolute top-8 right-8 text-gray-800 dark:text-white animate-scale-fade-delayed"
                 aria-label="Close menu"
               >
                 <X size={32} />
-              </motion.button>
+              </button>
 
-              <motion.ul
-                {...({
-                  variants: listVariants,
-                } as MotionProps)}
-                className="flex flex-col items-center justify-center h-full space-y-8"
-              >
+              <ul className="flex flex-col items-center justify-center h-full space-y-8 animate-stagger-fade-in">
                 {navItems.map((item) => (
-                  <motion.li
-                    key={item.name}
-                    {...({ variants: itemVariants } as MotionProps)}
-                  >
+                  <li key={item.name} className="animate-item-fade-in">
                     <a
                       onClick={() => handleScrollTo(item.href)}
                       className="text-4xl font-bold text-gray-800 dark:text-white cursor-pointer"
                     >
                       {item.name}
                     </a>
-                  </motion.li>
+                  </li>
                 ))}
                 {/* Action Buttons in Mobile Menu */}
-                <motion.li
-                  {...({ variants: itemVariants } as MotionProps)}
-                  className="mt-8 flex items-center gap-4 flex-wrap justify-center"
-                >
+                <li className="mt-8 flex items-center gap-4 flex-wrap justify-center">
                   {/* Tour Restart Button */}
                   {tour && (
-                    <motion.button
+                    <button
                       onClick={handleTourStart}
-                      className="p-4 rounded-full text-sm font-semibold
-                        hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
-                        bg-gray-200 dark:bg-gray-800"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
+                      className="p-4 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 bg-gray-200 dark:bg-gray-800 transition-all duration-200 hover:scale-110 active:scale-90"
                       title="Start Tour"
                     >
                       <HelpCircle
                         size={32}
                         className="text-gray-800 dark:text-white"
                       />
-                    </motion.button>
+                    </button>
                   )}
 
                   {/* Fullscreen Toggle */}
-                  <motion.button
+                  <button
                     onClick={() => {
                       toggleFullscreen();
                       handleMobileMenuClose();
                     }}
-                    className="p-4 rounded-full text-sm font-semibold
-                      hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
-                      bg-gray-200 dark:bg-gray-800"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    className="p-4 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 bg-gray-200 dark:bg-gray-800 transition-all duration-200 hover:scale-110 active:scale-90"
                     title={
                       isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"
                     }
                   >
                     {isFullscreen ? (
-                      <motion.div
-                        key="minimize"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <div key="minimize" className="animate-scale-fade-in">
                         <Minimize2
                           size={32}
                           className="text-gray-800 dark:text-white"
                         />
-                      </motion.div>
+                      </div>
                     ) : (
-                      <motion.div
-                        key="maximize"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <div key="maximize" className="animate-scale-fade-in">
                         <Maximize2
                           size={32}
                           className="text-gray-800 dark:text-white"
                         />
-                      </motion.div>
+                      </div>
                     )}
-                  </motion.button>
+                  </button>
 
                   {/* Theme Toggle */}
-                  <motion.button
+                  <button
                     onClick={handleThemeToggle}
-                    className="p-4 rounded-full text-sm font-semibold
-                      hover:bg-pink-400 dark:hover:bg-pink-800 transition-colors
-                      bg-gray-200 dark:bg-gray-800"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    className="p-4 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 bg-gray-200 dark:bg-gray-800 transition-all duration-200 hover:scale-110 active:scale-90"
                   >
                     {theme === "dark" ? (
-                      <motion.div
-                        key="moon"
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 20, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <div key="moon" className="animate-slide-fade-down">
                         <Moon
                           size={32}
                           className="text-gray-800 dark:text-white"
                         />
-                      </motion.div>
+                      </div>
                     ) : (
-                      <motion.div
-                        key="sun"
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -20, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <div key="sun" className="animate-slide-fade-up">
                         <Sun
                           size={32}
                           className="text-gray-800 dark:text-white"
                         />
-                      </motion.div>
+                      </div>
                     )}
-                  </motion.button>
-                </motion.li>
-              </motion.ul>
-            </motion.div>
+                  </button>
+                </li>
+              </ul>
+            </div>
           )}
         </motion.header>
       )}

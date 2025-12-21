@@ -9,6 +9,249 @@
 
 @import "./components/lightswind.css";
 
+@keyframes menu-open {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-menu-open {
+  animation: menu-open 0.3s ease-out;
+}
+
+.animate-stagger-fade-in > li:nth-child(1) { animation-delay: 0.3s; }
+.animate-stagger-fade-in > li:nth-child(2) { animation-delay: 0.4s; }
+.animate-stagger-fade-in > li:nth-child(3) { animation-delay: 0.5s; }
+.animate-stagger-fade-in > li:nth-child(4) { animation-delay: 0.6s; }
+.animate-stagger-fade-in > li:nth-child(5) { animation-delay: 0.7s; }
+/* Add more as needed */
+
+.animate-stagger-fade-in > li {
+  animation: stagger-fade-in 0.4s ease-out both;
+}
+
+@keyframes item-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply to parent ul */
+.animate-stagger-fade-in > li {
+  animation: item-fade-in 0.4s ease-out both;
+}
+
+.animate-stagger-fade-in > li:nth-child(1) { animation-delay: 0.3s; }
+.animate-stagger-fade-in > li:nth-child(2) { animation-delay: 0.4s; }
+.animate-stagger-fade-in > li:nth-child(3) { animation-delay: 0.5s; }
+.animate-stagger-fade-in > li:nth-child(4) { animation-delay: 0.6s; }
+.animate-stagger-fade-in > li:nth-child(5) { animation-delay: 0.7s; }
+
+@keyframes scale-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-fade-in {
+  animation: scale-fade-in 0.2s ease-out;
+}
+
+@keyframes slide-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-fade-down {
+  animation: slide-fade-down 0.2s ease-out;
+}
+
+@keyframes slide-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-fade-up {
+  animation: slide-fade-up 0.2s ease-out;
+}
+
+@keyframes scale-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-fade-in {
+  animation: scale-fade-in 0.2s ease-out;
+}
+
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger-fade-in {
+  animation: stagger-fade-in 0.5s ease-out 0.3s both;
+}
+
+@keyframes scale-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+.animate-scale-fade-out {
+  animation: scale-fade-out 0.3s ease-out;
+}
+
+@keyframes scale-fade-delayed {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-fade-delayed {
+  animation: scale-fade-delayed 0.3s ease-out 0.2s both;
+}
+
+@keyframes menu-close {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.animate-menu-close {
+  animation: menu-close 0.3s ease-out;
+}
+
+@keyframes slide-fade-out-up {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.animate-slide-fade-out-up {
+  animation: slide-fade-out-up 0.2s ease-out;
+}
+
+@keyframes slide-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-fade-up {
+  animation: slide-fade-up 0.2s ease-out;
+}
+
+@keyframes slide-fade-out-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.animate-slide-fade-out-down {
+  animation: slide-fade-out-down 0.2s ease-out;
+}
+
+@keyframes slide-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-fade-down {
+  animation: slide-fade-down 0.2s ease-out;
+}
+
+@keyframes scale-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-fade-in {
+  animation: scale-fade-in 0.2s ease-out;
+}
+
 @keyframes fade-slide-up {
   from {
     opacity: 0;

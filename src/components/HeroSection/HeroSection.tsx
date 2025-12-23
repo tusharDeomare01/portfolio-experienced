@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, memo } from "react";
 import { TypingText } from "../lightswind/typing-text";
 import { Button } from "../lightswind/button";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { ArrowDown, Sparkles, Mail } from "lucide-react";
 
-export const HeroSection = () => {
+const HeroSectionComponent = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [leftSectionVisible, setLeftSectionVisible] = useState(false);
   const [rightSectionVisible, setRightSectionVisible] = useState(false);
@@ -15,27 +15,18 @@ export const HeroSection = () => {
   const rightSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Main hero section fade in - trigger immediately with triple RAF for ultra-smoothness
+    // Main hero section fade in - optimized to single RAF
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsVisible(true);
-        });
-      });
+      setIsVisible(true);
     });
 
-    // Intersection Observer for left section
+    // Intersection Observer for left section - optimized to single RAF
     const leftObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Triple RAF for ultra-smooth animation trigger
             requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  setLeftSectionVisible(true);
-                });
-              });
+              setLeftSectionVisible(true);
             });
             if (leftSectionRef.current) {
               leftObserver.unobserve(leftSectionRef.current);
@@ -46,18 +37,13 @@ export const HeroSection = () => {
       { threshold: 0.01, rootMargin: '0px 0px -20px 0px' }
     );
 
-    // Intersection Observer for right section
+    // Intersection Observer for right section - optimized to single RAF
     const rightObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Triple RAF for ultra-smooth animation trigger
             requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  setRightSectionVisible(true);
-                });
-              });
+              setRightSectionVisible(true);
             });
             if (rightSectionRef.current) {
               rightObserver.unobserve(rightSectionRef.current);
@@ -89,7 +75,7 @@ export const HeroSection = () => {
     };
   }, []);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (el) {
       const offset = 80;
@@ -101,7 +87,16 @@ export const HeroSection = () => {
         behavior: "smooth",
       });
     }
-  };
+  }, []);
+
+  const handleEmailMouseEnter = useCallback(() => {
+    setHasHoveredEmail(true);
+    setIsEmailHovered(true);
+  }, []);
+
+  const handleEmailMouseLeave = useCallback(() => {
+    setIsEmailHovered(false);
+  }, []);
 
   return (
     <>
@@ -419,11 +414,8 @@ export const HeroSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="hero-email-link flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-pink-500 transition-colors duration-300 group relative"
-              onMouseEnter={() => {
-                setHasHoveredEmail(true);
-                setIsEmailHovered(true);
-              }}
-              onMouseLeave={() => setIsEmailHovered(false)}
+              onMouseEnter={handleEmailMouseEnter}
+              onMouseLeave={handleEmailMouseLeave}
             >
               <Mail className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
               <span className="font-medium relative">
@@ -479,6 +471,8 @@ export const HeroSection = () => {
               src="/Tushar_Deomare.jpg"
               alt="Tushar Deomare"
               className="w-full h-full object-cover"
+              loading="eager"
+              fetchPriority="high"
             />
           </div>
         </div>
@@ -486,3 +480,5 @@ export const HeroSection = () => {
     </>
   );
 };
+
+export const HeroSection = memo(HeroSectionComponent);

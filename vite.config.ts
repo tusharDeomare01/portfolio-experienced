@@ -77,13 +77,66 @@ export default defineConfig(({ mode }) => ({
       // Maximize parallel processing
       maxParallelFileOps: 16, // Matches UV_THREADPOOL_SIZE
       output: {
-        manualChunks: {
-          // Vendor chunks
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'redux-vendor': ['@reduxjs/toolkit', 'react-redux', 'redux-persist'],
-          'animation-vendor': ['framer-motion'],
-          'ui-vendor': ['lucide-react'],
-          'ai-vendor': ['openai'],
+        manualChunks: (id) => {
+          // More granular chunking for better caching
+          if (id.includes('node_modules')) {
+            // React core
+            if (id.includes('react/') || id.includes('react-dom/') || id.includes('scheduler/')) {
+              return 'react-core';
+            }
+            // React Router
+            if (id.includes('react-router')) {
+              return 'react-router';
+            }
+            // Redux
+            if (id.includes('@reduxjs/toolkit') || id.includes('redux') || id.includes('reselect')) {
+              return 'redux-vendor';
+            }
+            // Framer Motion - separate chunk as it's large
+            if (id.includes('framer-motion')) {
+              return 'animation-vendor';
+            }
+            // Three.js - separate chunk as it's large
+            if (id.includes('three')) {
+              return 'three-vendor';
+            }
+            // Particles - separate chunk
+            if (id.includes('@tsparticles') || id.includes('tsparticles')) {
+              return 'particles-vendor';
+            }
+            // OpenAI - separate chunk
+            if (id.includes('openai')) {
+              return 'ai-vendor';
+            }
+            // UI libraries
+            if (id.includes('lucide-react')) {
+              return 'ui-icons';
+            }
+            // Markdown
+            if (id.includes('react-markdown') || id.includes('remark') || id.includes('rehype')) {
+              return 'markdown-vendor';
+            }
+            // EmailJS
+            if (id.includes('@emailjs')) {
+              return 'emailjs-vendor';
+            }
+            // Other vendor code
+            return 'vendor';
+          }
+          // Route-based code splitting
+          if (id.includes('/pages/MarketJD')) {
+            return 'marketjd-page';
+          }
+          if (id.includes('/pages/Portfolio')) {
+            return 'portfolio-page';
+          }
+          // Heavy components
+          if (id.includes('ThreeDCarousel') || id.includes('3d-carousel')) {
+            return 'carousel-components';
+          }
+          if (id.includes('InteractiveCard') || id.includes('interactive-card')) {
+            return 'interactive-components';
+          }
         },
         // Optimize chunk file names
         chunkFileNames: 'assets/js/[name]-[hash].js',

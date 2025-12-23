@@ -70,8 +70,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
-    <!-- DNS Prefetch -->
-    <link rel="dns-prefetch" href="https://api.openai.com" />
+    <!-- Preconnect to external APIs -->
+    <link rel="preconnect" href="https://api.openai.com" />
+    <link rel="preconnect" href="https://api.emailjs.com" />
+    
+    <!-- DNS Prefetch for additional resources -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/Tushar_Deomare.jpg" as="image" type="image/jpeg" fetchpriority="high" />
+    <link rel="preload" href="/favicon.svg" as="image" type="image/svg+xml" />
+    
+    <!-- Prefetch likely next routes -->
+    <link rel="prefetch" href="/marketjd" />
+    <link rel="prefetch" href="/portfolio" />
     
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">

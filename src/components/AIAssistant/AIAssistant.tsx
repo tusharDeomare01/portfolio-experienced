@@ -1,6 +1,13 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback, memo } from "react";
 import { motion, useMotionValue, useDragControls } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  selectChatIsOpen,
+  selectChatIsFullscreen,
+  selectChatShowTooltip,
+  selectChatUserInteracted,
+  selectChatUnreadCount,
+} from "@/store/hooks";
 import {
   openChat,
   closeChat,
@@ -20,14 +27,14 @@ import {
   getNotificationPreferences,
 } from "@/lib/notificationUtils";
 
-export default function AIAssistant() {
+const AIAssistantComponent = () => {
   const dispatch = useAppDispatch();
-  const isOpen = useAppSelector((state) => state.chat.isOpen);
-  const isFullscreen = useAppSelector((state) => state.chat.isFullscreen);
+  const isOpen = useAppSelector(selectChatIsOpen);
+  const isFullscreen = useAppSelector(selectChatIsFullscreen);
   const theme = useAppSelector((state) => state.theme.theme);
-  const showTooltipState = useAppSelector((state) => state.chat.showTooltip);
-  const userInteracted = useAppSelector((state) => state.chat.userInteracted);
-  const unreadCount = useAppSelector((state) => state.chat.unreadCount);
+  const showTooltipState = useAppSelector(selectChatShowTooltip);
+  const userInteracted = useAppSelector(selectChatUserInteracted);
+  const unreadCount = useAppSelector(selectChatUnreadCount);
   const widgetRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const tooltipShownRef = useRef(false);
@@ -147,7 +154,7 @@ export default function AIAssistant() {
     return () => clearTimeout(timer);
   }, [showTooltipState, userInteracted, isOpen, dispatch]);
 
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
     if (isOpen) {
       dispatch(closeChat());
     } else {
@@ -159,18 +166,18 @@ export default function AIAssistant() {
       x.set(0);
       y.set(0);
     }
-  };
+  }, [isOpen, dispatch, x, y]);
 
-  const handleDragStart = () => {
+  const handleDragStart = useCallback(() => {
     setIsDragging(true);
-  };
+  }, []);
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
-  // Calculate drag constraints - relative to initial position (0,0)
-  const getDragConstraints = () => {
+  // Calculate drag constraints - relative to initial position (0,0) - memoized
+  const getDragConstraints = useCallback(() => {
     if (typeof window === "undefined" || isFullscreen) return false;
 
     // Responsive widget dimensions
@@ -201,7 +208,7 @@ export default function AIAssistant() {
       top: maxTop,
       bottom: maxBottom,
     };
-  };
+  }, [isFullscreen]);
 
   const dragEnabled = !isFullscreen && isOpen;
 
@@ -372,4 +379,6 @@ export default function AIAssistant() {
       )}
     </>
   );
-}
+};
+
+export default memo(AIAssistantComponent);

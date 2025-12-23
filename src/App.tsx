@@ -1,5 +1,5 @@
 // App.jsx
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense, useCallback, useMemo } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import {
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "./components/hooks/use-mobile";
 import { TourProvider, useTourContext } from "./components/Tour/TourContext";
+import { useThrottleRAF } from "./hooks/useThrottle";
 import {
   PageLoader,
   SectionLoader,
@@ -101,29 +102,29 @@ function HomePage() {
     }
   }, [showDock]);
 
-  // Track scroll direction
+  // Track scroll direction - optimized with throttled handler
+  const handleScroll = useThrottleRAF(() => {
+    const currentScrollY = window.scrollY;
+
+    // Show dock if scrolling down OR if tour is active and on dock step
+    const shouldShowDock =
+      (currentScrollY > lastScrollY && currentScrollY > 100) ||
+      (tour.isTourActive && tour.currentStep === 9); // Step 9 is the dock step
+
+    if (shouldShowDock) {
+      setShowDock(true);
+    } else if (currentScrollY < lastScrollY && !tour.isTourActive) {
+      // scrolling up -> hide Dock (unless tour is active)
+      setIsDockVisible(false);
+      // Remove from DOM after animation completes
+      setTimeout(() => setShowDock(false), 700);
+    }
+
+    setLastScrollY(currentScrollY);
+  });
+
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Show dock if scrolling down OR if tour is active and on dock step
-      const shouldShowDock =
-        (currentScrollY > lastScrollY && currentScrollY > 100) ||
-        (tour.isTourActive && tour.currentStep === 9); // Step 9 is the dock step
-
-      if (shouldShowDock) {
-        setShowDock(true);
-      } else if (currentScrollY < lastScrollY && !tour.isTourActive) {
-        // scrolling up -> hide Dock (unless tour is active)
-        setIsDockVisible(false);
-        // Remove from DOM after animation completes
-        setTimeout(() => setShowDock(false), 700);
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Show dock if tour is on dock step
     if (tour.isTourActive && tour.currentStep === 9) {
@@ -133,10 +134,10 @@ function HomePage() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY, tour.isTourActive, tour.currentStep]);
+  }, [handleScroll, tour.isTourActive, tour.currentStep]);
 
   // Helper for smooth scroll using native browser API
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (el) {
       const offset = 80;
@@ -148,11 +149,11 @@ function HomePage() {
         behavior: "smooth",
       });
     }
-  };
+  }, []);
 
-  // Dock items with responsive icon sizes
+  // Dock items with responsive icon sizes - memoized
   const iconSize = isMobile ? 20 : 24;
-  const dockItems = [
+  const dockItems = useMemo(() => [
     {
       icon: <Home size={iconSize} />,
       label: "Home",
@@ -193,7 +194,7 @@ function HomePage() {
       label: "Contact",
       onClick: () => scrollToSection("contact"),
     },
-  ];
+  ], [iconSize, scrollToSection]);
   return (
     <div className="bg-background min-h-screen w-full">
       <Suspense fallback={<HeaderLoader />}>

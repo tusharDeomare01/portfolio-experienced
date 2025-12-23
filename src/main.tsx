@@ -24,7 +24,9 @@ function ThemeSync() {
             store.dispatch(setTheme(theme));
           }
         } catch (error) {
-          console.error('Error parsing theme from storage:', error);
+          if (import.meta.env.DEV) {
+            console.error('Error parsing theme from storage:', error);
+          }
         }
       }
     };

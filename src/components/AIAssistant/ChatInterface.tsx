@@ -1,6 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo, memo } from "react";
 import { motion, DragControls } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+  selectChatMessages,
+  selectChatSessions,
+  selectChatCurrentSessionId,
+  selectChatIsStreaming,
+  selectChatError,
+  selectChatLastInteractivePromptTime,
+} from "@/store/hooks";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import {
@@ -45,35 +53,31 @@ interface ChatInterfaceProps {
   dragControls?: DragControls;
 }
 
-export default function ChatInterface({
+const ChatInterfaceComponent = ({
   isFullscreen,
   dragEnabled = false,
   dragControls,
-}: ChatInterfaceProps) {
+}: ChatInterfaceProps) => {
   const dispatch = useAppDispatch();
-  const messages = useAppSelector((state) => state.chat.messages);
-  const sessions = useAppSelector((state) => state.chat.sessions);
-  const currentSessionId = useAppSelector(
-    (state) => state.chat.currentSessionId
-  );
-  const isStreaming = useAppSelector((state) => state.chat.isStreaming);
-  const error = useAppSelector((state) => state.chat.error);
-  const lastInteractivePromptTime = useAppSelector(
-    (state) => state.chat.lastInteractivePromptTime
-  );
+  const messages = useAppSelector(selectChatMessages);
+  const sessions = useAppSelector(selectChatSessions);
+  const currentSessionId = useAppSelector(selectChatCurrentSessionId);
+  const isStreaming = useAppSelector(selectChatIsStreaming);
+  const error = useAppSelector(selectChatError);
+  const lastInteractivePromptTime = useAppSelector(selectChatLastInteractivePromptTime);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
   const interactivePromptShownRef = useRef(false);
 
-  // Interactive prompts that appear if user ignored tooltip
-  const interactivePrompts = [
+  // Interactive prompts that appear if user ignored tooltip - memoized
+  const interactivePrompts = useMemo(() => [
     "👋 Hey there! I'm here to help you learn about Tushar. Want to know about his projects or experience?",
     "💡 Curious about Tushar's skills? I can tell you about his technical expertise and achievements!",
     "🚀 Ask me anything! I know all about Tushar's work, education, and career journey.",
     "✨ I'm Tushar's AI assistant! What would you like to know about him today?",
-  ];
+  ], []);
 
   // Prevent scroll propagation to main app
   useEffect(() => {
@@ -177,39 +181,39 @@ export default function ChatInterface({
     }
   }, [messages.length]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     dispatch(closeChat());
-  };
+  }, [dispatch]);
 
-  const handleToggleFullscreen = () => {
+  const handleToggleFullscreen = useCallback(() => {
     dispatch(toggleFullscreen());
-  };
+  }, [dispatch]);
 
-  const handleClearChat = () => {
+  const handleClearChat = useCallback(() => {
     dispatch(clearMessages());
     setShowClearDialog(false);
-  };
+  }, [dispatch]);
 
-  const handleBackToSessions = () => {
+  const handleBackToSessions = useCallback(() => {
     dispatch(goBackToSessions());
     setShowSessions(true);
-  };
+  }, [dispatch]);
 
-  const handleNewChat = () => {
+  const handleNewChat = useCallback(() => {
     dispatch(createNewSession());
     setShowSessions(false);
-  };
+  }, [dispatch]);
 
-  const handleSelectSession = (sessionId: string) => {
+  const handleSelectSession = useCallback((sessionId: string) => {
     dispatch(switchSession(sessionId));
     setShowSessions(false);
-  };
+  }, [dispatch]);
 
   // Prevent drag when clicking buttons
-  const handleButtonClick = (e: React.MouseEvent, handler: () => void) => {
+  const handleButtonClick = useCallback((e: React.MouseEvent, handler: () => void) => {
     e.stopPropagation();
     handler();
-  };
+  }, []);
 
   return (
     <motion.div
@@ -478,4 +482,6 @@ export default function ChatInterface({
       </Card>
     </motion.div>
   );
-}
+};
+
+export default memo(ChatInterfaceComponent);

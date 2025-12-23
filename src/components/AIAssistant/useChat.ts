@@ -18,7 +18,8 @@ function generateId(): string {
 export async function sendMessage(
   content: string,
   dispatch: AppDispatch,
-  getState: () => RootState
+  getState: () => RootState,
+  signal?: AbortSignal
 ) {
   if (!content.trim()) return;
 
@@ -62,8 +63,12 @@ export async function sendMessage(
         content: msg.content,
       }));
 
-    // Stream response
-    for await (const chunk of streamChatCompletion(chatMessages)) {
+    // Stream response with AbortController support
+    for await (const chunk of streamChatCompletion(chatMessages, signal)) {
+      // Check if request was aborted
+      if (signal?.aborted) {
+        return;
+      }
       dispatch(
         updateMessage({
           id: assistantMessageId,
@@ -107,7 +112,10 @@ export async function sendMessage(
       // Page title will be updated by the unread count change in the reducer
     }
   } catch (error: any) {
-    console.error("Error sending message:", error);
+    // Log error in development, handle silently in production
+    if (import.meta.env.DEV) {
+      console.error("Error sending message:", error);
+    }
     dispatch(
       setError(
         error.message || "Failed to get response. Please try again."

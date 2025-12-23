@@ -33,26 +33,41 @@ export default function ThreeDCarousel({
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
 
-  // Detect mobile screen size
+  // Detect mobile screen size - debounced for performance
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsMobile(window.innerWidth < 768);
+      }, 150); // Debounce resize
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    // Initial check
+    setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", checkMobile, { passive: true });
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
-  // Intersection Observer to detect when carousel is in view
+  // Intersection Observer to detect when carousel is in view - properly cleaned up
   useEffect(() => {
+    if (!carouselRef.current) return;
+    
     const observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
       { threshold: 0.2 }
     );
-    if (carouselRef.current) {
-      observer.observe(carouselRef.current);
-    }
-    return () => observer.disconnect();
+    
+    observer.observe(carouselRef.current);
+    
+    return () => {
+      if (carouselRef.current) {
+        observer.unobserve(carouselRef.current);
+      }
+      observer.disconnect();
+    };
   }, []);
 
   // Auto-rotate functionality

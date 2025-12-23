@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
+import { selectTheme } from "@/store/hooks";
 import { useAppSelector } from "@/store/hooks";
 // @ts-ignore - interactive-card is a JS file without type definitions
 import { InteractiveCard } from "../lightswind/interactive-card";
@@ -9,13 +10,13 @@ import { Badge } from "../lightswind/badge";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { ArrowRight, Calendar, FolderKanban } from "lucide-react";
 
-export const ProjectsSection = () => {
+const ProjectsSectionComponent = () => {
   const navigate = useNavigate();
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  const theme = useAppSelector((state) => state.theme.theme);
+  const theme = useAppSelector(selectTheme);
   const isDarkMode = theme === "dark";
 
-  const getLogoPath = (projectTitle: string) => {
+  const getLogoPath = useCallback((projectTitle: string) => {
     if (projectTitle === "MarketJD") {
       return isDarkMode
         ? "/logo-horizontal-dark.svg"
@@ -26,9 +27,9 @@ export const ProjectsSection = () => {
         : "/techshowcase-logo-light.svg";
     }
     return "";
-  };
+  }, [isDarkMode]);
 
-  const [projects] = useState([
+  const projects = useMemo(() => [
     {
       id: 1,
       title: "MarketJD",
@@ -62,11 +63,19 @@ export const ProjectsSection = () => {
       technologies: ["React", "TypeScript", "Framer Motion", "Vite"],
       status: "Active",
     },
-  ]);
+  ], []);
 
-  const handleMoreInfo = (route: string) => {
+  const handleMoreInfo = useCallback((route: string) => {
     navigate(route);
-  };
+  }, [navigate]);
+
+  const handleMouseEnter = useCallback((id: number) => {
+    setHoveredProject(id);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredProject(null);
+  }, []);
 
   return (
     <div id="projects" className="min-h-screen flex flex-col justify-center">
@@ -93,8 +102,8 @@ export const ProjectsSection = () => {
             <div
               key={project.id}
               className="w-full max-w-md project-card-wrapper group"
-              onMouseEnter={() => setHoveredProject(project.id)}
-              onMouseLeave={() => setHoveredProject(null)}
+              onMouseEnter={() => handleMouseEnter(project.id)}
+              onMouseLeave={handleMouseLeave}
             >
               <InteractiveCard
                 className="h-full flex flex-col w-full overflow-hidden"
@@ -115,6 +124,7 @@ export const ProjectsSection = () => {
                     <img
                       src={getLogoPath(project.title)}
                       alt={project.title}
+                      loading="lazy"
                       className={`w-full h-full max-w-full max-h-full sm:max-w-[80%] sm:max-h-[70%] md:max-w-[75%] md:max-h-[65%] object-contain px-4 py-2 sm:px-4 sm:py-4 md:px-4 md:py-4 transition-transform duration-300 ${
                         hoveredProject === project.id
                           ? "scale-110"
@@ -125,6 +135,7 @@ export const ProjectsSection = () => {
                     <img
                       src={project.image}
                       alt={project.title}
+                      loading="lazy"
                       className={`w-full h-full object-cover transition-transform duration-300 ${
                         hoveredProject === project.id
                           ? "scale-110"
@@ -215,3 +226,5 @@ export const ProjectsSection = () => {
     </div>
   );
 };
+
+export const ProjectsSection = memo(ProjectsSectionComponent);

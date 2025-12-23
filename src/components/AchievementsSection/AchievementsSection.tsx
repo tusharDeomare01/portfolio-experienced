@@ -138,6 +138,7 @@ export const AchievementsSection = () => {
                     <img
                       src={selectedAchievement.image}
                       alt={selectedAchievement.title || "Achievement"}
+                      loading="lazy"
                       className="max-w-full max-h-full w-auto h-auto object-contain brightness-105 contrast-105 dark:brightness-100 dark:contrast-100 drop-shadow-2xl dark:drop-shadow-lg"
                       style={{
                         filter:

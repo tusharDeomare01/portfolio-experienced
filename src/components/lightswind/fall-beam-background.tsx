@@ -2,6 +2,29 @@ import { cn } from "../lib/utils";
 import { motion } from "framer-motion";
 import { useEffect, useState, useMemo, useRef, memo } from "react";
 
+// Page Visibility API hook for pausing animations when tab is not visible
+const usePageVisibility = () => {
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof document === "undefined") return true;
+    return !document.hidden;
+  });
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  return isVisible;
+};
+
 interface FallBeamBackgroundProps {
   /**
    * The number of beams to render (auto-adjusted for mobile)
@@ -289,10 +312,13 @@ function FallBeamBackgroundComponent({
     }));
   }, [responsiveBeamCount, staggerDelay]);
 
-  // Respect reduced motion preference
+  // Page visibility for pausing animations when tab is not visible
+  const isPageVisible = usePageVisibility();
+
+  // Respect reduced motion preference and page visibility
   const shouldAnimate = useMemo(
-    () => animate && !prefersReducedMotion,
-    [animate, prefersReducedMotion]
+    () => animate && !prefersReducedMotion && isPageVisible,
+    [animate, prefersReducedMotion, isPageVisible]
   );
 
   // Memoize gradient string to avoid recalculating on every render

@@ -82,17 +82,26 @@ export function ResumeSection() {
                 />
               </div>
 
-              {/* Mobile: Placeholder */}
-              <div className="sm:hidden flex items-center justify-center h-full bg-gradient-to-br from-primary/10 via-primary/5 to-background">
-                <iframe
-                  src={`${RESUME_FILE_PATH}#toolbar=0&navpanes=0&scrollbar=0&zoom=page-width`}
-                  className="w-[92.5%] h-[89.5%] flex justify-center items-center"
-                  title="Resume Preview"
-                  allowFullScreen={true}
-                  allowTransparency={false}
-                  key={"resume"}
-                  loading="eager"
-                />
+              {/* Mobile: Modern PDF Preview Card */}
+              <div className="lg:hidden flex flex-col items-center justify-center h-full p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-background dark:from-primary/20 dark:via-primary/10 dark:to-background">
+                {/* Large Document Icon with Glow Effect */}
+                <div className="mb-6 relative">
+                  <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full"></div>
+                  <FileText className="w-24 h-24 text-primary dark:text-primary/80 relative z-10" />
+                </div>
+
+                {/* PDF File Name */}
+                <div className="mb-8 text-center">
+                  <p className="text-xl font-bold text-foreground mb-2">
+                    {RESUME_FILE_NAME}
+                  </p>
+                  <p className="text-sm text-muted-foreground">PDF Document</p>
+                </div>
+
+                {/* Decorative Elements */}
+                <div className="absolute top-4 left-4 w-2 h-2 bg-primary/30 rounded-full"></div>
+                <div className="absolute top-6 right-6 w-1.5 h-1.5 bg-primary/20 rounded-full"></div>
+                <div className="absolute bottom-8 left-6 w-1 h-1 bg-primary/25 rounded-full"></div>
               </div>
 
               {/* Desktop Hover Overlay */}
@@ -138,37 +147,49 @@ export function ResumeSection() {
             </div>
 
             {/* Action Buttons - Mobile */}
-            <div className="lg:hidden flex gap-3 p-6 bg-background/80 flex-wrap">
+            <div className="lg:hidden mt-6 space-y-3">
+              {/* View Button - Full Width, Middle */}
               <button
                 onClick={handleView}
-                className="flex-1 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95"
+                className="w-full px-6 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-xl text-base font-semibold transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl active:scale-[0.98]"
               >
-                <ExternalLink className="w-4 h-4" />
-                View
-              </button>
-              <button
-                onClick={handleDownload}
-                disabled={isDownloading}
-                className="flex-1 px-4 py-3 bg-pink-500 hover:bg-pink-600 disabled:bg-pink-400 text-white rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Download
-                  className={`w-4 h-4 ${isDownloading ? "animate-bounce" : ""}`}
-                />
-                {isDownloading ? "..." : "Download"}
+                <ExternalLink className="w-5 h-5" />
+                View Resume
               </button>
 
-              <ShareButton
-                shareData={{
-                  title: "Tushar Deomare - Resume",
-                  description:
-                    "Check out my professional resume and career highlights",
-                  url: `${getBaseUrl()}/#resume`,
-                }}
-                variant="outline"
-                size="lg"
-                showLabel={true}
-                position="top"
-              />
+              {/* Download and Share Buttons - Side by Side */}
+              <div className="flex gap-3">
+                {/* Download Button - Left */}
+                <button
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="flex-1 h-[56px] px-4 bg-pink-500 hover:bg-pink-600 disabled:bg-pink-400 text-white rounded-xl text-base font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Download
+                    className={`w-5 h-5 ${
+                      isDownloading ? "animate-bounce" : ""
+                    }`}
+                  />
+                  {isDownloading ? "Downloading..." : "Download"}
+                </button>
+
+                {/* Share Button - Right */}
+                <div className="flex-1 h-[56px]">
+                  <ShareButton
+                    shareData={{
+                      title: "Tushar Deomare - Resume",
+                      description:
+                        "Check out my professional resume and career highlights",
+                      url: `${getBaseUrl()}/#resume`,
+                    }}
+                    variant="outline"
+                    size="lg"
+                    showLabel={true}
+                    position="top"
+                    className="w-full h-full !min-h-[56px]"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

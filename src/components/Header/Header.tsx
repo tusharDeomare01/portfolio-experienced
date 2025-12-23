@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
+import { useThrottleRAF } from "@/hooks/useThrottle";
+import { selectTheme } from "@/store/hooks";
 import {
   Menu,
   X,
@@ -27,13 +29,12 @@ const navItems = [
 ];
 
 export default function Header() {
-  const theme = useAppSelector((state) => state.theme.theme);
+  const theme = useAppSelector(selectTheme);
   const dispatch = useAppDispatch();
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollYRef = useRef(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const scrollTimeoutRef = useRef<number | null>(null);
 
   // Tour context - wrapped in try-catch in case TourProvider is not available
   let tour: ReturnType<typeof useTourContext> | null = null;
@@ -52,36 +53,25 @@ export default function Header() {
     }
   }, [theme]);
 
-  // Scroll listener for hide/show header - optimized with useRef and throttling
+  // Scroll listener for hide/show header - optimized with throttled handler
+  const handleScroll = useThrottleRAF(() => {
+    const currentScrollY = window.scrollY;
+    const lastScrollY = lastScrollYRef.current;
+
+    if (currentScrollY > lastScrollY && currentScrollY > 80) {
+      setShowHeader(false); // Scrolling down
+    } else {
+      setShowHeader(true); // Scrolling up
+    }
+    lastScrollYRef.current = currentScrollY;
+  });
+
   useEffect(() => {
-    const handleScroll = () => {
-      // Clear existing timeout
-      if (scrollTimeoutRef.current !== null) {
-        cancelAnimationFrame(scrollTimeoutRef.current);
-      }
-
-      // Throttle using requestAnimationFrame
-      scrollTimeoutRef.current = requestAnimationFrame(() => {
-        const currentScrollY = window.scrollY;
-        const lastScrollY = lastScrollYRef.current;
-
-        if (currentScrollY > lastScrollY && currentScrollY > 80) {
-          setShowHeader(false); // Scrolling down
-        } else {
-          setShowHeader(true); // Scrolling up
-        }
-        lastScrollYRef.current = currentScrollY;
-      });
-    };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (scrollTimeoutRef.current !== null) {
-        cancelAnimationFrame(scrollTimeoutRef.current);
-      }
     };
-  }, []);
+  }, [handleScroll]);
 
   // Fullscreen change listener
   useEffect(() => {
@@ -158,7 +148,9 @@ export default function Header() {
         }
       }
     } catch (error) {
-      console.error("Error toggling fullscreen:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error toggling fullscreen:", error);
+      }
     }
   }, []);
 

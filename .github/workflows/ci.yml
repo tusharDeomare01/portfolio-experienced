@@ -2,46 +2,46 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run linter
-      run: npm run lint
-      continue-on-error: true
+      - name: Run linter
+        run: npm run lint
+        continue-on-error: true
 
-    - name: Build project
-      run: npm run build
-      env:
-        # These are dummy values for build - actual values should be set in hosting platform
-        VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY || 'dummy-key-for-build' }}
-        VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY || 'dummy-key-for-build' }}
-        VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID || 'dummy-id-for-build' }}
-        VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID || 'dummy-id-for-build' }}
+      - name: Build project
+        run: npm run build
+        env:
+          # These are dummy values for build - actual values should be set in hosting platform
+          VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY || 'dummy-key-for-build' }}
+          VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY || 'dummy-key-for-build' }}
+          VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID || 'dummy-id-for-build' }}
+          VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID || 'dummy-id-for-build' }}
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist
-        path: dist/
-        retention-days: 7
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
 
   # Optional: Deploy to GitHub Pages
   # Uncomment if you want to use GitHub Pages instead of Vercel/Netlify
@@ -61,7 +61,3 @@ jobs:
   #     with:
   #       github_token: ${{ secrets.GITHUB_TOKEN }}
   #       publish_dir: ./dist
-
-
-
-

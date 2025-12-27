@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect } from "react";
 
 /**
  * Custom hook for debouncing function calls
@@ -26,7 +26,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      
+
       timeoutRef.current = setTimeout(() => {
         callback(...args);
       }, delay);
@@ -34,4 +34,3 @@ export function useDebounce<T extends (...args: any[]) => any>(
     [callback, delay]
   );
 }
-

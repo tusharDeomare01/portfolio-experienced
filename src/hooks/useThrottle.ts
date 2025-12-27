@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback } from "react";
 
 /**
  * Custom hook for throttling function calls
@@ -16,7 +16,7 @@ export function useThrottle<T extends (...args: any[]) => any>(
   return useCallback(
     ((...args: Parameters<T>) => {
       const now = Date.now();
-      
+
       if (now - lastRun.current >= delay) {
         lastRun.current = now;
         callback(...args);
@@ -25,7 +25,7 @@ export function useThrottle<T extends (...args: any[]) => any>(
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
         }
-        
+
         // Schedule the call for after the delay
         timeoutRef.current = setTimeout(() => {
           lastRun.current = Date.now();
@@ -51,7 +51,7 @@ export function useThrottleRAF<T extends (...args: any[]) => any>(
   return useCallback(
     ((...args: Parameters<T>) => {
       lastArgsRef.current = args;
-      
+
       if (rafRef.current === null) {
         rafRef.current = requestAnimationFrame(() => {
           if (lastArgsRef.current) {
@@ -64,4 +64,3 @@ export function useThrottleRAF<T extends (...args: any[]) => any>(
     [callback]
   );
 }
-

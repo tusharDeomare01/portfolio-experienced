@@ -182,8 +182,12 @@ const AIAssistantComponent = () => {
 
     // Responsive widget dimensions
     const isMobile = window.innerWidth < 640; // sm breakpoint
+    // Use visual viewport height for mobile to account for browser chrome
+    const viewportHeight = isMobile && (window as any).visualViewport 
+      ? (window as any).visualViewport.height 
+      : window.innerHeight;
     const widgetWidth = isMobile ? window.innerWidth - 16 : 384; // w-96 = 384px on desktop
-    const widgetHeight = isMobile ? window.innerHeight - 128 : 600; // h-[600px] on desktop
+    const widgetHeight = isMobile ? viewportHeight - 80 : 600; // Account for mobile browser UI
     const padding = isMobile ? 8 : 20; // Safe padding from edges
 
     // Calculate max drag distance from initial position
@@ -194,13 +198,13 @@ const AIAssistantComponent = () => {
     const maxLeft = -(window.innerWidth - widgetWidth - padding - initialRight);
     const maxRight = window.innerWidth - widgetWidth - padding - initialRight;
     const maxTop = -(
-      window.innerHeight -
+      viewportHeight -
       widgetHeight -
       padding -
       initialBottom
     );
     const maxBottom =
-      window.innerHeight - widgetHeight - padding - initialBottom;
+      viewportHeight - widgetHeight - padding - initialBottom;
 
     return {
       left: maxLeft,
@@ -363,11 +367,14 @@ const AIAssistantComponent = () => {
             x: dragEnabled ? x : 0,
             y: dragEnabled ? y : 0,
             touchAction: dragEnabled ? "none" : "auto",
+            maxHeight: isFullscreen ? "none" : typeof window !== "undefined" && window.innerWidth < 640 
+              ? "calc(100dvh - 5rem)" 
+              : "none",
           }}
           className={`${
             isFullscreen
               ? "fixed inset-2 sm:inset-4 z-[19999]"
-              : "fixed bottom-20 right-2 sm:bottom-28 sm:right-4 w-[calc(100vw-1rem)] sm:w-96 h-[calc(100vh-6rem)] sm:h-[600px] max-w-sm sm:max-w-none z-[19999] flex flex-col"
+              : "fixed bottom-20 right-2 sm:bottom-28 sm:right-4 w-[calc(100vw-1rem)] sm:w-96 h-[calc(100dvh-5rem)] sm:h-[600px] max-w-sm sm:max-w-none z-[19999] flex flex-col"
           } flex flex-col`}
         >
           <ChatInterface

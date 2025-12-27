@@ -1,5 +1,5 @@
-import React, { useRef, useMemo } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import React, { useRef, useMemo, useCallback } from "react";
+import { motion, useInView, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { cn } from "../../lib/utils";
 
 export interface ScrollRevealProps {
@@ -66,21 +66,51 @@ const DEFAULT_SPRING_CONFIG = {
   mass: 1,
 } as const;
 
-// Optimized whitespace check function
+// Optimized whitespace check using regex (faster for most cases)
+const WHITESPACE_REGEX = /^\s+$/;
 const isWhitespaceOnly = (str: string): boolean => {
   if (str.length === 0) return false;
-  // Fast check: if first char is not whitespace, it's not whitespace-only
-  if (str[0] !== " " && str[0] !== "\t" && str[0] !== "\n" && str[0] !== "\r") {
-    return false;
+  // Fast path: single character check
+  if (str.length === 1) {
+    const char = str[0];
+    return char === " " || char === "\t" || char === "\n" || char === "\r";
   }
-  // Check all characters are whitespace
-  for (let i = 0; i < str.length; i++) {
-    const char = str[i];
-    if (char !== " " && char !== "\t" && char !== "\n" && char !== "\r") {
-      return false;
+  // Use regex for longer strings (more efficient than loop for most cases)
+  return WHITESPACE_REGEX.test(str);
+};
+
+// Cache for text splitting to avoid re-splitting same text
+const textSplitCache = new Map<string, Array<{ value: string; isSpace: boolean; originalIndex: number }>>();
+const MAX_CACHE_SIZE = 100;
+
+// Optimized text splitter with caching
+const splitTextOptimized = (text: string): Array<{ value: string; isSpace: boolean; originalIndex: number }> => {
+  // Check cache first
+  if (textSplitCache.has(text)) {
+    return textSplitCache.get(text)!;
+  }
+
+  // Split and process
+  const parts = text.split(/(\s+)/);
+  const result = parts
+    .map((part, index) => ({
+      value: part,
+      isSpace: isWhitespaceOnly(part),
+      originalIndex: index,
+    }))
+    .filter((item) => item.value.length > 0);
+
+  // Cache result (with size limit to prevent memory leaks)
+  if (textSplitCache.size >= MAX_CACHE_SIZE) {
+    // Remove oldest entry (FIFO)
+    const firstKey = textSplitCache.keys().next().value;
+    if (firstKey !== undefined) {
+      textSplitCache.delete(firstKey);
     }
   }
-  return true;
+  textSplitCache.set(text, result);
+
+  return result;
 };
 
 const ScrollRevealComponent = ({
@@ -100,6 +130,7 @@ const ScrollRevealComponent = ({
   variant = "default",
 }: ScrollRevealProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
   
   // Use stable default springConfig reference
   const stableSpringConfig = springConfig ?? DEFAULT_SPRING_CONFIG;
@@ -118,6 +149,9 @@ const ScrollRevealComponent = ({
   
   const isInView = useInView(containerRef, inViewOptions);
   
+  // Only use scroll-based rotation if not reduced motion
+  const shouldUseScrollRotation = !prefersReducedMotion && baseRotation !== 0;
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: DEFAULT_SCROLL_OFFSET,
@@ -129,83 +163,117 @@ const ScrollRevealComponent = ({
     [baseRotation]
   );
 
-  // Transform rotation based on scroll
+  // Transform rotation based on scroll (only if enabled)
   const rotation = useTransform(
     scrollYProgress,
     DEFAULT_ROTATION_INPUT,
-    rotationOutput
+    rotationOutput,
+    { clamp: true } // Clamp values for better performance
   );
 
-  // Memoize style object to prevent recreation
+  // Memoize style object with GPU acceleration hints
   const rotationStyle = useMemo(
-    () => ({ rotate: rotation }),
-    [rotation]
+    () => ({
+      rotate: shouldUseScrollRotation ? rotation : 0,
+      willChange: shouldUseScrollRotation ? "transform" : "auto",
+    }),
+    [rotation, shouldUseScrollRotation]
   );
 
-  // Split text into words and spaces, ensuring each part is an object
+  // Split text into words and spaces with caching
   const splitText = useMemo(() => {
     const text = typeof children === "string" ? children : "";
     if (!text) return [];
     
-    // Optimized: use efficient whitespace check function
-    return text
-      .split(/(\s+)/)
-      .map((part, index) => ({
-        value: part,
-        isSpace: isWhitespaceOnly(part),
-        originalIndex: index,
-      }))
-      .filter((item) => item.value.length > 0);
+    return splitTextOptimized(text);
   }, [children]);
 
-  // Memoize containerVariants to prevent recreation on every render
+  // Memoize containerVariants - respect reduced motion preference
   const containerVariants = useMemo(
-    () => ({
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: {
-          staggerChildren: staggerDelay,
-          delayChildren: 0.1,
+    () => {
+      if (prefersReducedMotion) {
+        return {
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              duration: 0.3, // Faster, simpler animation for reduced motion
+            },
+          },
+        };
+      }
+      return {
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: {
+            staggerChildren: staggerDelay,
+            delayChildren: 0.1,
+          },
         },
-      },
-    }),
-    [staggerDelay]
+      };
+    },
+    [staggerDelay, prefersReducedMotion]
   );
 
-  // Memoize blur filter string to avoid template literal recreation
+  // Memoize blur filter string - disable for reduced motion
   const blurFilter = useMemo(
-    () => (enableBlur ? `blur(${blurStrength}px)` : "blur(0px)"),
-    [enableBlur, blurStrength]
+    () => {
+      if (prefersReducedMotion || !enableBlur) return "blur(0px)";
+      return `blur(${blurStrength}px)`;
+    },
+    [enableBlur, blurStrength, prefersReducedMotion]
   );
 
-  // Memoize wordVariants to prevent recreation on every render
-  // Use extracted spring config values to avoid dependency on object reference
+  // Memoize wordVariants - respect reduced motion preference
   const wordVariants = useMemo(
-    () => ({
-      hidden: {
-        opacity: baseOpacity,
-        filter: blurFilter,
-        y: 20,
-      },
-      visible: {
-        opacity: 1,
-        filter: "blur(0px)",
-        y: 0,
-        transition: {
-          damping,
-          stiffness,
-          mass,
-          duration,
+    () => {
+      if (prefersReducedMotion) {
+        return {
+          hidden: {
+            opacity: baseOpacity,
+            y: 0, // No movement for reduced motion
+          },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.3,
+            },
+          },
+        };
+      }
+      return {
+        hidden: {
+          opacity: baseOpacity,
+          filter: blurFilter,
+          y: 20,
         },
-      },
-    }),
-    [baseOpacity, blurFilter, damping, stiffness, mass, duration]
+        visible: {
+          opacity: 1,
+          filter: "blur(0px)",
+          y: 0,
+          transition: {
+            damping,
+            stiffness,
+            mass,
+            duration,
+            type: "spring" as const, // Explicitly use spring for better performance
+          },
+        },
+      };
+    },
+    [baseOpacity, blurFilter, damping, stiffness, mass, duration, prefersReducedMotion]
   );
 
   // Memoize className strings to prevent recalculation
   const containerClass = useMemo(
-    () => cn("my-5 transform-gpu", containerClassName),
+    () => cn(
+      "my-5 transform-gpu",
+      "will-change-transform", // Hint browser for GPU acceleration
+      "contain-layout", // CSS containment for better rendering performance
+      containerClassName
+    ),
     [containerClassName]
   );
 
@@ -221,6 +289,25 @@ const ScrollRevealComponent = ({
     [size, align, variant, textClassName]
   );
 
+  // Memoize render function for word spans to prevent recreation
+  const renderWord = useCallback(
+    (item: { value: string; isSpace: boolean; originalIndex: number }) => {
+      if (item.isSpace) {
+        return <span key={`space-${item.originalIndex}`}>{item.value}</span>;
+      }
+      return (
+        <motion.span
+          key={`word-${item.originalIndex}`}
+          className="inline-block will-change-[opacity,transform,filter]"
+          variants={wordVariants}
+        >
+          {item.value}
+        </motion.span>
+      );
+    },
+    [wordVariants]
+  );
+
   return (
     <motion.div
       ref={containerRef}
@@ -233,25 +320,44 @@ const ScrollRevealComponent = ({
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
       >
-        {splitText.map((item) =>
-          item.isSpace ? (
-            <span key={`space-${item.originalIndex}`}>{item.value}</span>
-          ) : (
-            <motion.span
-              key={`word-${item.originalIndex}`}
-              className="inline-block"
-              variants={wordVariants}
-            >
-              {item.value}
-            </motion.span>
-          )
-        )}
+        {splitText.map(renderWord)}
       </motion.p>
     </motion.div>
   );
 };
 
-// Memoize component to prevent unnecessary re-renders when props haven't changed
-export const ScrollReveal = React.memo(ScrollRevealComponent);
+// Custom comparison function for React.memo to prevent unnecessary re-renders
+const arePropsEqual = (
+  prevProps: ScrollRevealProps,
+  nextProps: ScrollRevealProps
+): boolean => {
+  // Quick reference check
+  if (prevProps === nextProps) return true;
+
+  // Compare all props
+  return (
+    prevProps.children === nextProps.children &&
+    prevProps.containerClassName === nextProps.containerClassName &&
+    prevProps.textClassName === nextProps.textClassName &&
+    prevProps.enableBlur === nextProps.enableBlur &&
+    prevProps.baseOpacity === nextProps.baseOpacity &&
+    prevProps.baseRotation === nextProps.baseRotation &&
+    prevProps.blurStrength === nextProps.blurStrength &&
+    prevProps.staggerDelay === nextProps.staggerDelay &&
+    prevProps.threshold === nextProps.threshold &&
+    prevProps.duration === nextProps.duration &&
+    prevProps.size === nextProps.size &&
+    prevProps.align === nextProps.align &&
+    prevProps.variant === nextProps.variant &&
+    // Deep compare springConfig
+    (prevProps.springConfig === nextProps.springConfig ||
+      (prevProps.springConfig?.damping === nextProps.springConfig?.damping &&
+        prevProps.springConfig?.stiffness === nextProps.springConfig?.stiffness &&
+        prevProps.springConfig?.mass === nextProps.springConfig?.mass))
+  );
+};
+
+// Memoize component with custom comparison for optimal performance
+export const ScrollReveal = React.memo(ScrollRevealComponent, arePropsEqual);
 
 export default ScrollReveal;

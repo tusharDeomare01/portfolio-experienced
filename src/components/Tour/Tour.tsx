@@ -14,7 +14,6 @@ import {
   Mail,
   Bot,
   Maximize2,
-  FileText,
 } from "lucide-react";
 import { Button } from "../lightswind/button";
 import { BorderBeam } from "../lightswind/border-beam";
@@ -91,15 +90,6 @@ const TOUR_STEPS: TourStep[] = [
       "View my notable achievements and recognitions. This includes awards, certifications, and other milestones in my professional journey.",
     position: "top",
     icon: <Trophy className="w-5 h-5" />,
-  },
-  {
-    id: "resume",
-    target: "#resume",
-    title: "Resume & Portfolio",
-    content:
-      "Download or view my professional resume. This section provides a comprehensive overview of my career highlights, skills, and experience in a downloadable PDF format.",
-    position: "top",
-    icon: <FileText className="w-5 h-5" />,
   },
   {
     id: "contact",
@@ -748,6 +738,10 @@ export function Tour({
 
   if (!isActive || !step) return null;
 
+  // Check if this is the dock step - if so, tooltip should appear behind the dock
+  const isDockStep = step.id === "dock";
+  const tourZIndex = isDockStep ? "z-[9998]" : "z-[10000]";
+
   const isCenter = tooltipPosition.position === "center";
   const tooltipStyle: React.CSSProperties = isCenter
     ? {
@@ -767,7 +761,7 @@ export function Tour({
       };
 
   return (
-    <div className="fixed inset-0 z-[10000] pointer-events-none">
+    <div className={`fixed inset-0 ${tourZIndex} pointer-events-none`}>
       {/* Overlay */}
       <motion.div
         key={`overlay-${currentStep}`}

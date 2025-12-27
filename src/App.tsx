@@ -16,7 +16,6 @@ import {
   Briefcase,
   FolderKanban,
   Trophy,
-  FileText,
   Mail,
 } from "lucide-react";
 import { useIsMobile } from "./components/hooks/use-mobile";
@@ -67,11 +66,6 @@ const AchievementsSection = lazy(() =>
 const ContactSection = lazy(() =>
   import("./components/ContactSection/ContactSection").then((module) => ({
     default: module.ContactSection,
-  }))
-);
-const ResumeSection = lazy(() =>
-  import("./components/ResumeSection/ResumeSection").then((module) => ({
-    default: module.ResumeSection,
   }))
 );
 
@@ -185,7 +179,7 @@ function HomePage() {
     // Show dock if scrolling down OR if tour is active and on dock step
     const shouldShowDock =
       (currentScrollY > lastScrollY && currentScrollY > 100) ||
-      (tour.isTourActive && tour.currentStep === 9); // Step 9 is the dock step
+      (tour.isTourActive && tour.currentStep === 8); // Step 8 (index) is the dock step
 
     if (shouldShowDock) {
       setShowDock(true);
@@ -203,7 +197,7 @@ function HomePage() {
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Show dock if tour is on dock step
-    if (tour.isTourActive && tour.currentStep === 9) {
+    if (tour.isTourActive && tour.currentStep === 8) {
       setShowDock(true);
     }
 
@@ -262,11 +256,6 @@ function HomePage() {
         onClick: () => scrollToSection("achievements"),
       },
       {
-        icon: <FileText size={iconSize} />,
-        label: "Resume",
-        onClick: () => scrollToSection("resume"),
-      },
-      {
         icon: <Mail size={iconSize} />,
         label: "Contact",
         onClick: () => scrollToSection("contact"),
@@ -293,7 +282,6 @@ function HomePage() {
             <CareerTimeline />
             <ProjectsSection />
             <AchievementsSection />
-            <ResumeSection />
             <ContactSection />
           </Suspense>
         </div>
@@ -309,7 +297,7 @@ function HomePage() {
               ? "translate-y-0 opacity-100 scale-100"
               : "translate-y-[100px] opacity-0 scale-95"
           } ${
-            tour.isTourActive && tour.currentStep === 9
+            tour.isTourActive && tour.currentStep === 8
               ? "z-[10001]"
               : "z-[999]"
           }`}

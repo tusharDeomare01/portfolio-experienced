@@ -16,58 +16,67 @@ const ProjectsSectionComponent = () => {
   const theme = useAppSelector(selectTheme);
   const isDarkMode = theme === "dark";
 
-  const getLogoPath = useCallback((projectTitle: string) => {
-    if (projectTitle === "MarketJD") {
-      return isDarkMode
-        ? "/logo-horizontal-dark.svg"
-        : "/logo-horizontal-light.svg";
-    } else if (projectTitle === "TechShowcase") {
-      return isDarkMode
-        ? "/techshowcase-logo-dark.svg"
-        : "/techshowcase-logo-light.svg";
-    }
-    return "";
-  }, [isDarkMode]);
-
-  const projects = useMemo(() => [
-    {
-      id: 1,
-      title: "MarketJD",
-      subtitle:
-        "Comprehensive insights platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with modern tech stack.",
-      date: "2024 - Present",
-      route: "/marketjd",
-      image: "/logo-horizontal.svg", // This will be replaced dynamically
-      technologies: [
-        "Next.js",
-        "React",
-        "TypeScript",
-        "Prisma",
-        "Next-Auth",
-        "Redux Toolkit",
-        "Ant Design",
-        "Chart.js",
-        "MySQL",
-        "Tailwind CSS",
-      ],
-      status: "Active",
+  const getLogoPath = useCallback(
+    (projectTitle: string) => {
+      if (projectTitle === "MarketJD") {
+        return isDarkMode
+          ? "/logo-horizontal-dark.svg"
+          : "/logo-horizontal-light.svg";
+      } else if (projectTitle === "TechShowcase") {
+        return isDarkMode
+          ? "/techshowcase-logo-dark.svg"
+          : "/techshowcase-logo-light.svg";
+      }
+      return "";
     },
-    {
-      id: 2,
-      title: "TechShowcase",
-      subtitle:
-        "Modern, interactive portfolio website featuring smooth animations, AI-powered assistant, 3D carousel, and responsive design. Built with React, TypeScript, Framer Motion, and advanced UI components.",
-      date: "2025 - Present",
-      route: "/portfolio",
-      image: "/techshowcase-logo.svg", // This will be replaced dynamically
-      technologies: ["React", "TypeScript", "Framer Motion", "Vite"],
-      status: "Active",
-    },
-  ], []);
+    [isDarkMode]
+  );
 
-  const handleMoreInfo = useCallback((route: string) => {
-    navigate(route);
-  }, [navigate]);
+  const projects = useMemo(
+    () => [
+      {
+        id: 1,
+        title: "MarketJD",
+        subtitle:
+          "Comprehensive insights platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with modern tech stack.",
+        date: "2024 - Present",
+        route: "/marketjd",
+        image: "/logo-horizontal.svg", // This will be replaced dynamically
+        technologies: [
+          "Next.js",
+          "React",
+          "TypeScript",
+          "Prisma",
+          "Next-Auth",
+          "Redux Toolkit",
+          "Ant Design",
+          "Chart.js",
+          "MySQL",
+          "Tailwind CSS",
+        ],
+        status: "Active",
+      },
+      {
+        id: 2,
+        title: "TechShowcase",
+        subtitle:
+          "Modern, interactive portfolio website featuring smooth animations, AI-powered assistant, 3D carousel, and responsive design. Built with React, TypeScript, Framer Motion, and advanced UI components.",
+        date: "2025 - Present",
+        route: "/portfolio",
+        image: "/techshowcase-logo.svg", // This will be replaced dynamically
+        technologies: ["React", "TypeScript", "Framer Motion", "Vite"],
+        status: "Active",
+      },
+    ],
+    []
+  );
+
+  const handleMoreInfo = useCallback(
+    (route: string) => {
+      navigate(route);
+    },
+    [navigate]
+  );
 
   const handleMouseEnter = useCallback((id: number) => {
     setHoveredProject(id);
@@ -143,9 +152,8 @@ const ProjectsSectionComponent = () => {
                       }`}
                     />
                   )}
-                  {/* Status Badge and Share Button */}
+
                   <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
-                    {/* Status Badge */}
                     <Badge
                       variant="success"
                       size="sm"

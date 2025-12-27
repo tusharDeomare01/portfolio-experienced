@@ -24,7 +24,6 @@ const navItems = [
   { name: "Career", href: "#career" },
   { name: "Projects", href: "#projects" },
   { name: "Achievements", href: "#achievements" },
-  { name: "Resume", href: "#resume" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -240,7 +239,7 @@ export default function Header() {
               {tour && (
                 <button
                   onClick={tour.startTour}
-                  className="p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
+                  className="cursor-pointer p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
                   title="Start Tour"
                 >
                   <HelpCircle
@@ -253,7 +252,7 @@ export default function Header() {
               {/* Fullscreen Toggle Button */}
               <button
                 onClick={toggleFullscreen}
-                className="p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
+                className="cursor-pointer p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
                 title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
               >
                 {isFullscreen ? (
@@ -276,7 +275,8 @@ export default function Header() {
               {/* Theme Toggle Button */}
               <button
                 onClick={handleThemeToggle}
-                className="p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
+                title="Toggle Theme"
+                className="cursor-pointer p-2 rounded-full text-sm font-semibold hover:bg-pink-400 dark:hover:bg-pink-800 transition-all duration-200 hover:scale-110 active:scale-90"
               >
                 {theme === "dark" ? (
                   <div key="moon" className="animate-slide-fade-down">

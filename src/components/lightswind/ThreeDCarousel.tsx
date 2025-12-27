@@ -54,14 +54,14 @@ export default function ThreeDCarousel({
   // Intersection Observer to detect when carousel is in view - properly cleaned up
   useEffect(() => {
     if (!carouselRef.current) return;
-    
+
     const observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
       { threshold: 0.2 }
     );
-    
+
     observer.observe(carouselRef.current);
-    
+
     return () => {
       if (carouselRef.current) {
         observer.unobserve(carouselRef.current);
@@ -241,7 +241,8 @@ export default function ThreeDCarousel({
             variant="ghost"
             size="icon"
             onClick={goToPrevious}
-            className={`absolute ${
+            title="previous"
+            className={`cursor-pointer absolute ${
               isMobile ? "left-2" : "left-4"
             } top-1/2 -translate-y-1/2 z-50 ${
               isMobile ? "h-10 w-10" : "h-12 w-12"
@@ -253,8 +254,9 @@ export default function ThreeDCarousel({
           <Button
             variant="ghost"
             size="icon"
+            title="next"
             onClick={goToNext}
-            className={`absolute ${
+            className={`cursor-pointer absolute ${
               isMobile ? "right-2" : "right-4"
             } top-1/2 -translate-y-1/2 z-50 ${
               isMobile ? "h-10 w-10" : "h-12 w-12"

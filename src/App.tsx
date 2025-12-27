@@ -1,5 +1,12 @@
 // App.jsx
-import { useState, useEffect, lazy, Suspense, useCallback, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  lazy,
+  Suspense,
+  useCallback,
+  useMemo,
+} from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import {
@@ -9,7 +16,6 @@ import {
   Briefcase,
   FolderKanban,
   Trophy,
-  FileText,
   Mail,
 } from "lucide-react";
 import { useIsMobile } from "./components/hooks/use-mobile";
@@ -20,9 +26,10 @@ import {
   SectionLoader,
   ComponentLoader,
   HeaderLoader,
-  BackgroundLoader,
+  // BackgroundLoader,
   AIAssistantLoader,
 } from "./components/Loading/LoadingComponents";
+import LightRays from "./components/reactBits/lightRays";
 
 // Lazy load section components
 const Header = lazy(() => import("./components/Header/Header"));
@@ -61,11 +68,6 @@ const ContactSection = lazy(() =>
     default: module.ContactSection,
   }))
 );
-const ResumeSection = lazy(() =>
-  import("./components/ResumeSection/ResumeSection").then((module) => ({
-    default: module.ResumeSection,
-  }))
-);
 
 // Lazy load other components
 const AIAssistant = lazy(() => import("./components/AIAssistant/AIAssistant"));
@@ -74,17 +76,85 @@ const Tour = lazy(() =>
 );
 const Dock = lazy(() => import("./components/lightswind/dock"));
 
-const ParticlesBackground = lazy(
-  () => import("./components/lightswind/particles-background")
-);
+// const ParticlesBackground = lazy(
+//   () => import("./components/lightswind/particles-background")
+// );
 
-const FallBeamBackground = lazy(
-  () => import("./components/lightswind/fall-beam-background")
-);
+// const FallBeamBackground = lazy(
+//   () => import("./components/lightswind/fall-beam-background")
+// );
 
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+
+// Wrapper component for MarketJD with conditional LightRays background
+function MarketJDPage() {
+  const isMobile = useIsMobile();
+  
+  return (
+    <>
+      {/* LightRays Background - Only render on non-mobile devices */}
+      {!isMobile && (
+        <div className="fixed inset-0 z-0">
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#ffffff"
+            raysSpeed={2}
+            lightSpread={10}
+            rayLength={0.8}
+            followMouse={true}
+            mouseInfluence={0.1}
+            noiseAmount={0}
+            distortion={0.05}
+            fadeDistance={10}
+            // pulsating={true}
+            // saturation={20}
+            className="custom-rays"
+          />
+        </div>
+      )}
+      {/* MarketJD Content */}
+      <div className="relative z-10">
+        <MarketJD />
+      </div>
+    </>
+  );
+}
+
+// Wrapper component for Portfolio with conditional LightRays background
+function PortfolioPage() {
+  const isMobile = useIsMobile();
+  
+  return (
+    <>
+      {/* LightRays Background - Only render on non-mobile devices */}
+      {!isMobile && (
+        <div className="fixed inset-0 z-0">
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#ffffff"
+            raysSpeed={2}
+            lightSpread={10}
+            rayLength={0.8}
+            followMouse={true}
+            mouseInfluence={0.1}
+            noiseAmount={0}
+            distortion={0.05}
+            fadeDistance={10}
+            // pulsating={true}
+            // saturation={20}
+            className="custom-rays"
+          />
+        </div>
+      )}
+      {/* Portfolio Content */}
+      <div className="relative z-10">
+        <Portfolio />
+      </div>
+    </>
+  );
+}
 
 function HomePage() {
   const [showDock, setShowDock] = useState(false);
@@ -109,7 +179,7 @@ function HomePage() {
     // Show dock if scrolling down OR if tour is active and on dock step
     const shouldShowDock =
       (currentScrollY > lastScrollY && currentScrollY > 100) ||
-      (tour.isTourActive && tour.currentStep === 9); // Step 9 is the dock step
+      (tour.isTourActive && tour.currentStep === 8); // Step 8 (index) is the dock step
 
     if (shouldShowDock) {
       setShowDock(true);
@@ -127,7 +197,7 @@ function HomePage() {
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Show dock if tour is on dock step
-    if (tour.isTourActive && tour.currentStep === 9) {
+    if (tour.isTourActive && tour.currentStep === 8) {
       setShowDock(true);
     }
 
@@ -153,59 +223,57 @@ function HomePage() {
 
   // Dock items with responsive icon sizes - memoized
   const iconSize = isMobile ? 20 : 24;
-  const dockItems = useMemo(() => [
-    {
-      icon: <Home size={iconSize} />,
-      label: "Home",
-      onClick: () => scrollToSection("hero"),
-    },
-    {
-      icon: <User size={iconSize} />,
-      label: "About",
-      onClick: () => scrollToSection("about"),
-    },
-    {
-      icon: <GraduationCap size={iconSize} />,
-      label: "Education",
-      onClick: () => scrollToSection("education"),
-    },
-    {
-      icon: <Briefcase size={iconSize} />,
-      label: "Career",
-      onClick: () => scrollToSection("career"),
-    },
-    {
-      icon: <FolderKanban size={iconSize} />,
-      label: "Projects",
-      onClick: () => scrollToSection("projects"),
-    },
-    {
-      icon: <Trophy size={iconSize} />,
-      label: "Achievements",
-      onClick: () => scrollToSection("achievements"),
-    },
-    {
-      icon: <FileText size={iconSize} />,
-      label: "Resume",
-      onClick: () => scrollToSection("resume"),
-    },
-    {
-      icon: <Mail size={iconSize} />,
-      label: "Contact",
-      onClick: () => scrollToSection("contact"),
-    },
-  ], [iconSize, scrollToSection]);
+  const dockItems = useMemo(
+    () => [
+      {
+        icon: <Home size={iconSize} />,
+        label: "Home",
+        onClick: () => scrollToSection("hero"),
+      },
+      {
+        icon: <User size={iconSize} />,
+        label: "About",
+        onClick: () => scrollToSection("about"),
+      },
+      {
+        icon: <GraduationCap size={iconSize} />,
+        label: "Education",
+        onClick: () => scrollToSection("education"),
+      },
+      {
+        icon: <Briefcase size={iconSize} />,
+        label: "Career",
+        onClick: () => scrollToSection("career"),
+      },
+      {
+        icon: <FolderKanban size={iconSize} />,
+        label: "Projects",
+        onClick: () => scrollToSection("projects"),
+      },
+      {
+        icon: <Trophy size={iconSize} />,
+        label: "Achievements",
+        onClick: () => scrollToSection("achievements"),
+      },
+      {
+        icon: <Mail size={iconSize} />,
+        label: "Contact",
+        onClick: () => scrollToSection("contact"),
+      },
+    ],
+    [iconSize, scrollToSection]
+  );
   return (
-    <div className="bg-background min-h-screen w-full">
+    <div className="bg-transparent z-10 min-h-screen w-full">
       <Suspense fallback={<HeaderLoader />}>
         <Header />
       </Suspense>
 
       <div
         className="w-full bg-transparent max-w-5xl mx-auto px-4 py-8
-        lg:rounded-3xl backdrop-blur-xl border-gray-100 dark:border-gray-900"
+        lg:rounded-3xl border-gray-100 dark:border-gray-900"
       >
-        <div className="z-[111]">
+        <div className="relative z-[10]">
           {/* Sections with IDs for smooth scrolling navigation */}
           <Suspense fallback={<SectionLoader />}>
             <HeroSection />
@@ -214,7 +282,6 @@ function HomePage() {
             <CareerTimeline />
             <ProjectsSection />
             <AchievementsSection />
-            <ResumeSection />
             <ContactSection />
           </Suspense>
         </div>
@@ -230,7 +297,7 @@ function HomePage() {
               ? "translate-y-0 opacity-100 scale-100"
               : "translate-y-[100px] opacity-0 scale-95"
           } ${
-            tour.isTourActive && tour.currentStep === 9
+            tour.isTourActive && tour.currentStep === 8
               ? "z-[10001]"
               : "z-[999]"
           }`}
@@ -274,11 +341,7 @@ function App() {
             path="/marketjd"
             element={
               <Suspense fallback={<PageLoader />}>
-                <>
-                  <div className="z-[111]">
-                    <MarketJD />
-                  </div>
-                </>
+                <MarketJDPage />
               </Suspense>
             }
           />
@@ -288,11 +351,7 @@ function App() {
             path="/portfolio"
             element={
               <Suspense fallback={<PageLoader />}>
-                <>
-                  <div className="z-[111]">
-                    <Portfolio />
-                  </div>
-                </>
+                <PortfolioPage />
               </Suspense>
             }
           />
@@ -311,12 +370,12 @@ function App() {
         simulationResolution={256}
       /> */}
         {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
-        <Suspense fallback={<BackgroundLoader />}>
+        {/* <Suspense fallback={<BackgroundLoader />}>
           <ParticlesBackground />
         </Suspense>
         <Suspense fallback={<BackgroundLoader />}>
           <FallBeamBackground beamCount={5} />
-        </Suspense>
+        </Suspense> */}
       </BrowserRouter>
     </TourProvider>
   );

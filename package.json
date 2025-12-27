@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "portfolio01",
   "private": true,
   "version": "0.0.0",
@@ -24,10 +25,10 @@
     "geist": "^1.4.2",
     "lightswind": "^3.1.20",
     "lucide-react": "^0.539.0",
-    "npx": "^10.2.2",
+    "ogl": "^1.0.11",
     "openai": "^6.9.1",
-    "path": "^0.12.7",
     "react": "^19.1.1",
+    "react-bits": "^1.0.5",
     "react-dom": "^19.1.1",
     "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
@@ -37,8 +38,7 @@
     "reselect": "^5.1.1",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.181.2",
-    "url": "^0.11.4"
+    "three": "^0.181.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -47,6 +47,7 @@
     "@types/node": "^24.2.1",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "@types/three": "^0.182.0",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "cross-env": "^7.0.3",
     "eslint": "^9.32.0",

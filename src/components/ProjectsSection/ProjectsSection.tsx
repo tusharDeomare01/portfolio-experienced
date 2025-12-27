@@ -53,7 +53,7 @@ const PROJECTS_DATA = [
     id: 1,
     title: "MarketJD",
     subtitle:
-      "Comprehensive insights platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with modern tech stack.",
+      "Comprehensive insights platform with 10+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation. Built with modern tech stack.",
     date: "2024 - Present",
     route: "/marketjd",
     technologies: [
@@ -237,7 +237,7 @@ const ProjectCard = memo(
                 variant="outline"
                 size="lg"
                 onClick={() => onNavigate(project.route)}
-                className="w-full group/btn relative overflow-hidden border-2 hover:border-primary transition-all duration-300"
+                className="cursor-pointer w-full group/btn relative overflow-hidden border-2 hover:border-primary transition-all duration-300"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2 font-semibold">
                   Explore Project ...

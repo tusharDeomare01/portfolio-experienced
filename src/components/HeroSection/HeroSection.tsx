@@ -2,7 +2,10 @@ import { useEffect, useRef, useState, useCallback, memo } from "react";
 import { TypingText } from "../lightswind/typing-text";
 import { Button } from "../lightswind/button";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
-import { ArrowDown, Sparkles, Mail } from "lucide-react";
+import { FileText, Sparkles, Mail } from "lucide-react";
+
+// Resume file configuration
+const RESUME_FILE_PATH = "/Tushar_Deomare.pdf";
 
 const HeroSectionComponent = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -34,7 +37,7 @@ const HeroSectionComponent = () => {
           }
         });
       },
-      { threshold: 0.01, rootMargin: '0px 0px -20px 0px' }
+      { threshold: 0.01, rootMargin: "0px 0px -20px 0px" }
     );
 
     // Intersection Observer for right section - optimized to single RAF
@@ -51,7 +54,7 @@ const HeroSectionComponent = () => {
           }
         });
       },
-      { threshold: 0.01, rootMargin: '0px 0px -20px 0px' }
+      { threshold: 0.01, rootMargin: "0px 0px -20px 0px" }
     );
 
     // Observe elements immediately - refs should be ready
@@ -75,18 +78,8 @@ const HeroSectionComponent = () => {
     };
   }, []);
 
-  const scrollToSection = useCallback((id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      const offset = 80;
-      const elementPosition = el.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
+  const handleResumeView = useCallback(() => {
+    window.open(RESUME_FILE_PATH, "_blank");
   }, []);
 
   const handleEmailMouseEnter = useCallback(() => {
@@ -328,10 +321,6 @@ const HeroSectionComponent = () => {
           animation: slideUpSpringSmall 0.8s var(--ease-out-spring-soft) 0.85s forwards;
         }
 
-        .hero-buttons.visible .hero-button-wrapper:nth-child(2) {
-          animation: slideUpSpringSmall 0.8s var(--ease-out-spring-soft) 0.95s forwards;
-        }
-
         /* Optimize performance for animations */
         @media (prefers-reduced-motion: reduce) {
           .hero-left-section,
@@ -351,15 +340,21 @@ const HeroSectionComponent = () => {
         ref={heroRef}
         id="hero"
         className={`text-foreground bg-transparent flex flex-col md:flex-row 
-        items-center justify-center max-w-7xl mx-auto w-full min-h-screen hero-fade-in ${isVisible ? "visible" : ""}`}
+        items-center justify-center max-w-7xl mx-auto w-full min-h-screen hero-fade-in ${
+          isVisible ? "visible" : ""
+        }`}
       >
         {/* Left Section */}
         <div
           ref={leftSectionRef}
-          className={`flex-1 space-y-6 p-6 text-left md:text-left flex flex-col justify-center hero-left-section ${leftSectionVisible ? "visible" : ""}`}
+          className={`flex-1 space-y-6 p-6 text-left md:text-left flex flex-col justify-center hero-left-section ${
+            leftSectionVisible ? "visible" : ""
+          }`}
         >
           <h1
-            className={`text-3xl sm:text-3xl md:text-5xl font-bold hero-title ${leftSectionVisible ? "visible" : ""}`}
+            className={`text-3xl sm:text-3xl md:text-5xl font-bold hero-title ${
+              leftSectionVisible ? "visible" : ""
+            }`}
           >
             <TypingText
               delay={0.5}
@@ -388,7 +383,9 @@ const HeroSectionComponent = () => {
 
           {/* Key Highlight - Concise and Impactful */}
           <div
-            className={`flex items-center gap-2 text-lg sm:text-xl md:text-2xl text-muted-foreground hero-subtitle ${leftSectionVisible ? "visible" : ""}`}
+            className={`flex items-center gap-2 text-lg sm:text-xl md:text-2xl text-muted-foreground hero-subtitle ${
+              leftSectionVisible ? "visible" : ""
+            }`}
           >
             <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
             <ScrollReveal
@@ -407,7 +404,9 @@ const HeroSectionComponent = () => {
 
           {/* Email Contact */}
           <div
-            className={`flex items-center gap-2 mt-4 relative hero-email ${leftSectionVisible ? "visible" : ""}`}
+            className={`flex items-center gap-2 mt-4 relative hero-email ${
+              leftSectionVisible ? "visible" : ""
+            }`}
           >
             <a
               href="mailto:tdeomare1@gmail.com"
@@ -423,11 +422,13 @@ const HeroSectionComponent = () => {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-pink-500 transition-all duration-300 group-hover:w-full"></span>
               </span>
               {/* Tooltip */}
-              <span 
+              <span
                 className={`absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-md pointer-events-none transition-opacity duration-300 whitespace-nowrap z-10 shadow-lg ${
-                  hasHoveredEmail 
-                    ? (isEmailHovered ? 'opacity-100' : 'opacity-0')
-                    : 'opacity-100'
+                  hasHoveredEmail
+                    ? isEmailHovered
+                      ? "opacity-100"
+                      : "opacity-0"
+                    : "opacity-100"
                 }`}
               >
                 Click to compose email message
@@ -438,24 +439,17 @@ const HeroSectionComponent = () => {
 
           {/* CTA Button */}
           <div
-            className={`flex flex-wrap gap-4 mt-6 hero-buttons ${leftSectionVisible ? "visible" : ""}`}
+            className={`flex flex-wrap gap-4 mt-6 hero-buttons ${
+              leftSectionVisible ? "visible" : ""
+            }`}
           >
             <div className="hero-button-wrapper">
               <Button
-                onClick={() => scrollToSection("projects")}
-                className="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 group"
+                onClick={handleResumeView}
+                className="bg-pink-500 hover:bg-pink-600 cursor-pointer text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 group"
               >
-                View My Work
-                <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-              </Button>
-            </div>
-            <div className="hero-button-wrapper">
-              <Button
-                onClick={() => scrollToSection("contact")}
-                variant="outline"
-                className="border-2 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-pink-600 font-semibold px-6 py-3 rounded-lg transition-all duration-300"
-              >
-                Get In Touch
+                My Resume
+                <FileText className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
               </Button>
             </div>
           </div>
@@ -464,7 +458,9 @@ const HeroSectionComponent = () => {
         {/* Right Section */}
         <div
           ref={rightSectionRef}
-          className={`flex-1 flex justify-center p-6 hero-right-section ${rightSectionVisible ? "visible" : ""}`}
+          className={`flex-1 flex justify-center p-6 hero-right-section ${
+            rightSectionVisible ? "visible" : ""
+          }`}
         >
           <div className="w-64 h-64 rounded-full overflow-hidden shadow-lg">
             <img

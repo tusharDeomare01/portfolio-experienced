@@ -302,7 +302,7 @@ const MarketJD = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-transparent relative">
       {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
       {/* <Suspense fallback={<BackgroundSkeleton />}>
         <RaysBackground className="fixed z-0" />
@@ -313,13 +313,13 @@ const MarketJD = () => {
         <div className="mb-8 flex items-center justify-between flex-wrap gap-3 sm:gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
+            className="cursor-pointer flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
           >
             <ArrowLeft
               size={20}
               className="group-hover:-translate-x-1 transition-transform"
             />
-            <span className="text-sm sm:text-base">Back to TechShowcase</span>
+            <span className="text-sm sm:text-base">Back</span>
           </button>
           <ShareButton
             shareData={{
@@ -332,7 +332,7 @@ const MarketJD = () => {
             size="md"
             showLabel={true}
             position="bottom"
-            className="shrink-0"
+            className="shrink-0 cursor-pointer"
           />
         </div>
 
@@ -430,7 +430,7 @@ const MarketJD = () => {
               return (
                 <div
                   key={key}
-                  className="p-6 rounded-xl border bg-background/50 backdrop-blur-xl hover:bg-background/80 transition-all duration-300 hover:shadow-lg"
+                  className="p-6 rounded-xl border bg-transparent backdrop-blur-xl hover:bg-background/80 transition-all duration-300 hover:shadow-lg"
                 >
                   <div className="flex items-start gap-4">
                     <div className="p-3 rounded-lg bg-primary/10">
@@ -477,7 +477,7 @@ const MarketJD = () => {
               const Icon = integration.icon;
               return (
                 <div key={idx}>
-                  <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full">
+                  <Card className="backdrop-blur-xl bg-transparent hover:bg-background/90 transition-all h-full">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-3">
                         <div
@@ -500,7 +500,7 @@ const MarketJD = () => {
                         {integration.items.map((item, itemIdx) => (
                           <div
                             key={itemIdx}
-                            className="p-3 rounded-lg bg-background/50 border border-border/50"
+                            className="p-3 rounded-lg bg-transparent border border-border/50"
                           >
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex-1">
@@ -549,7 +549,7 @@ const MarketJD = () => {
               const Icon = feature.icon;
               return (
                 <div key={idx} className="group">
-                  <Card className="backdrop-blur-xl bg-background/80 hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
+                  <Card className="backdrop-blur-xl bg-transparent hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <div
@@ -582,7 +582,7 @@ const MarketJD = () => {
 
         {/* Automation & Cron Jobs */}
         <div className="mb-16">
-          <Card className="backdrop-blur-xl bg-background/80">
+          <Card className="backdrop-blur-xl bg-transparent">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="w-6 h-6 text-primary" />
@@ -597,7 +597,7 @@ const MarketJD = () => {
                 {cronJobs.map((job, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors"
+                    className="p-4 rounded-lg border bg-transparent hover:bg-background/80 transition-colors"
                   >
                     <h4 className="font-semibold text-sm text-foreground mb-1">
                       {job.name}
@@ -614,7 +614,7 @@ const MarketJD = () => {
 
         {/* Additional Technologies */}
         <div className="mb-16">
-          <Card className="backdrop-blur-xl bg-background/80">
+          <Card className="backdrop-blur-xl bg-transparent">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="w-6 h-6 text-primary" />
@@ -622,7 +622,7 @@ const MarketJD = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
                 {[
                   "Ant Design",
                   "NextUI",
@@ -651,7 +651,7 @@ const MarketJD = () => {
                   <Badge
                     key={idx}
                     variant="outline"
-                    className="justify-center py-2"
+                    className="justify-center py-2 hover:bg-background/80"
                   >
                     {tech}
                   </Badge>
@@ -663,7 +663,7 @@ const MarketJD = () => {
 
         {/* Project Summary */}
         <div className="mb-12">
-          <Card className="backdrop-blur-xl bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+          <Card className="backdrop-blur-xl hover:bg-background/80 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardHeader>
               <CardTitle>Project Summary</CardTitle>
               <CardDescription>

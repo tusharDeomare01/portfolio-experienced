@@ -221,9 +221,9 @@ const ChatInterfaceComponent = ({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 20 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col h-full w-full"
+      className="flex flex-col h-full w-full min-h-0"
     >
-      <Card className="flex flex-col h-full backdrop-blur-xl bg-background/95 border-2 shadow-2xl overflow-hidden">
+      <Card className="flex flex-col h-full backdrop-blur-xl bg-background/95 border-2 shadow-2xl overflow-hidden max-h-full min-h-0">
         {/* Header - Drag Handle Area */}
         <div
           onPointerDown={(e) => {
@@ -392,7 +392,7 @@ const ChatInterfaceComponent = ({
         )}
 
         {/* Messages Area */}
-        <ScrollArea ref={scrollAreaRef} className="flex-1 p-3 sm:p-4">
+        <ScrollArea ref={scrollAreaRef} className="flex-1 p-3 sm:p-4 min-h-0" style={{ WebkitOverflowScrolling: 'touch' }}>
           <div
             className="space-y-3 sm:space-y-4"
             onWheel={(e) => e.stopPropagation()}

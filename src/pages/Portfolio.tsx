@@ -210,7 +210,7 @@ const Portfolio = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen z-10 bg-transparent relative">
       {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
       {/* <Suspense fallback={<BackgroundSkeleton />}>
         <RaysBackground className="fixed z-0" />
@@ -221,13 +221,13 @@ const Portfolio = () => {
         <div className="mb-8 flex items-center justify-between flex-wrap gap-3 sm:gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
+            className="cursor-pointer flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
           >
             <ArrowLeft
               size={20}
               className="group-hover:-translate-x-1 transition-transform"
             />
-            <span className="text-sm sm:text-base">Back to TechShowcase</span>
+            <span className="text-sm sm:text-base">Back</span>
           </button>
           <ShareButton
             shareData={{
@@ -240,7 +240,7 @@ const Portfolio = () => {
             size="md"
             showLabel={true}
             position="bottom"
-            className="shrink-0"
+            className="shrink-0 cursor-pointer "
           />
         </div>
 

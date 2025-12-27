@@ -78,7 +78,7 @@ export function ResumeSection() {
                   allowFullScreen={true}
                   allowTransparency={false}
                   key={"resume"}
-                  loading="eager"
+                  loading="lazy"
                 />
               </div>
 

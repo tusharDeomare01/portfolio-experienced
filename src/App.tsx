@@ -157,9 +157,7 @@ function App() {
         {/* <Suspense fallback={<BackgroundLoader />}>
           <ParticlesBackground />
         </Suspense>
-        <Suspense fallback={<BackgroundLoader />}>
-          <FallBeamBackground beamCount={5} />
-        </Suspense> */}
+         */}
       </BrowserRouter>
     </TourProvider>
   );

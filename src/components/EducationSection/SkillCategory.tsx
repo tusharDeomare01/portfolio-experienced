@@ -89,16 +89,17 @@ export default function ProfessionalProfile() {
   ];
 
   return (
-    <section id="skills" className="space-y-8 mt-8">
+    <section id="skills" className="space-y-8 mt-8 !scroll-smooth">
       <div className="flex items-baseline gap-4 mb-6">
         <Users className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
         <ScrollReveal
           size="xl"
-          align="left"
+          align="center"
           variant="default"
           enableBlur={false}
-          blurStrength={0}
+          baseOpacity={0.1}
           baseRotation={0}
+          blurStrength={0}
         >
           Technical Skills
         </ScrollReveal>

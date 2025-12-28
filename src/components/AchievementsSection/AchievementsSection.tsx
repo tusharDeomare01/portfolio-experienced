@@ -79,7 +79,9 @@ export const AchievementsSection = () => {
             align="center"
             variant="default"
             enableBlur={false}
-            staggerDelay={0.05}
+            baseOpacity={0.1}
+            baseRotation={0}
+            blurStrength={0}
           >
             Achievements
           </ScrollReveal>
@@ -91,8 +93,8 @@ export const AchievementsSection = () => {
 
       {/* 3D Carousel */}
       <div
-        className="w-full overflow-hidden opacity-0 translate-y-[30px]
-             transition-all duration-800 ease-out
+        className="w-full overflow-hidden opacity-0
+             transition-all duration-400 ease-in
              animate-fade-in-up"
       >
         <ThreeDCarousel

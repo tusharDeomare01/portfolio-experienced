@@ -356,8 +356,8 @@ const MarketJD = () => {
                 align="left"
                 variant="default"
                 enableBlur={false}
-                staggerDelay={0}
                 baseOpacity={0.1}
+                baseRotation={0}
                 blurStrength={0}
               >
                 MarketJD

@@ -2,16 +2,6 @@ import { memo, useMemo } from "react";
 import { User } from "lucide-react";
 import ScrollReveal from "../lightswind/scroll-reveal";
 
-// Extract repeated ScrollReveal props to constants to prevent object recreation
-const TITLE_REVEAL_PROPS = {
-  size: "xl" as const,
-  align: "left" as const,
-  variant: "default" as const,
-  enableBlur: true,
-  blurStrength: 5,
-  baseRotation: 0,
-} as const;
-
 // const PARAGRAPH_REVEAL_PROPS = {
 //   size: "sm" as const,
 //   align: "left" as const,
@@ -56,7 +46,17 @@ const AboutSectionComponent = () => {
     <div id="about" className={CONTAINER_CLASSES}>
       <div className={HEADER_CLASSES}>
         <User className={ICON_CLASSES} />
-        <ScrollReveal {...TITLE_REVEAL_PROPS}>About Me</ScrollReveal>
+        <ScrollReveal
+          size="xl"
+          align="left"
+          variant="default"
+          enableBlur={false}
+          baseOpacity={0.1}
+          baseRotation={0}
+          blurStrength={0}
+        >
+          About Me
+        </ScrollReveal>
       </div>
 
       <div className={CONTENT_CLASSES}>{paragraphElements}</div>

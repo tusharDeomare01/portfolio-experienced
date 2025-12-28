@@ -1,13 +1,9 @@
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "../lightswind/card.tsx";
+import { memo, useMemo, useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
-import { CountUp } from "../lightswind/count-up.tsx";
-import { Progress } from "../lightswind/progress.tsx";
 import { Badge } from "../lightswind/badge.tsx";
+import CardSwap, { type CardSwapItem } from "../reactBits/cardSwap";
+import FluidSkillDisplay from "./FluidSkillDisplay";
 import {
   Code2,
   Globe,
@@ -21,148 +17,223 @@ import {
 interface SkillCategory {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
-  skills: Array<{ name: string; level: number }>;
+  skills: string[];
+  color: string;
 }
 
-export default function ProfessionalProfile() {
-  const skillCategories: SkillCategory[] = [
-    {
-      title: "Languages",
-      icon: Code2,
-      skills: [
-        { name: "JavaScript", level: 95 },
-        { name: "TypeScript", level: 92 },
-      ],
+// Color themes for each category
+const CATEGORY_COLORS = [
+  "blue",
+  "purple",
+  "green",
+  "orange",
+  "teal",
+  "indigo",
+] as const;
+
+const SOFT_SKILLS = [
+  "Leadership",
+  "Problem Solving",
+  "Agile Methodologies",
+  "Mentorship",
+  "Strategic Thinking",
+  "Cross-Team Collaboration",
+] as const;
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
     },
-    {
-      title: "Frontend Technologies",
-      icon: Globe,
-      skills: [
-        { name: "React.js", level: 95 },
-        { name: "Next.js", level: 91 },
-        { name: "HTML / CSS", level: 92 },
-        { name: "Redux Toolkit", level: 88 },
-        { name: "Redux Persist", level: 85 },
-      ],
+  },
+};
+
+const badgeVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.8,
+    y: 20,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 200,
+      damping: 20,
     },
-    {
-      title: "Backend Technologies",
-      icon: Server,
-      skills: [
-        { name: "Node.js", level: 90 },
-        { name: "Express.js", level: 90 },
-        { name: "NestJS", level: 85 },
-        { name: "REST APIs", level: 92 },
-        { name: "GraphQL", level: 85 },
-      ],
+  },
+};
+
+const softSkillsContainerVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
     },
-    {
-      title: "Databases & Data Access",
-      icon: Database,
-      skills: [
-        { name: "MySQL", level: 88 },
-        { name: "MongoDB", level: 88 },
-        { name: "Prisma", level: 90 },
-        { name: "Mongoose", level: 85 },
-      ],
-    },
-    {
-      title: "DevOps & Cloud",
-      icon: Cloud,
-      skills: [
-        { name: "Docker", level: 85 },
-        { name: "Kubernetes", level: 80 },
-        { name: "AWS", level: 85 },
-        { name: "YAML", level: 88 },
-      ],
-    },
-    {
-      title: "Developer Tools",
-      icon: Wrench,
-      skills: [
-        { name: "Git / GitHub", level: 95 },
-        { name: "Bitbucket", level: 90 },
-        { name: "Jira", level: 90 },
-        { name: "ClickUp", level: 88 },
-      ],
-    },
-  ];
+  },
+};
+
+
+function ProfessionalProfile() {
+  const skillCategories: SkillCategory[] = useMemo(
+    () => [
+      {
+        title: "Languages",
+        icon: Code2,
+        skills: ["JavaScript", "TypeScript"],
+        color: CATEGORY_COLORS[0],
+      },
+      {
+        title: "Frontend Technologies",
+        icon: Globe,
+        skills: [
+          "React.js",
+          "Next.js",
+          "HTML / CSS",
+          "Redux Toolkit",
+          "Redux Persist",
+        ],
+        color: CATEGORY_COLORS[1],
+      },
+      {
+        title: "Backend Technologies",
+        icon: Server,
+        skills: [
+          "Node.js",
+          "Express.js",
+          "NestJS",
+          "REST APIs",
+          "GraphQL",
+        ],
+        color: CATEGORY_COLORS[2],
+      },
+      {
+        title: "Databases & Data Access",
+        icon: Database,
+        skills: ["MySQL", "MongoDB", "Prisma", "Mongoose"],
+        color: CATEGORY_COLORS[3],
+      },
+      {
+        title: "DevOps & Cloud",
+        icon: Cloud,
+        skills: ["Docker", "Kubernetes", "AWS", "YAML"],
+        color: CATEGORY_COLORS[4],
+      },
+      {
+        title: "Developer Tools",
+        icon: Wrench,
+        skills: ["Git / GitHub", "Bitbucket", "Jira", "ClickUp"],
+        color: CATEGORY_COLORS[5],
+      },
+    ],
+    []
+  );
+
+  const [activeCategoryId, setActiveCategoryId] = useState<string | number>(
+    skillCategories[0].title
+  );
+
+  // Transform categories into CardSwap format
+  const cardSwapItems: CardSwapItem[] = useMemo(
+    () =>
+      skillCategories.map((category) => {
+        const Icon = category.icon;
+        return {
+          id: category.title,
+          title: category.title,
+          icon: <Icon className="w-6 h-6" />,
+          color: category.color,
+          content: (
+            <FluidSkillDisplay
+              category={category}
+              isActive={activeCategoryId === category.title}
+            />
+          ),
+        };
+      }),
+    [skillCategories, activeCategoryId]
+  );
+
+  const handleCategoryChange = useCallback((categoryId: string | number) => {
+    setActiveCategoryId(categoryId);
+  }, []);
 
   return (
-    <section id="skills" className="space-y-8 mt-8 !scroll-smooth">
-      <div className="flex items-baseline gap-4 mb-6">
+    <motion.section
+      id="skills"
+      className="space-y-12 mt-8 !scroll-smooth"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={containerVariants}
+    >
+      {/* Header */}
+      <div className="flex items-baseline gap-4 mb-8">
         <Users className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
         <ScrollReveal
           size="xl"
-          align="center"
+          align="left"
           variant="default"
           enableBlur={false}
           baseOpacity={0.1}
           baseRotation={0}
           blurStrength={0}
+          threshold={0.2}
         >
           Technical Skills
         </ScrollReveal>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        {skillCategories.map((category) => {
-          const Icon = category.icon;
-          return (
-            <Card
-              key={category.title}
-              className="transition-shadow duration-300 hover:shadow-lg"
-            >
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-primary" />
-                  <CardTitle className="text-lg">{category.title}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {category.skills.map((skill) => (
-                  <div key={skill.name} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm font-medium">
-                      <span className="text-foreground">{skill.name}</span>
-                      <CountUp
-                        className="text-sm font-semibold text-muted-foreground"
-                        value={skill.level}
-                        suffix="%"
-                        duration={1.5}
-                        decimals={0}
-                        animationStyle="spring"
-                        colorScheme="primary"
-                      />
-                    </div>
-                    <Progress value={skill.level} />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      {/* Fluid Skill Clusters with CardSwap Navigation */}
+      <CardSwap
+        items={cardSwapItems}
+        defaultIndex={0}
+        onCardChange={handleCategoryChange}
+        enableHover={true}
+        transitionDuration={0.8}
+        className="mb-12"
+      />
 
-      {/* Soft Skills */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Soft Skills</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          {[
-            "Leadership",
-            "Problem Solving",
-            "Agile Methodologies",
-            "Mentorship",
-            "Strategic Thinking",
-            "Cross-Team Collaboration",
-          ].map((skill, i) => (
-            <div key={i}>
-              <Badge className="bg-pink-500">{skill}</Badge>
-            </div>
+      {/* Soft Skills Section */}
+      <motion.div
+        className="space-y-6"
+        variants={softSkillsContainerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <h3 className="text-2xl md:text-3xl font-bold text-foreground">
+            Soft Skills
+          </h3>
+          <div className="flex-1 h-px bg-gradient-to-r from-border via-primary/30 to-transparent" />
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          {SOFT_SKILLS.map((skill) => (
+            <motion.div key={skill} variants={badgeVariants}>
+              <Badge
+                variant="default"
+                size="lg"
+                className="text-sm font-semibold bg-gradient-to-r from-pink-500/90 to-purple-500/90 text-white border-0 hover:from-pink-500 hover:to-purple-500 hover:scale-110 hover:shadow-lg transition-all duration-300 cursor-default"
+              >
+                {skill}
+              </Badge>
+            </motion.div>
           ))}
-        </CardContent>
-      </Card>
-    </section>
+        </div>
+      </motion.div>
+    </motion.section>
   );
 }
+
+export default memo(ProfessionalProfile);

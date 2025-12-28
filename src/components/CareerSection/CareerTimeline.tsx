@@ -42,8 +42,9 @@ export const CareerTimeline = () => {
             align="center"
             variant="default"
             enableBlur={false}
-            blurStrength={0}
+            baseOpacity={0.1}
             baseRotation={0}
+            blurStrength={0}
           >
             Career Journey
           </ScrollReveal>

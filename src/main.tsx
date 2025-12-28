@@ -60,7 +60,7 @@ createRoot(document.getElementById("root")!).render(
             sparkCount={8}
             duration={400}
           >
-            <div className="fixed inset-0 z-[0] w-full h-full">
+            <div className="fixed inset-0 z-[0] w-full h-full !scroll-smooth">
               <Particles
                 particleColors={["#ffffff", "#ffffff"]}
                 particleCount={200}
@@ -75,7 +75,10 @@ createRoot(document.getElementById("root")!).render(
                 className="w-full h-full pointer-events-none"
               />
             </div>
-            <div className="relative z-[10] !bg-transparent">
+            <div
+              className="relative z-[10] !bg-transparent !scroll-smooth transition-opacity duration-300 ease-out
+             opacity-100"
+            >
               <App />
             </div>
           </ClickSpark>

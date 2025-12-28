@@ -264,7 +264,6 @@ const Portfolio = () => {
                 align="left"
                 variant="default"
                 enableBlur={false}
-                staggerDelay={0}
                 baseOpacity={0.1}
                 blurStrength={0}
               >

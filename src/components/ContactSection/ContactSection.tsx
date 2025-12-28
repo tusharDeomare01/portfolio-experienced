@@ -66,14 +66,6 @@ const HEADER_CLASSES =
 const ICON_CLASSES =
   "w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2";
 
-// Extract ScrollReveal props to constants
-const TITLE_REVEAL_PROPS = {
-  size: "xl" as const,
-  align: "center" as const,
-  variant: "default" as const,
-  baseRotation: 0,
-} as const;
-
 // const SUBTITLE_REVEAL_PROPS = {
 //   size: "sm" as const,
 //   align: "center" as const,
@@ -116,17 +108,6 @@ const ContactSectionComponent = () => {
     message: string;
   }>({ type: null, message: "" });
   const [confettiLoaded, setConfettiLoaded] = useState(false);
-
-  // Memoize blur settings based on device performance
-  const blurSettings = useMemo(() => {
-    if (devicePerformance === PERFORMANCE_TIERS.LOW || prefersReducedMotion) {
-      return { enableBlur: false, blurStrength: 0 };
-    }
-    return {
-      enableBlur: true,
-      blurStrength: devicePerformance === PERFORMANCE_TIERS.MID ? 3 : 5,
-    };
-  }, [devicePerformance, prefersReducedMotion]);
 
   // Load confetti script dynamically (only if enabled)
   useEffect(() => {
@@ -288,9 +269,13 @@ const ContactSectionComponent = () => {
         <div className={HEADER_CLASSES}>
           <Mail className={ICON_CLASSES} />
           <ScrollReveal
-            {...TITLE_REVEAL_PROPS}
-            enableBlur={blurSettings.enableBlur}
-            blurStrength={blurSettings.blurStrength}
+            size="xl"
+            align="center"
+            variant="default"
+            enableBlur={false}
+            baseOpacity={0.1}
+            baseRotation={0}
+            blurStrength={0}
           >
             Get In Touch
           </ScrollReveal>

@@ -10,22 +10,10 @@ import { Badge } from "../lightswind/badge";
 import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { ArrowRight, Calendar, FolderKanban } from "lucide-react";
 
-// ============================================================================
-// CONSTANTS EXTRACTED OUTSIDE COMPONENT TO PREVENT RECREATION
-// ============================================================================
-
-const SCROLL_REVEAL_PROPS = {
-  size: "2xl" as const,
-  align: "center" as const,
-  variant: "default" as const,
-  enableBlur: false,
-  blurStrength: 0,
-  baseRotation: 0,
-} as const;
-
-const CONTAINER_CLASSES = "min-h-screen flex flex-col justify-center";
+const CONTAINER_CLASSES =
+  "min-h-screen flex flex-col justify-center !scroll-smooth transition-all duration-400 ease-in animate-fade-in-up";
 const SECTION_CLASSES =
-  "max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-16 w-full";
+  "max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-16 w-full !scroll-smooth";
 const HEADER_CLASSES = "text-center mb-8 sm:mb-16";
 const TITLE_WRAPPER_CLASSES = "mb-4 flex items-baseline justify-center gap-4";
 const ICON_CLASSES =
@@ -81,10 +69,6 @@ const PROJECTS_DATA = [
     status: "Active",
   },
 ] as const;
-
-// ============================================================================
-// MEMOIZED PROJECT CARD COMPONENT - PREVENTS UNNECESSARY RE-RENDERS
-// ============================================================================
 
 interface ProjectCardProps {
   project: (typeof PROJECTS_DATA)[number];
@@ -176,7 +160,7 @@ const ProjectCard = memo(
         onMouseLeave={onMouseLeave}
       >
         <InteractiveCard
-          className="h-full flex flex-col w-full overflow-hidden"
+          className="h-full flex flex-col w-full overflow-hidden scroll-smooth"
           InteractiveColor="#07eae6ff"
           borderRadius="24px"
           rotationFactor={0.25}
@@ -334,7 +318,17 @@ const ProjectsSectionComponent = () => {
         <div className={HEADER_CLASSES}>
           <div className={TITLE_WRAPPER_CLASSES}>
             <FolderKanban className={ICON_CLASSES} />
-            <ScrollReveal {...SCROLL_REVEAL_PROPS}>Projects</ScrollReveal>
+            <ScrollReveal
+              size="xl"
+              align="center"
+              variant="default"
+              enableBlur={false}
+              baseOpacity={0.1}
+              baseRotation={0}
+              blurStrength={0}
+            >
+              Projects
+            </ScrollReveal>
           </div>
           <p className={SUBTITLE_CLASSES}>Explore my latest work...</p>
         </div>

@@ -18,7 +18,7 @@ const applyThemeToDocument = (theme: Theme) => {
   }
 };
 
-// Get initial theme from localStorage or default to 'light'
+// Get initial theme from localStorage or default to 'dark'
 const getInitialTheme = (): Theme => {
   if (typeof window !== 'undefined') {
     const storedTheme = localStorage.getItem('theme') as Theme | null;

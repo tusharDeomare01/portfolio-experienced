@@ -70,8 +70,13 @@ export const TypingText = ({
     }),
   };
 
+  const ComponentWithType = Component as React.ComponentType<{
+    className?: string;
+    children?: ReactNode;
+  }>;
+  
   return (
-    <Component
+    <ComponentWithType
       className={cn(
         "inline-flex",
         className,
@@ -106,6 +111,6 @@ export const TypingText = ({
           </motion.span>
         ))}
       </motion.span>
-    </Component>
+    </ComponentWithType>
   );
 };

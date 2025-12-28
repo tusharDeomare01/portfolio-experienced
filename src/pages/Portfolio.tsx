@@ -264,9 +264,9 @@ const Portfolio = () => {
                 align="left"
                 variant="default"
                 enableBlur={false}
-                containerClassName="mb-3"
+                staggerDelay={0}
+                baseOpacity={0.1}
                 blurStrength={0}
-                baseRotation={0}
               >
                 TechShowcase
               </ScrollReveal>
@@ -278,6 +278,7 @@ const Portfolio = () => {
                 containerClassName="mb-2"
                 blurStrength={0}
                 baseRotation={0}
+                baseOpacity={0.1}
               >
                 Modern Interactive Portfolio • React + TypeScript
               </ScrollReveal>
@@ -302,6 +303,7 @@ const Portfolio = () => {
             containerClassName="max-w-4xl"
             blurStrength={0}
             baseRotation={0}
+            baseOpacity={0.1}
           >
             TechShowcase is a modern, interactive portfolio website showcasing
             professional experience, projects, and achievements. Features smooth
@@ -324,6 +326,7 @@ const Portfolio = () => {
                 containerClassName="inline-block"
                 blurStrength={0}
                 baseRotation={0}
+                baseOpacity={0.1}
               >
                 Technology Stack
               </ScrollReveal>
@@ -372,6 +375,7 @@ const Portfolio = () => {
                 containerClassName="inline-block"
                 blurStrength={0}
                 baseRotation={0}
+                baseOpacity={0.1}
               >
                 Key Features & Capabilities
               </ScrollReveal>

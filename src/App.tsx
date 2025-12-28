@@ -87,11 +87,11 @@ const Dock = lazy(() => import("./components/lightswind/dock"));
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+const LanyardPage = lazy(() => import("./pages/Lanyard"));
 
 // Wrapper component for MarketJD with conditional LightRays background
 function MarketJDPage() {
   const isMobile = useIsMobile();
-  
   return (
     <>
       {/* LightRays Background - Only render on non-mobile devices */}
@@ -125,7 +125,7 @@ function MarketJDPage() {
 // Wrapper component for Portfolio with conditional LightRays background
 function PortfolioPage() {
   const isMobile = useIsMobile();
-  
+
   return (
     <>
       {/* LightRays Background - Only render on non-mobile devices */}
@@ -352,6 +352,16 @@ function App() {
             element={
               <Suspense fallback={<PageLoader />}>
                 <PortfolioPage />
+              </Suspense>
+            }
+          />
+
+          {/* Lanyard Interactive Page */}
+          <Route
+            path="/lanyard"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <LanyardPage />
               </Suspense>
             }
           />

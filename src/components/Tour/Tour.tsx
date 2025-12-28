@@ -14,6 +14,7 @@ import {
   Mail,
   Bot,
   Maximize2,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "../lightswind/button";
 import { BorderBeam } from "../lightswind/border-beam";
@@ -45,6 +46,15 @@ const TOUR_STEPS: TourStep[] = [
       "Use the header to navigate between sections. You can toggle between light/dark theme and enter fullscreen mode for a better viewing experience.",
     position: "bottom",
     icon: <Maximize2 className="w-5 h-5" />,
+  },
+  {
+    id: "my-card",
+    target: "[data-my-card='true']",
+    title: "My Card",
+    content:
+      "Check out 'My Card' for an interactive 3D lanyard card experience. Drag it around and explore a unique way to view my contact information.",
+    position: "bottom",
+    icon: <CreditCard className="w-5 h-5" />,
   },
   {
     id: "about",

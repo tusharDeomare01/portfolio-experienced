@@ -726,14 +726,19 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, fov = 20, cameraZ
   const { nodes = {}, materials = {} } = gltfData || {};
   const texture = textureData;
   
-  // State for ID card texture
-  const [idCardTexture, setIdCardTexture] = useState<THREE.CanvasTexture | null>(null);
-  const [logoImage, setLogoImage] = useState<HTMLImageElement | null>(null);
-  const [profileImage, setProfileImage] = useState<HTMLImageElement | null>(null);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-  
   // Premium navy blue ribbon texture
   const [ribbonTexture, setRibbonTexture] = useState<THREE.CanvasTexture | null>(null);
+  
+  // State for ID card texture and profile image
+  const [idCardTexture, setIdCardTexture] = useState<THREE.CanvasTexture>(() => {
+    // Create initial placeholder texture immediately so card shows content from start
+    const placeholderTexture = createIDCardTexture(null, null);
+    placeholderTexture.wrapS = placeholderTexture.wrapT = THREE.ClampToEdgeWrapping;
+    placeholderTexture.flipY = true;
+    return placeholderTexture;
+  });
+  const [profileImage, setProfileImage] = useState<HTMLImageElement | null>(null);
+  const textureUpdateRef = useRef(false);
   
   // Create premium ribbon texture on mount with higher resolution
   useEffect(() => {
@@ -745,64 +750,138 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, fov = 20, cameraZ
     setRibbonTexture(premiumTexture);
   }, []);
 
-  // Load logo (favicon) and profile images
+  // Try to extract image from photoTexture if it's already loaded (drei's useTexture)
+  // This gives us the fastest path to showing the profile photo
+  useEffect(() => {
+    if (photoTexture && photoTexture.image && !profileImage && !textureUpdateRef.current) {
+      // photoTexture.image might be an Image element or ImageBitmap
+      if (photoTexture.image instanceof HTMLImageElement && photoTexture.image.complete) {
+        // Image is already loaded, use it immediately
+        setProfileImage(photoTexture.image);
+        textureUpdateRef.current = true;
+        const cardTexture = createIDCardTexture(null, photoTexture.image);
+        cardTexture.wrapS = cardTexture.wrapT = THREE.ClampToEdgeWrapping;
+        cardTexture.flipY = true;
+        setIdCardTexture(cardTexture);
+      } else if (photoTexture.image instanceof ImageBitmap) {
+        // Convert ImageBitmap to Image element
+        const canvas = document.createElement('canvas');
+        canvas.width = photoTexture.image.width;
+        canvas.height = photoTexture.image.height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(photoTexture.image, 0, 0);
+          const img = new Image();
+          img.onload = () => {
+            setProfileImage(img);
+            if (!textureUpdateRef.current) {
+              textureUpdateRef.current = true;
+              const cardTexture = createIDCardTexture(null, img);
+              cardTexture.wrapS = cardTexture.wrapT = THREE.ClampToEdgeWrapping;
+              cardTexture.flipY = true;
+              setIdCardTexture(cardTexture);
+            }
+          };
+          img.src = canvas.toDataURL();
+        }
+      } else if (photoTexture.image instanceof HTMLImageElement) {
+        // Image is loading, wait for it
+        photoTexture.image.onload = () => {
+          if (!textureUpdateRef.current) {
+            setProfileImage(photoTexture.image as HTMLImageElement);
+            textureUpdateRef.current = true;
+            const cardTexture = createIDCardTexture(null, photoTexture.image as HTMLImageElement);
+            cardTexture.wrapS = cardTexture.wrapT = THREE.ClampToEdgeWrapping;
+            cardTexture.flipY = true;
+            setIdCardTexture(cardTexture);
+          }
+        };
+      }
+    }
+  }, [photoTexture, profileImage]);
+
+  // Load logo (favicon) and profile images - aggressive preloading
   useEffect(() => {
     let logoLoaded = false;
     let profileLoaded = false;
+    let currentLogo: HTMLImageElement | null = null;
+    let currentProfile: HTMLImageElement | null = null;
     
-    const checkAllLoaded = () => {
-      if (logoLoaded && profileLoaded) {
-        setImagesLoaded(true);
+    const updateTexture = () => {
+      // Update texture as soon as profile image is available (most important)
+      if (currentProfile && !textureUpdateRef.current) {
+        textureUpdateRef.current = true;
+        const cardTexture = createIDCardTexture(currentLogo, currentProfile);
+        cardTexture.wrapS = cardTexture.wrapT = THREE.ClampToEdgeWrapping;
+        cardTexture.flipY = true;
+        setIdCardTexture(cardTexture);
+        setProfileImage(currentProfile);
+      } else if (logoLoaded && profileLoaded && !textureUpdateRef.current) {
+        // Final update when both are loaded (in case profile loaded before logo)
+        textureUpdateRef.current = true;
+        const cardTexture = createIDCardTexture(currentLogo, currentProfile);
+        cardTexture.wrapS = cardTexture.wrapT = THREE.ClampToEdgeWrapping;
+        cardTexture.flipY = true;
+        setIdCardTexture(cardTexture);
+        setProfileImage(currentProfile);
       }
     };
 
-    // Load favicon/logo
+    // Preload favicon/logo with link prefetch for faster loading
+    const logoLink = document.createElement('link');
+    logoLink.rel = 'prefetch';
+    logoLink.as = 'image';
+    logoLink.href = '/favicon.svg';
+    document.head.appendChild(logoLink);
+
     const logo = new Image();
     logo.crossOrigin = 'anonymous';
     logo.onload = () => {
-      setLogoImage(logo);
+      currentLogo = logo;
       logoLoaded = true;
-      checkAllLoaded();
+      updateTexture();
     };
     logo.onerror = () => {
       console.warn('Failed to load logo');
-      setLogoImage(null);
+      currentLogo = null;
       logoLoaded = true;
-      checkAllLoaded();
+      updateTexture();
     };
     logo.src = '/favicon.svg';
 
-    // Load profile photo
+    // Preload profile photo with link prefetch for faster loading
+    const profileLink = document.createElement('link');
+    profileLink.rel = 'prefetch';
+    profileLink.as = 'image';
+    profileLink.href = profilePhoto;
+    document.head.appendChild(profileLink);
+
+    // Load profile photo - most important visual element
     const profile = new Image();
     profile.crossOrigin = 'anonymous';
     profile.onload = () => {
-      setProfileImage(profile);
+      currentProfile = profile;
       profileLoaded = true;
-      checkAllLoaded();
+      updateTexture();
     };
     profile.onerror = () => {
       console.warn('Failed to load profile photo');
-      setProfileImage(null);
+      currentProfile = null;
       profileLoaded = true;
-      checkAllLoaded();
+      updateTexture();
     };
     profile.src = profilePhoto;
-  }, []);
 
-  // Create ID card texture when images are loaded (or failed to load)
-  useEffect(() => {
-    if (imagesLoaded) {
-      // Wait a bit to ensure images are fully loaded
-      const timer = setTimeout(() => {
-        const cardTexture = createIDCardTexture(logoImage, profileImage);
-        // Configure texture properties
-        cardTexture.wrapS = cardTexture.wrapT = THREE.ClampToEdgeWrapping;
-        cardTexture.flipY = true; // Three.js uses flipped Y by default for textures
-        setIdCardTexture(cardTexture);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [imagesLoaded, logoImage, profileImage]);
+    // Cleanup prefetch links (if they exist)
+    return () => {
+      if (logoLink.parentNode) {
+        document.head.removeChild(logoLink);
+      }
+      if (profileLink.parentNode) {
+        document.head.removeChild(profileLink);
+      }
+    };
+  }, []);
   const [curve] = useState(
     () =>
       new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])

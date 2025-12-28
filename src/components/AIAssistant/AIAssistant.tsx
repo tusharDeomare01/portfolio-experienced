@@ -183,9 +183,10 @@ const AIAssistantComponent = () => {
     // Responsive widget dimensions
     const isMobile = window.innerWidth < 640; // sm breakpoint
     // Use visual viewport height for mobile to account for browser chrome
-    const viewportHeight = isMobile && (window as any).visualViewport 
-      ? (window as any).visualViewport.height 
-      : window.innerHeight;
+    const viewportHeight =
+      isMobile && (window as any).visualViewport
+        ? (window as any).visualViewport.height
+        : window.innerHeight;
     const widgetWidth = isMobile ? window.innerWidth - 16 : 384; // w-96 = 384px on desktop
     const widgetHeight = isMobile ? viewportHeight - 80 : 600; // Account for mobile browser UI
     const padding = isMobile ? 8 : 20; // Safe padding from edges
@@ -197,14 +198,8 @@ const AIAssistantComponent = () => {
 
     const maxLeft = -(window.innerWidth - widgetWidth - padding - initialRight);
     const maxRight = window.innerWidth - widgetWidth - padding - initialRight;
-    const maxTop = -(
-      viewportHeight -
-      widgetHeight -
-      padding -
-      initialBottom
-    );
-    const maxBottom =
-      viewportHeight - widgetHeight - padding - initialBottom;
+    const maxTop = -(viewportHeight - widgetHeight - padding - initialBottom);
+    const maxBottom = viewportHeight - widgetHeight - padding - initialBottom;
 
     return {
       left: maxLeft,
@@ -239,6 +234,7 @@ const AIAssistantComponent = () => {
           exit={{ scale: 0, opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
           className="
+          cursor-pointer
         fixed z-[999]
         bottom-20 right-3     /* Mobile: 80px from bottom, 12px from right */
         sm:bottom-22 sm:right-4 /* Small screens: 88px from bottom, 16px from right */
@@ -249,6 +245,7 @@ const AIAssistantComponent = () => {
             onClick={handleToggle}
             data-ai-assistant
             className={`
+              cursor-pointer 
                 relative
                 h-14 w-14
                 sm:h-16 sm:w-16
@@ -330,7 +327,7 @@ const AIAssistantComponent = () => {
             />
 
             {/* Tooltip text */}
-            <div className="absolute -top-12 right-0 bg-foreground/90 text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+            <div className="cursor-pointer absolute -top-12 right-0 bg-foreground/90 text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
               AI Assistant
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground/90" />
             </div>
@@ -367,8 +364,10 @@ const AIAssistantComponent = () => {
             x: dragEnabled ? x : 0,
             y: dragEnabled ? y : 0,
             touchAction: dragEnabled ? "none" : "auto",
-            maxHeight: isFullscreen ? "none" : typeof window !== "undefined" && window.innerWidth < 640 
-              ? "calc(100dvh - 5rem)" 
+            maxHeight: isFullscreen
+              ? "none"
+              : typeof window !== "undefined" && window.innerWidth < 640
+              ? "calc(100dvh - 5rem)"
               : "none",
           }}
           className={`${

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useThrottleRAF } from "@/hooks/useThrottle";
 import { selectTheme } from "@/store/hooks";
@@ -18,20 +19,25 @@ import { toggleTheme } from "@/store/slices/themeSlice";
 import { useTourContext } from "../Tour/TourContext";
 
 const navItems = [
-  { name: "Home", href: "#hero" },
-  { name: "About", href: "#about" },
-  { name: "Education", href: "#education" },
-  { name: "Career", href: "#career" },
-  { name: "Projects", href: "#projects" },
-  { name: "Achievements", href: "#achievements" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "#hero", isRoute: false },
+  { name: "About", href: "#about", isRoute: false },
+  { name: "Education", href: "#education", isRoute: false },
+  { name: "Career", href: "#career", isRoute: false },
+  { name: "Projects", href: "#projects", isRoute: false },
+  { name: "Achievements", href: "#achievements", isRoute: false },
+  { name: "My Card", href: "/lanyard", isRoute: true },
+  { name: "Contact", href: "#contact", isRoute: false },
 ];
 
 export default function Header() {
-  const theme = useAppSelector(selectTheme);
+  const navigate = useNavigate();
+  // ROOT CAUSE FIX: Ensure theme has a fallback value in case Redux Persist hasn't hydrated
+  // In production, Redux Persist hydration might be delayed, causing undefined theme
+  const theme = useAppSelector(selectTheme) || 'dark'; // Default to dark theme
   const dispatch = useAppDispatch();
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollYRef = useRef(0);
+  const isInitialMountRef = useRef(true); // Track initial mount to prevent immediate hide
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -52,8 +58,24 @@ export default function Header() {
     }
   }, [theme]);
 
+  // Initialize scroll position on mount
+  useEffect(() => {
+    // Set initial scroll position to prevent false positives
+    lastScrollYRef.current = window.scrollY;
+    // Mark initial mount as complete after a short delay
+    const timer = setTimeout(() => {
+      isInitialMountRef.current = false;
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Scroll listener for hide/show header - optimized with throttled handler
   const handleScroll = useThrottleRAF(() => {
+    // Don't hide header during initial mount to prevent production rendering issues
+    if (isInitialMountRef.current) {
+      return;
+    }
+
     const currentScrollY = window.scrollY;
     const lastScrollY = lastScrollYRef.current;
 
@@ -100,10 +122,17 @@ export default function Header() {
     };
   }, []);
 
-  const handleScrollTo = useCallback((id: string) => {
-    // Remove # if present and find the element
-    const cleanId = id.replace("#", "");
-    const el = document.getElementById(cleanId) || document.querySelector(id);
+  const handleScrollTo = useCallback((href: string, isRoute: boolean = false) => {
+    if (isRoute) {
+      // Handle route navigation
+      navigate(href);
+      setIsMobileMenuOpen(false);
+      return;
+    }
+    
+    // Handle scroll navigation for hash links
+    const cleanId = href.replace("#", "");
+    const el = document.getElementById(cleanId) || document.querySelector(href);
     if (el) {
       const offset = 80;
       const elementPosition = el.getBoundingClientRect().top;
@@ -115,7 +144,7 @@ export default function Header() {
       });
     }
     setIsMobileMenuOpen(false); // Close mobile menu on click
-  }, []);
+  }, [navigate]);
 
   const toggleFullscreen = useCallback(async () => {
     try {
@@ -221,9 +250,10 @@ export default function Header() {
                     dark:text-gray-300 transition-colors"
                   >
                     <a
-                      onClick={() => handleScrollTo(item.href)}
+                      onClick={() => handleScrollTo(item.href, item.isRoute)}
                       className="cursor-pointer hover:text-pink-800
                        dark:hover:text-pink-400"
+                      data-my-card={item.name === "My Card" ? "true" : undefined}
                     >
                       {item.name}
                     </a>
@@ -327,8 +357,9 @@ export default function Header() {
                   {navItems.map((item) => (
                     <li key={item.name} className="mobile-menu-item">
                       <a
-                        onClick={() => handleScrollTo(item.href)}
+                        onClick={() => handleScrollTo(item.href, item.isRoute)}
                         className="text-4xl font-bold text-gray-800 dark:text-white cursor-pointer px-4 py-2 rounded-lg transition-all duration-300"
+                        data-my-card={item.name === "My Card" ? "true" : undefined}
                       >
                         {item.name}
                       </a>

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback, memo } from "react";
 import { TypingText } from "../lightswind/typing-text";
 import { Button } from "../lightswind/button";
-import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { FileText, Sparkles, Mail } from "lucide-react";
 
 // Resume file configuration
@@ -367,18 +366,10 @@ const HeroSectionComponent = () => {
             >
               Tushar Deomare
             </TypingText>
-            <ScrollReveal
-              size="sm"
-              align="left"
-              variant="accent"
-              enableBlur={false}
-              blurStrength={0}
-              baseRotation={0}
-              containerClassName="mt-1"
-              textClassName="text-xs sm:text-sm text-pink-500 font-semibold block"
-            >
+
+            <p className="text-xs sm:text-sm text-pink-500 font-semibold block">
               He / Him
-            </ScrollReveal>
+            </p>
           </h1>
 
           {/* Key Highlight - Concise and Impactful */}
@@ -388,18 +379,9 @@ const HeroSectionComponent = () => {
             }`}
           >
             <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
-            <ScrollReveal
-              size="md"
-              align="left"
-              variant="muted"
-              enableBlur={false}
-              blurStrength={0}
-              baseRotation={0}
-              containerClassName="inline"
-              textClassName="font-medium"
-            >
+            <div className="p-1">
               Building scalable solutions with 2+ years of expertise
-            </ScrollReveal>
+            </div>
           </div>
 
           {/* Email Contact */}

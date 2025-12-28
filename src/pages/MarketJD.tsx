@@ -356,9 +356,9 @@ const MarketJD = () => {
                 align="left"
                 variant="default"
                 enableBlur={false}
-                containerClassName="mb-3"
+                staggerDelay={0}
+                baseOpacity={0.1}
                 blurStrength={0}
-                baseRotation={0}
               >
                 MarketJD
               </ScrollReveal>
@@ -370,6 +370,7 @@ const MarketJD = () => {
                 containerClassName="mb-2"
                 blurStrength={0}
                 baseRotation={0}
+                baseOpacity={0.1}
               >
                 SEO Admin Portal • Enterprise Platform
               </ScrollReveal>
@@ -394,6 +395,7 @@ const MarketJD = () => {
             containerClassName="max-w-4xl"
             blurStrength={0}
             baseRotation={0}
+            baseOpacity={0.1}
           >
             A comprehensive SEO insights and analytics platform with 20+
             third-party API integrations, advanced authentication, dynamic
@@ -416,6 +418,7 @@ const MarketJD = () => {
                 containerClassName="inline-block"
                 blurStrength={0}
                 baseRotation={0}
+                baseOpacity={0.1}
               >
                 Technology Stack
               </ScrollReveal>
@@ -464,6 +467,7 @@ const MarketJD = () => {
                 containerClassName="inline-block"
                 blurStrength={0}
                 baseRotation={0}
+                baseOpacity={0.1}
               >
                 Third-Party Integrations
               </ScrollReveal>
@@ -536,6 +540,7 @@ const MarketJD = () => {
                 containerClassName="inline-block"
                 blurStrength={0}
                 baseRotation={0}
+                baseOpacity={0.1}
               >
                 Key Features & Capabilities
               </ScrollReveal>

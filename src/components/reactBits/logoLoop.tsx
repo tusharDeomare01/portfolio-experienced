@@ -363,6 +363,10 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         const itemAriaLabel = isNodeItem
           ? ((item as any).ariaLabel ?? (item as any).title)
           : ((item as any).alt ?? (item as any).title);
+        
+        const itemTitle = isNodeItem
+          ? ((item as any).title ?? (item as any).ariaLabel)
+          : ((item as any).title ?? (item as any).alt);
 
         const inner = (item as any).href ? (
           <a
@@ -374,6 +378,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
             )}
             href={(item as any).href}
             aria-label={itemAriaLabel || 'logo link'}
+            title={itemTitle || itemAriaLabel || 'logo link'}
             target="_blank"
             rel="noreferrer noopener"
           >

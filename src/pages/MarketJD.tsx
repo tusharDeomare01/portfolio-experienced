@@ -1,19 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import {
   ArrowLeft,
-  Code,
-  Database,
-  Shield,
   Zap,
   Globe,
   BarChart3,
   Settings,
   Mail,
   Key,
-  Layers,
-  Package,
   Webhook,
   Brain,
   FileText,
@@ -23,11 +18,10 @@ import {
   Calendar,
   Cpu,
 } from "lucide-react";
-import ScrollReveal from "@/components/lightswind/scroll-reveal";
+import { ScrollReveal } from "@/components/reactBits/scrollReveal";
 import { Badge } from "@/components/lightswind/badge";
 import { ShareButton } from "@/components/Share";
 import { getCurrentUrl } from "@/lib/shareUtils";
-// import { BackgroundSkeleton } from "@/components/Loading/LoadingComponents";
 import {
   Card,
   CardContent,
@@ -35,68 +29,87 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/lightswind/card";
+import { LogoLoop, type LogoItem } from "@/components/reactBits/logoLoop";
+import { InteractiveGrid, type InteractiveGridItem } from "@/components/reactBits/interactiveGrid";
+import { AccordionTabs, type AccordionTabItem } from "@/components/reactBits/accordionTabs";
 
-// const RaysBackground = lazy(
-//   () => import("../components/lightswind/rays-background")
-// );
-// const FallBeamBackground = lazy(
-//   () => import("../components/lightswind/fall-beam-background")
-// );
+// Lazy load react-bits components for better performance
+const LightRays = lazy(() => import("@/components/reactBits/lightRays"));
+
+// Lazy load heavy components
+const Shield = lazy(() => import("lucide-react").then((mod) => ({ default: mod.Shield })));
 
 const MarketJD = () => {
   const navigate = useNavigate();
   const theme = useAppSelector((state) => state.theme.theme);
   const isDarkMode = theme === "dark";
 
-  // Updated tech stack based on actual package.json
-  const techStack = {
-    framework: {
-      name: "Next.js 14.2.10",
-      description:
-        "React framework with App Router, Server Components, and API Routes",
-      icon: Code,
-    },
-    language: {
-      name: "TypeScript 5.1.6",
-      description: "Type-safe JavaScript for better developer experience",
-      icon: Code,
-    },
-    ui: {
-      name: "React 18.3.1",
-      description: "Modern React with concurrent features and hooks",
-      icon: Layers,
-    },
-    database: {
-      name: "Prisma 6.11.1",
-      description: "Next-generation ORM with type-safe database access",
-      icon: Database,
-    },
-    stateManagement: {
-      name: "Redux Toolkit + Persist",
-      description: "Predictable state container with persistence layer",
-      icon: Package,
-    },
-    auth: {
-      name: "Next-Auth 4.24.7",
-      description: "Complete authentication solution for Next.js",
-      icon: Shield,
-    },
-    styling: {
-      name: "Tailwind CSS 3.3.2",
-      description: "Utility-first CSS framework for rapid UI development",
-      icon: Layers,
-    },
-    uiLibraries: {
-      name: "Ant Design + NextUI",
-      description: "Enterprise-grade UI component libraries",
-      icon: Package,
-    },
-    charts: {
-      name: "Chart.js 4.3.3",
-      description: "Powerful charting library for data visualization",
-      icon: BarChart3,
-    },
-  };
+  // Technology logos with real CDN URLs, documentation links, and tooltips
+  const techLogos: LogoItem[] = useMemo(
+    () => [
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+        alt: "Next.js",
+        title: "Next.js 14.2.10 - Click to visit documentation",
+        href: "https://nextjs.org/docs",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+        alt: "TypeScript",
+        title: "TypeScript 5.1.6 - Click to visit documentation",
+        href: "https://www.typescriptlang.org/docs",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+        alt: "React",
+        title: "React 18.3.1 - Click to visit documentation",
+        href: "https://react.dev",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg",
+        alt: "Prisma",
+        title: "Prisma 6.11.1 - Click to visit documentation",
+        href: "https://www.prisma.io/docs",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redux/redux-original.svg",
+        alt: "Redux Toolkit",
+        title: "Redux Toolkit + Persist - Click to visit documentation",
+        href: "https://redux-toolkit.js.org",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg",
+        alt: "Tailwind CSS",
+        title: "Tailwind CSS 3.3.2 - Click to visit documentation",
+        href: "https://tailwindcss.com/docs",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+        alt: "MySQL",
+        title: "MySQL Database - Click to visit documentation",
+        href: "https://dev.mysql.com/doc",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chartjs/chartjs-original.svg",
+        alt: "Chart.js",
+        title: "Chart.js 4.3.3 - Click to visit documentation",
+        href: "https://www.chartjs.org/docs",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+        alt: "Node.js",
+        title: "Node.js Runtime - Click to visit documentation",
+        href: "https://nodejs.org/docs",
+      },
+      {
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg",
+        alt: "npm",
+        title: "npm Package Manager - Click to visit documentation",
+        href: "https://docs.npmjs.com",
+      },
+    ],
+    []
+  );
 
   // Detailed integrations with descriptions
   const integrations = [
@@ -220,7 +233,7 @@ const MarketJD = () => {
     {
       title: "Unified Analytics Dashboard",
       description:
-        "Comprehensive dashboard aggregating data from 20+ third-party APIs without performance degradation. Features real-time data synchronization, caching strategies, and optimized rendering using React Window for large datasets.",
+        "Comprehensive dashboard aggregating data from 10+ third-party APIs without performance degradation. Features real-time data synchronization, caching strategies, and optimized rendering using React Window for large datasets.",
       icon: BarChart3,
       color: "orange",
     },
@@ -290,23 +303,93 @@ const MarketJD = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const colorMap: Record<string, { bg: string; text: string }> = {
-    blue: { bg: "bg-blue-500/10", text: "text-blue-500" },
-    purple: { bg: "bg-purple-500/10", text: "text-purple-500" },
-    green: { bg: "bg-green-500/10", text: "text-green-500" },
-    orange: { bg: "bg-orange-500/10", text: "text-orange-500" },
-    pink: { bg: "bg-pink-500/10", text: "text-pink-500" },
-    teal: { bg: "bg-teal-500/10", text: "text-teal-500" },
-    yellow: { bg: "bg-yellow-500/10", text: "text-yellow-500" },
-    red: { bg: "bg-red-500/10", text: "text-red-500" },
-  };
+  // Prepare InteractiveGrid items for features
+  const interactiveGridItems: InteractiveGridItem[] = useMemo(
+    () =>
+      features.map((feature) => {
+        const Icon = feature.icon;
+        return {
+          id: feature.title,
+          title: feature.title,
+          description: feature.description,
+          icon: <Icon className="w-6 h-6" />,
+          color: feature.color,
+        };
+      }),
+    [features]
+  );
+
+  // Prepare AccordionTabs items for integrations
+  const accordionTabItems: AccordionTabItem[] = useMemo(
+    () =>
+      integrations.map((integration) => {
+        const Icon = integration.icon;
+        return {
+          id: integration.category,
+          label: integration.category,
+          icon: <Icon className="w-4 h-4" />,
+          color: integration.color,
+          badge: integration.items.length,
+          content: (
+            <div className="space-y-3">
+              {integration.items.map((item, itemIdx) => (
+                <div
+                  key={itemIdx}
+                  style={{
+                    animation: `slideInLeft 0.4s ease-out ${itemIdx * 0.05}s both`,
+                  }}
+                  className="p-4 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-background/80 transition-all duration-300 group"
+                >
+                  <h4 className="font-semibold text-sm text-foreground mb-2 group-hover:text-primary transition-colors">
+                    {item.name}
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ),
+        };
+      }),
+    [integrations]
+  );
 
   return (
     <div className="min-h-screen bg-transparent relative">
-      {/* <FallBeamBackground className="fixed z-1" beamCount={3} /> */}
-      {/* <Suspense fallback={<BackgroundSkeleton />}>
-        <RaysBackground className="fixed z-0" />
-      </Suspense> */}
+      <style>{`
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.6s ease-out both;
+        }
+      `}</style>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button and Share */}
@@ -333,7 +416,7 @@ const MarketJD = () => {
             shareData={{
               title: "MarketJD - SEO Insights Platform",
               description:
-                "Comprehensive SEO insights and analytics platform with 20+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation.",
+                "Comprehensive SEO insights and analytics platform with 10+ third-party API integrations, advanced authentication, dynamic reporting, and AI-powered automation.",
               url: getCurrentUrl(),
             }}
             variant="outline"
@@ -363,10 +446,9 @@ const MarketJD = () => {
                 size="2xl"
                 align="left"
                 variant="default"
-                enableBlur={false}
-                baseOpacity={0.1}
-                baseRotation={0}
-                blurStrength={0}
+                animation="fadeUp"
+                stagger={true}
+                delay={0.1}
               >
                 MarketJD
               </ScrollReveal>
@@ -374,11 +456,9 @@ const MarketJD = () => {
                 size="md"
                 align="left"
                 variant="muted"
-                enableBlur={false}
                 containerClassName="mb-2"
-                blurStrength={0}
-                baseRotation={0}
-                baseOpacity={0.1}
+                animation="fadeUp"
+                delay={0.2}
               >
                 SEO Admin Portal • Enterprise Platform
               </ScrollReveal>
@@ -399,13 +479,11 @@ const MarketJD = () => {
             size="md"
             align="left"
             variant="muted"
-            enableBlur={false}
             containerClassName="max-w-4xl"
-            blurStrength={0}
-            baseRotation={0}
-            baseOpacity={0.1}
+            animation="fadeUp"
+            delay={0.3}
           >
-            A comprehensive SEO insights and analytics platform with 20+
+            A comprehensive SEO insights and analytics platform with 10+
             third-party API integrations, advanced authentication, dynamic
             reporting, and AI-powered automation. Built with Next.js 14,
             TypeScript, Prisma, and modern best practices for enterprise-scale
@@ -413,57 +491,68 @@ const MarketJD = () => {
           </ScrollReveal>
         </div>
 
-        {/* Tech Stack */}
-        <div className="mb-16">
-          <div className="mb-6">
+        {/* Technology Stack - LogoLoop with Futuristic Background */}
+        <div className="mb-16 relative">
+          {/* Futuristic Background Effect */}
+          {!isDarkMode && (
+            <Suspense fallback={null}>
+              <div className="absolute inset-0 -z-10 opacity-10 pointer-events-none overflow-hidden rounded-3xl">
+                <LightRays
+                  raysOrigin="top-center"
+                  raysColor="#07eae6"
+                  raysSpeed={1}
+                  lightSpread={12}
+                  rayLength={0.7}
+                  followMouse={true}
+                  mouseInfluence={0.1}
+                  className="w-full h-full"
+                />
+              </div>
+            </Suspense>
+          )}
+          
+          <div className="mb-6 relative z-10">
             <div className="mb-2 flex items-center gap-2">
               <Cpu className="w-8 h-8 text-primary" />
               <ScrollReveal
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={0}
-                baseRotation={0}
-                baseOpacity={0.1}
+                animation="slideLeft"
+                delay={0.1}
               >
                 Technology Stack
               </ScrollReveal>
             </div>
-            <p className="text-lg font-bold">
+            <ScrollReveal
+              size="md"
+              align="left"
+              variant="muted"
+              animation="fadeUp"
+              delay={0.2}
+            >
               Modern, scalable technologies powering the platform
-            </p>
+            </ScrollReveal>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Object.entries(techStack).map(([key, tech]) => {
-              const Icon = tech.icon;
-              return (
-                <div
-                  key={key}
-                  className="p-6 rounded-xl border bg-transparent backdrop-blur-xl hover:bg-background/80 transition-all duration-300 hover:shadow-lg"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-lg bg-primary/10">
-                      <Icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground mb-1">
-                        {tech.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {tech.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="relative py-8 px-4 rounded-2xl bg-transparent">
+            <LogoLoop
+              logos={techLogos}
+              speed={80}
+              direction="left"
+              logoHeight={48}
+              gap={48}
+              pauseOnHover={true}
+              fadeOut={true}
+              scaleOnHover={true}
+              className="w-full"
+              ariaLabel="Technology stack logos"
+            />
           </div>
         </div>
 
-        {/* API Integrations */}
-        <div className="mb-16">
+        {/* Third-Party Integrations - AccordionTabs */}
+        <div className="mb-16 relative">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Webhook className="w-8 h-8 text-primary" />
@@ -471,72 +560,33 @@ const MarketJD = () => {
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={0}
-                baseRotation={0}
-                baseOpacity={0.1}
+                animation="slideLeft"
+                delay={0.1}
               >
                 Third-Party Integrations
               </ScrollReveal>
             </div>
-            <p className="text-lg font-bold">
+            <ScrollReveal
+              size="md"
+              align="left"
+              variant="muted"
+              animation="fadeUp"
+              delay={0.2}
+            >
               10+ seamless API integrations for comprehensive data insights
-            </p>
+            </ScrollReveal>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {integrations.map((integration, idx) => {
-              const Icon = integration.icon;
-              return (
-                <div key={idx}>
-                  <Card className="backdrop-blur-xl bg-transparent hover:bg-background/90 transition-all h-full">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-3">
-                        <div
-                          className={`p-2 rounded-lg ${
-                            colorMap[integration.color]?.bg || "bg-primary/10"
-                          }`}
-                        >
-                          <Icon
-                            className={`w-6 h-6 ${
-                              colorMap[integration.color]?.text ||
-                              "text-primary"
-                            }`}
-                          />
-                        </div>
-                        {integration.category}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {integration.items.map((item, itemIdx) => (
-                          <div
-                            key={itemIdx}
-                            className="p-3 rounded-lg bg-transparent border border-border/50"
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-sm text-foreground mb-1">
-                                  {item.name}
-                                </h4>
-                                <p className="text-xs text-muted-foreground">
-                                  {item.description}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              );
-            })}
-          </div>
+          <AccordionTabs
+            items={accordionTabItems}
+            defaultActiveId={accordionTabItems[0]?.id}
+            orientation="horizontal"
+            className="w-full"
+          />
         </div>
 
-        {/* Key Features */}
-        <div className="mb-16">
+        {/* Key Features & Capabilities - InteractiveGrid */}
+        <div className="mb-16 relative">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Zap className="w-8 h-8 text-primary" />
@@ -544,174 +594,166 @@ const MarketJD = () => {
                 size="xl"
                 align="left"
                 variant="default"
-                enableBlur={false}
                 containerClassName="inline-block"
-                blurStrength={0}
-                baseRotation={0}
-                baseOpacity={0.1}
+                animation="slideLeft"
+                delay={0.1}
               >
                 Key Features & Capabilities
               </ScrollReveal>
             </div>
-            <p className="text-lg font-bold">
+            <ScrollReveal
+              size="md"
+              align="left"
+              variant="muted"
+              animation="fadeUp"
+              delay={0.2}
+            >
               Major development achievements and platform capabilities
-            </p>
+            </ScrollReveal>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {features.map((feature, idx) => {
-              const Icon = feature.icon;
-              return (
-                <div key={idx} className="group">
-                  <Card className="backdrop-blur-xl bg-transparent hover:bg-background/90 transition-all h-full border-2 hover:border-primary/50">
-                    <CardHeader>
-                      <div className="flex items-start gap-4">
-                        <div
-                          className={`p-3 rounded-xl ${
-                            colorMap[feature.color]?.bg || "bg-primary/10"
-                          } group-hover:scale-110 transition-transform`}
-                        >
-                          <Icon
-                            className={`w-6 h-6 ${
-                              colorMap[feature.color]?.text || "text-primary"
-                            }`}
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <CardTitle className="mb-2">
-                            {feature.title}
-                          </CardTitle>
-                          <CardDescription className="text-sm leading-relaxed">
-                            {feature.description}
-                          </CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                  </Card>
-                </div>
-              );
-            })}
-          </div>
+          <InteractiveGrid
+            items={interactiveGridItems}
+            columns={2}
+            enableHoverEffects={true}
+            enableParticles={true}
+            enableLightRays={true}
+            className="w-full"
+          />
         </div>
 
-        {/* Automation & Cron Jobs */}
-        <div className="mb-16">
-          <Card className="backdrop-blur-xl bg-transparent">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-6 h-6 text-primary" />
+        {/* Automation & Cron Jobs - Enhanced */}
+        <div className="mb-16 relative">
+          <div className="mb-6">
+            <div className="mb-2 flex items-center gap-2">
+              <Calendar className="w-8 h-8 text-primary" />
+              <ScrollReveal
+                size="xl"
+                align="left"
+                variant="default"
+                containerClassName="inline-block"
+                animation="slideLeft"
+                delay={0.1}
+              >
                 Automated Background Jobs
-              </CardTitle>
-              <CardDescription>
-                8+ cron jobs handling data synchronization and processing
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {cronJobs.map((job, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-lg border bg-transparent hover:bg-background/80 transition-colors"
-                  >
-                    <h4 className="font-semibold text-sm text-foreground mb-1">
+              </ScrollReveal>
+            </div>
+            <ScrollReveal
+              size="md"
+              align="left"
+              variant="muted"
+              animation="fadeUp"
+              delay={0.2}
+            >
+              8+ cron jobs handling data synchronization and processing
+            </ScrollReveal>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {cronJobs.map((job, idx) => (
+              <div
+                key={idx}
+                style={{
+                  animation: `fadeInUp 0.6s ease-out ${idx * 0.1}s both`,
+                }}
+                className="group relative p-5 rounded-xl border-2 border-border/50 bg-background/50 backdrop-blur-xl hover:border-primary/50 hover:bg-background/80 transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                    <Calendar className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-sm text-foreground mb-1 group-hover:text-primary transition-colors">
                       {job.name}
                     </h4>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       {job.description}
                     </p>
                   </div>
-                ))}
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary/0 group-hover:bg-primary/50 transition-all duration-300 rounded-b-xl" />
               </div>
-            </CardContent>
-          </Card>
+            ))}
+          </div>
         </div>
 
-        {/* Additional Technologies */}
-        <div className="mb-16">
-          <Card className="backdrop-blur-xl bg-transparent">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="w-6 h-6 text-primary" />
-                Additional Technologies & Tools
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-                {[
-                  "Ant Design",
-                  "NextUI",
-                  "Chart.js",
-                  "React DnD Kit",
-                  "Formik",
-                  "Yup",
-                  "ExcelJS",
-                  "html2pdf.js",
-                  "Jodit Editor",
-                  "React Window",
-                  "React Grid Layout",
-                  "SendGrid",
-                  "Mailgun",
-                  "Nodemailer",
-                  "Moment.js",
-                  "Day.js",
-                  "Date-fns",
-                  "Axios",
-                  "Crypto-js",
-                  "UUID",
-                  "Howler.js",
-                  "React Toastify",
-                  "File Saver",
-                ].map((tech, idx) => (
-                  <Badge
-                    key={idx}
-                    variant="outline"
-                    className="justify-center py-2 hover:bg-background/80"
-                  >
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Project Summary */}
+        {/* Project Summary - Enhanced */}
         <div className="mb-12">
-          <Card className="backdrop-blur-xl hover:bg-background/80 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-            <CardHeader>
-              <CardTitle>Project Summary</CardTitle>
-              <CardDescription>
+          <Card className="backdrop-blur-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-2 border-primary/20 hover:border-primary/40 transition-all duration-500">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-2xl flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/20">
+                  <FileText className="w-6 h-6 text-primary" />
+                </div>
+                Project Summary
+              </CardTitle>
+              <CardDescription className="text-base">
                 Comprehensive enterprise platform for SEO management
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <h3 className="font-semibold text-foreground mb-2">
+                <div
+                  style={{
+                    animation: `fadeInUp 0.6s ease-out 0s both`,
+                  }}
+                  className="p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg"
+                >
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                     Project Name
                   </h3>
-                  <p className="text-muted-foreground">
-                    MarketJD (SEO Admin Portal)
+                  <p className="text-foreground font-medium text-lg mb-1">
+                    MarketJD
                   </p>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground">
+                    SEO Admin Portal
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2 italic">
                     Previously: InsightsJD
                   </p>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-2">
+                <div
+                  style={{
+                    animation: `fadeInUp 0.6s ease-out 0.1s both`,
+                  }}
+                  className="p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg"
+                >
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '0.2s' }} />
                     Duration
                   </h3>
-                  <p className="text-muted-foreground">2+ Years</p>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-foreground font-medium text-lg mb-1">
+                    2+ Years
+                  </p>
+                  <p className="text-sm text-muted-foreground">
                     Continuous development & maintenance
                   </p>
+                  <div className="mt-3 flex gap-2">
+                    <Badge variant="info" size="sm">Active Development</Badge>
+                    <Badge variant="outline" size="sm">Ongoing</Badge>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-2">Status</h3>
-                  <Badge variant="success" size="lg">
+                <div
+                  style={{
+                    animation: `fadeInUp 0.6s ease-out 0.2s both`,
+                  }}
+                  className="p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg"
+                >
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '0.4s' }} />
+                    Status
+                  </h3>
+                  <Badge variant="success" size="lg" className="mb-3">
+                    <span className="relative flex h-2 w-2 mr-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                    </span>
                     Live & Active
                   </Badge>
-                  <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm text-muted-foreground">
                     Production environment
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Enterprise-grade platform
                   </p>
                 </div>
               </div>

@@ -1,13 +1,14 @@
 import { lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
 import { PageLoader } from "../components/Loading/LoadingComponents";
 import { ArrowLeft } from "lucide-react";
 import { ShareButton } from "@/components/Share";
 import { getCurrentUrl } from "@/lib/shareUtils";
+import { useNavigate } from "react-router-dom";
 
 const Lanyard = lazy(() => import("../components/reactBits/lanYard"));
 
 const LanyardPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <Suspense fallback={<PageLoader />}>
@@ -21,13 +22,24 @@ const LanyardPage = () => {
 
       {/* Back Button and Share */}
       <div className="absolute top-4 left-4 right-4 z-50 flex items-center justify-between flex-wrap gap-3 sm:gap-4">
-        <Link
-          to="/"
-          className="px-4 py-2 bg-white/10 dark:bg-black/10 backdrop-blur-md rounded-lg text-foreground hover:bg-white/20 dark:hover:bg-black/20 transition-colors duration-200 flex items-center gap-2 group shrink-0"
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            const splitUrl = window.location.href.split("#");
+            if (splitUrl?.includes("home")) {
+              navigate("/");
+            } else {
+              navigate(-1);
+            }
+          }}
+          className="cursor-pointer flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          Back
-        </Link>
+          <ArrowLeft
+            size={20}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
+          <span className="text-sm sm:text-base">Back</span>
+        </button>
         <ShareButton
           shareData={{
             title: "My Card - Interactive 3D Lanyard",

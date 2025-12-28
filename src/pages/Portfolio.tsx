@@ -220,7 +220,15 @@ const Portfolio = () => {
         {/* Back Button and Share */}
         <div className="mb-8 flex items-center justify-between flex-wrap gap-3 sm:gap-4">
           <button
-            onClick={() => navigate(-1)}
+            onClick={(e) => {
+              e.preventDefault();
+              const splitUrl = window.location.href.split("#");
+              if (splitUrl?.includes("home")) {
+                navigate("/");
+              } else {
+                navigate(-1);
+              }
+            }}
             className="cursor-pointer flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
           >
             <ArrowLeft

@@ -1,6 +1,6 @@
 /**
  * Share Utilities
- * 
+ *
  * Provides functions for generating share URLs and handling share functionality
  * across different social platforms.
  */
@@ -16,15 +16,16 @@ export interface ShareData {
  * Get the current page URL
  */
 export const getCurrentUrl = (): string => {
-  if (typeof window === 'undefined') return '';
-  return window.location.href;
+  if (typeof window === "undefined") return "";
+  return `${window.location.href}#home`;
 };
 
 /**
  * Get the base URL of the site
  */
 export const getBaseUrl = (): string => {
-  if (typeof window === 'undefined') return 'https://tushar-deomare-portfolio.vercel.app';
+  if (typeof window === "undefined")
+    return "https://tushar-deomare-portfolio.vercel.app";
   return `${window.location.protocol}//${window.location.host}`;
 };
 
@@ -47,7 +48,7 @@ export const getTwitterShareUrl = (data: ShareData): string => {
   const text = `${data.title} - ${data.description}`;
   const params = new URLSearchParams({
     url: data.url,
-    text: text.length > 280 ? text.substring(0, 277) + '...' : text,
+    text: text.length > 280 ? text.substring(0, 277) + "..." : text,
   });
   return `https://twitter.com/intent/tweet?${params.toString()}`;
 };
@@ -84,16 +85,16 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
       return true;
     } else {
       // Fallback for older browsers
-      const textArea = document.createElement('textarea');
+      const textArea = document.createElement("textarea");
       textArea.value = text;
-      textArea.style.position = 'fixed';
-      textArea.style.left = '-999999px';
-      textArea.style.top = '-999999px';
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
       try {
-        document.execCommand('copy');
+        document.execCommand("copy");
         return true;
       } catch (err) {
         return false;
@@ -102,7 +103,7 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
       }
     }
   } catch (err) {
-    console.error('Failed to copy to clipboard:', err);
+    console.error("Failed to copy to clipboard:", err);
     return false;
   }
 };
@@ -111,7 +112,7 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
  * Check if Web Share API is available
  */
 export const isWebShareSupported = (): boolean => {
-  return typeof navigator !== 'undefined' && 'share' in navigator;
+  return typeof navigator !== "undefined" && "share" in navigator;
 };
 
 /**
@@ -124,22 +125,28 @@ export const shareViaWebAPI = async (data: ShareData): Promise<boolean> => {
   }
 
   // Check if we're in a secure context (HTTPS or localhost)
-  if (!window.isSecureContext && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    console.debug('Web Share API requires HTTPS');
+  if (
+    !window.isSecureContext &&
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1"
+  ) {
+    console.debug("Web Share API requires HTTPS");
     return false;
   }
 
   try {
     // Prepare share data - some browsers require at least one of title, text, or url
     const shareData: ShareTargetData = {};
-    
+
     if (data.title) shareData.title = data.title;
     if (data.description) shareData.text = data.description;
     if (data.url) shareData.url = data.url;
 
     // Ensure at least one field is present
     if (!shareData.title && !shareData.text && !shareData.url) {
-      console.debug('Web Share API requires at least one of: title, text, or url');
+      console.debug(
+        "Web Share API requires at least one of: title, text, or url"
+      );
       return false;
     }
 
@@ -147,12 +154,12 @@ export const shareViaWebAPI = async (data: ShareData): Promise<boolean> => {
     return true;
   } catch (err) {
     // User cancelled (AbortError) is normal, don't log it
-    if ((err as Error).name === 'AbortError') {
+    if ((err as Error).name === "AbortError") {
       return false;
     }
-    
+
     // Other errors (NotAllowedError, TypeError, etc.) - log for debugging but don't throw
-    console.debug('Web Share API error:', (err as Error).name, err);
+    console.debug("Web Share API error:", (err as Error).name, err);
     return false;
   }
 };
@@ -175,8 +182,7 @@ export const openShareUrl = (url: string): void => {
 
   window.open(
     url,
-    'share',
+    "share",
     `width=${width},height=${height},left=${left},top=${top},toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=1`
   );
 };
-

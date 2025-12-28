@@ -388,18 +388,25 @@ export function Tour({
           const isTablet = width >= 768 && width < 1024;
           const isLarge = width >= 1920;
 
-          const currentDimensions = {
-            width,
-            height,
-            tooltipWidth: isSmall
-              ? 300
+          // Calculate safe tooltip width - ensure it never exceeds viewport
+          const safePadding = isSmall ? 16 : isMobile ? 20 : isTablet ? 24 : 32;
+          const maxTooltipWidth = Math.min(
+            isSmall
+              ? 280
               : isMobile
-              ? 340
+              ? 320
               : isTablet
-              ? 400
+              ? 380
               : isLarge
               ? 450
               : 420,
+            width - safePadding * 2 // Ensure tooltip fits with padding on both sides
+          );
+
+          const currentDimensions = {
+            width,
+            height,
+            tooltipWidth: maxTooltipWidth,
             spacing: isSmall
               ? 12
               : isMobile
@@ -409,22 +416,14 @@ export function Tour({
               : isLarge
               ? 28
               : 24,
-            padding: isSmall
-              ? 12
-              : isMobile
-              ? 16
-              : isTablet
-              ? 20
-              : isLarge
-              ? 32
-              : 24,
+            padding: safePadding,
             estimatedHeight: isSmall
-              ? 260
-              : isMobile
               ? 280
-              : isTablet
+              : isMobile
               ? 300
-              : 320,
+              : isTablet
+              ? 320
+              : 340,
           };
 
           const element = targetElement || document.querySelector(step.target);
@@ -521,21 +520,23 @@ export function Tour({
               break;
           }
 
-          // Constrain to viewport with safe margins
-          tooltipLeft = Math.max(
-            padding,
-            Math.min(
-              tooltipLeft,
-              currentDimensions.width - tooltipWidth - padding
-            )
-          );
-          tooltipTop = Math.max(
-            padding,
-            Math.min(
-              tooltipTop,
-              currentDimensions.height - estimatedHeight - padding
-            )
-          );
+          // Constrain to viewport with safe margins - enhanced for mobile
+          const minLeft = padding;
+          const maxLeft = currentDimensions.width - tooltipWidth - padding;
+          const minTop = padding;
+          const maxTop = currentDimensions.height - estimatedHeight - padding;
+
+          // Ensure tooltip never goes off-screen
+          tooltipLeft = Math.max(minLeft, Math.min(tooltipLeft, maxLeft));
+          tooltipTop = Math.max(minTop, Math.min(tooltipTop, maxTop));
+
+          // Additional safety check: if tooltip would still overflow, center it
+          if (tooltipLeft < padding || tooltipLeft + tooltipWidth > currentDimensions.width - padding) {
+            tooltipLeft = Math.max(padding, (currentDimensions.width - tooltipWidth) / 2);
+          }
+          if (tooltipTop < padding || tooltipTop + estimatedHeight > currentDimensions.height - padding) {
+            tooltipTop = Math.max(padding, (currentDimensions.height - estimatedHeight) / 2);
+          }
 
           setTooltipPosition({
             top:
@@ -625,7 +626,17 @@ export function Tour({
           dockElement
         );
       } else {
-        const targetElement = document.querySelector(step.target);
+        // Special handling for "my-card" step on mobile - position relative to header
+        const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+        let targetElement: Element | null = null;
+        
+        if (step.id === "my-card" && isMobile) {
+          // On mobile, use header element instead of the data-my-card link
+          targetElement = document.querySelector("header");
+        } else {
+          targetElement = document.querySelector(step.target);
+        }
+        
         if (targetElement) {
           targetElement.scrollIntoView({
             behavior: "smooth",
@@ -724,7 +735,17 @@ export function Tour({
   const overlayClipPath = useMemo(() => {
     if (!step || !isActive) return "";
 
-    const targetElement = document.querySelector(step.target);
+    // Special handling for "my-card" step on mobile - use header element
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    let targetElement: Element | null = null;
+    
+    if (step.id === "my-card" && isMobile) {
+      // On mobile, use header element instead of the data-my-card link
+      targetElement = document.querySelector("header");
+    } else {
+      targetElement = document.querySelector(step.target);
+    }
+    
     if (!targetElement) return "";
 
     const rect = targetElement.getBoundingClientRect();
@@ -753,6 +774,9 @@ export function Tour({
   const tourZIndex = isDockStep ? "z-[9998]" : "z-[10000]";
 
   const isCenter = tooltipPosition.position === "center";
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  
+  // Enhanced mobile-safe tooltip styling
   const tooltipStyle: React.CSSProperties = isCenter
     ? {
         position: "fixed",
@@ -760,14 +784,16 @@ export function Tour({
         left: "50%",
         transform: "translate(-50%, -50%)",
         width: `${tooltipPosition.width}px`,
-        maxWidth: "95vw",
+        maxWidth: isMobile ? "calc(100vw - 32px)" : "95vw",
+        maxHeight: isMobile ? "calc(100vh - 32px)" : "90vh",
       }
     : {
         position: "fixed",
-        top: `${tooltipPosition.top}px`,
-        left: `${tooltipPosition.left}px`,
+        top: `${Math.max(16, Math.min(tooltipPosition.top, window.innerHeight - 200))}px`,
+        left: `${Math.max(16, Math.min(tooltipPosition.left, window.innerWidth - tooltipPosition.width - 16))}px`,
         width: `${tooltipPosition.width}px`,
-        maxWidth: "95vw",
+        maxWidth: isMobile ? "calc(100vw - 32px)" : "95vw",
+        maxHeight: isMobile ? "calc(100vh - 32px)" : "90vh",
       };
 
   return (
@@ -845,7 +871,7 @@ export function Tour({
           damping: 32,
           mass: 0.75,
         }}
-        className="pointer-events-auto relative bg-background/95 backdrop-blur-md border-2 border-primary/50 rounded-xl shadow-2xl p-4 sm:p-5 md:p-6 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        className="pointer-events-auto relative bg-background/95 backdrop-blur-md border-2 border-primary/50 rounded-xl shadow-2xl p-4 sm:p-5 md:p-6 overflow-y-auto focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         style={tooltipStyle}
         role="dialog"
         aria-modal="true"

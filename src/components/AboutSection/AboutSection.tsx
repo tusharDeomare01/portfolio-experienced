@@ -35,7 +35,7 @@ const AboutSectionComponent = () => {
         // <ScrollReveal key={`paragraph-${index}`} {...PARAGRAPH_REVEAL_PROPS}>
         //   {text}
         // </ScrollReveal>
-        <div id={`${index}`} className="font-bold text-xl py-3">
+        <div key={`about-paragraph-${index}`} id={`${index}`} className="font-bold text-xl py-3">
           {text}
         </div>
       )),

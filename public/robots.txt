@@ -1,6 +1,6 @@
 # robots.txt
 # Auto-generated at build time for https://tushar-deomare-portfolio.vercel.app/
-# Last updated: 2025-12-28
+# Last updated: 2025-12-30
 
 # Allow all search engines
 User-agent: *

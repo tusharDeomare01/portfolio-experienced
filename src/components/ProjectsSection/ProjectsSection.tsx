@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback, memo, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { selectTheme } from "@/store/hooks";
 import { useAppSelector } from "@/store/hooks";
 import { Button } from "../lightswind/button";
@@ -26,6 +25,39 @@ const TITLE_WRAPPER_CLASSES = "mb-4 flex items-baseline justify-center gap-4";
 const ICON_CLASSES =
   "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-primary flex-shrink-0 mt-1.5 md:mt-2 lg:mt-2.5";
 const SUBTITLE_CLASSES = "text-lg font-bold text-muted-foreground";
+
+// Static CSS styles - moved outside component to prevent recreation
+const PROJECT_STYLES = `
+  @keyframes projectItemEnter {
+    0% {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes projectCardEnter {
+    0% {
+      opacity: 0;
+      transform: translateX(var(--card-offset, 0));
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .animate-project-item-enter {
+    animation: projectItemEnter 0.6s ease-out both;
+  }
+  
+  .animate-project-card-enter {
+    animation: projectCardEnter 0.5s ease-out both;
+  }
+`;
 
 // Logo path mapping - pre-computed for performance
 const LOGO_PATHS = {
@@ -123,35 +155,71 @@ const ProjectItem = memo(
       [project.id, project.technologies]
     );
 
-    // Animation variants for staggered entrance
-    const containerVariants = {
-      hidden: { opacity: 0, y: 50 },
-      visible: {
-        opacity: 1,
-        y: 0,
-      },
-    };
+    // Memoize style objects to prevent recreation
+    const containerStyle = useMemo(
+      () => ({
+        animationDelay: `${index * 0.1}s`,
+      }),
+      [index]
+    );
 
-    const itemVariants = {
-      hidden: { opacity: 0, x: isEven ? -30 : 30 },
-      visible: {
-        opacity: 1,
-        x: 0,
-      },
-    };
+    const cardStyle = useMemo(
+      () => ({
+        animationDelay: `${index * 0.1 + 0.1}s`,
+        "--card-offset": isEven ? "-30px" : "30px",
+      } as React.CSSProperties),
+      [index, isEven]
+    );
+
+    // Memoize className strings
+    const cardClassName = useMemo(
+      () =>
+        `relative group bg-background/80 backdrop-blur-xl border border-border/60 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out ${
+          isHovered
+            ? "shadow-2xl shadow-primary/20 scale-[1.02] border-primary/40"
+            : "shadow-lg"
+        } animate-project-card-enter`,
+      [isHovered]
+    );
+
+    const gradientClassName = useMemo(
+      () =>
+        `absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
+          isEven
+            ? "from-primary/5 via-transparent to-transparent"
+            : "from-transparent via-transparent to-primary/5"
+        } pointer-events-none`,
+      [isEven]
+    );
+
+    const contentClassName = useMemo(
+      () =>
+        `relative p-6 sm:p-8 md:p-10 flex flex-col ${
+          isMobile ? "" : isEven ? "md:flex-row" : "md:flex-row-reverse"
+        } gap-6 md:gap-8`,
+      [isMobile, isEven]
+    );
+
+    const logoContainerClassName = useMemo(
+      () =>
+        `relative flex-shrink-0 ${
+          isMobile
+            ? "w-full h-48 sm:h-56"
+            : "md:w-80 md:h-64 lg:w-96 lg:h-72"
+        } rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/50 to-background/30 border border-border/40 group-hover:border-primary/60 transition-all duration-500`,
+      [isMobile]
+    );
+
+    const cornerAccentClassName = useMemo(
+      () =>
+        `absolute ${isEven ? "top-0 right-0" : "top-0 left-0"} w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`,
+      [isEven]
+    );
 
     return (
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{
-          duration: 0.6,
-          ease: "easeOut",
-          staggerChildren: 0.1,
-        }}
-        className="relative w-full mb-8 sm:mb-12 md:mb-16"
+      <div
+        className="relative w-full mb-8 sm:mb-12 md:mb-16 animate-project-item-enter"
+        style={containerStyle}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
@@ -176,61 +244,21 @@ const ProjectItem = memo(
           </Suspense>
         )}
 
-        <motion.div
-          variants={itemVariants}
-          transition={{
-            duration: 0.5,
-            ease: "easeOut",
-          }}
-          className={`
-            relative group
-            bg-background/80 backdrop-blur-xl
-            border border-border/60
-            rounded-2xl sm:rounded-3xl
-            overflow-hidden
-            transition-all duration-500 ease-out
-            ${isHovered ? "shadow-2xl shadow-primary/20 scale-[1.02] border-primary/40" : "shadow-lg"}
-          `}
-        >
+        <div className={cardClassName} style={cardStyle}>
           {/* Gradient overlay on hover */}
-          <div
-            className={`
-              absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100
-              transition-opacity duration-500
-              ${isEven ? "from-primary/5 via-transparent to-transparent" : "from-transparent via-transparent to-primary/5"}
-              pointer-events-none
-            `}
-          />
+          <div className={gradientClassName} />
 
-          <div
-            className={`
-              relative p-6 sm:p-8 md:p-10
-              flex flex-col ${isMobile ? "" : isEven ? "md:flex-row" : "md:flex-row-reverse"}
-              gap-6 md:gap-8
-            `}
-          >
+          <div className={contentClassName}>
             {/* Logo/Image Section */}
-            <div
-              className={`
-                relative flex-shrink-0
-                ${isMobile ? "w-full h-48 sm:h-56" : "md:w-80 md:h-64 lg:w-96 lg:h-72"}
-                rounded-xl overflow-hidden
-                bg-gradient-to-br from-primary/10 via-background/50 to-background/30
-                border border-border/40
-                group-hover:border-primary/60
-                transition-all duration-500
-              `}
-            >
+            <div className={logoContainerClassName}>
               {logoPath ? (
                 <div className="w-full h-full flex items-center justify-center p-6 sm:p-8">
-                  <motion.img
+                  <img
                     src={logoPath}
                     alt={project.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-contain max-w-full max-h-full"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.3 }}
+                    className="w-full h-full object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
               ) : (
@@ -260,13 +288,9 @@ const ProjectItem = memo(
               <div className="space-y-4 sm:space-y-5">
                 {/* Title and Date */}
                 <div className="space-y-3">
-                  <motion.h3
-                    className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight transition-colors duration-300 group-hover:text-primary"
-                    whileHover={{ x: 4 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight transition-all duration-300 group-hover:text-primary group-hover:translate-x-1">
                     {project.title}
-                  </motion.h3>
+                  </h3>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4 flex-shrink-0" />
                     <span className="font-medium">{project.date}</span>
@@ -294,60 +318,40 @@ const ProjectItem = memo(
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2 font-semibold">
                     Explore Project
-                    <motion.div
-                      animate={isHovered ? { x: 4 } : { x: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ArrowRight className="w-4 h-4" />
-                    </motion.div>
+                    <ArrowRight
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isHovered ? "translate-x-1" : "translate-x-0"
+                      }`}
+                    />
                   </span>
                   {/* Button hover effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-primary/10"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
+                  <div className="absolute inset-0 bg-primary/10 -translate-x-full group-hover/btn:translate-x-0 transition-transform duration-300" />
                 </Button>
               </div>
             </div>
           </div>
 
           {/* Decorative corner accent */}
-          <div
-            className={`
-              absolute ${isEven ? "top-0 right-0" : "top-0 left-0"}
-              w-32 h-32 bg-primary/5 rounded-full blur-3xl
-              opacity-0 group-hover:opacity-100
-              transition-opacity duration-500
-            `}
-          />
-        </motion.div>
+          <div className={cornerAccentClassName} />
+        </div>
 
         {/* Timeline connector line (hidden on mobile) */}
         {!isMobile && index < PROJECTS_DATA.length - 1 && (
           <div className="absolute left-1/2 -translate-x-1/2 w-0.5 h-8 sm:h-12 bg-gradient-to-b from-primary/40 via-primary/20 to-transparent" />
         )}
-      </motion.div>
+      </div>
     );
   },
   (prevProps, nextProps) => {
-    // Custom comparison function for React.memo
+    // Optimized comparison function - only check what actually changes
+    // Project data is static, so we can skip deep comparison
     return (
       prevProps.project.id === nextProps.project.id &&
       prevProps.index === nextProps.index &&
       prevProps.isDarkMode === nextProps.isDarkMode &&
       prevProps.isHovered === nextProps.isHovered &&
-      prevProps.project.title === nextProps.project.title &&
-      prevProps.project.subtitle === nextProps.project.subtitle &&
-      prevProps.project.date === nextProps.project.date &&
-      prevProps.project.route === nextProps.project.route &&
-      prevProps.project.status === nextProps.project.status &&
-      prevProps.project.technologies.length ===
-        nextProps.project.technologies.length &&
-      prevProps.project.technologies.every(
-        (tech, idx) => tech === nextProps.project.technologies[idx]
-      )
+      // Handlers are stable, so we don't need to compare them
+      prevProps.onNavigate === nextProps.onNavigate
     );
   }
 );
@@ -367,7 +371,7 @@ const ProjectsSectionComponent = () => {
   // Memoize isDarkMode calculation
   const isDarkMode = useMemo(() => theme === "dark", [theme]);
 
-  // Optimized navigation handler
+  // Optimized navigation handler - stable reference
   const handleNavigate = useCallback(
     (route: string) => {
       navigate(route);
@@ -375,26 +379,25 @@ const ProjectsSectionComponent = () => {
     [navigate]
   );
 
-  // Optimized hover handlers with useCallback
-  const createHoverHandlers = useCallback(
-    (projectId: number) => ({
-      onMouseEnter: () => setHoveredProject(projectId),
-      onMouseLeave: () => setHoveredProject(null),
-    }),
-    []
-  );
+  // Create stable hover handlers using useCallback
+  const handleMouseLeave = useCallback(() => {
+    setHoveredProject(null);
+  }, []);
 
-  // Memoize hover handlers for each project - only recreate when needed
-  const projectHandlers = useMemo(
-    () =>
-      PROJECTS_DATA.reduce((acc, project) => {
-        acc[project.id] = createHoverHandlers(project.id);
-        return acc;
-      }, {} as Record<number, { onMouseEnter: () => void; onMouseLeave: () => void }>),
-    [createHoverHandlers]
-  );
+  // Memoize hover handlers for each project - create stable closures
+  const projectHandlers = useMemo(() => {
+    const handlers: Record<number, { onMouseEnter: () => void; onMouseLeave: () => void }> = {};
+    PROJECTS_DATA.forEach((project) => {
+      handlers[project.id] = {
+        onMouseEnter: () => setHoveredProject(project.id),
+        onMouseLeave: handleMouseLeave,
+      };
+    });
+    return handlers;
+  }, [handleMouseLeave]);
 
-  // Memoize project items to prevent unnecessary re-renders
+  // Memoize project items - React.memo in ProjectItem will prevent unnecessary re-renders
+  // Only the hovered item will re-render when hover state changes
   const projectItems = useMemo(
     () =>
       PROJECTS_DATA.map((project, index) => (
@@ -444,6 +447,7 @@ const ProjectsSectionComponent = () => {
           <div className="relative space-y-0">{projectItems}</div>
         </div>
       </section>
+      <style>{PROJECT_STYLES}</style>
     </div>
   );
 };

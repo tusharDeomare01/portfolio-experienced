@@ -11,7 +11,7 @@ import App from "./App.tsx";
 import "@fontsource/geist-sans/400.css"; // Specific weight
 import "@fontsource/geist-sans/700.css"; // Bold
 import {
-  BackgroundLoader,
+  // BackgroundLoader,
   PageLoader,
 } from "./components/Loading/LoadingComponents";
 // import ClickSpark from "./components/reactBits/clickSpark.tsx";
@@ -21,9 +21,9 @@ const ClickSpark = lazy(() => import("./components/reactBits/clickSpark.tsx"));
 const Particles = lazy(
   () => import("./components/reactBits/reactBitsParticles.tsx")
 );
-const FallBeamBackground = lazy(
-  () => import("./components/lightswind/fall-beam-background")
-);
+// const FallBeamBackground = lazy(
+//   () => import("./components/lightswind/fall-beam-background")
+// );
 
 // Component to handle theme sync across tabs
 function ThemeSync() {
@@ -99,9 +99,9 @@ createRoot(document.getElementById("root")!).render(
               className="relative z-[10] !bg-transparent !scroll-smooth transition-opacity duration-300 ease-out
              opacity-100"
             >
-              <Suspense fallback={<BackgroundLoader />}>
+              {/* <Suspense fallback={<BackgroundLoader />}>
                 <FallBeamBackground beamCount={5} />
-              </Suspense>
+              </Suspense> */}
               <App />
             </div>
           </ThemedClickSpark>

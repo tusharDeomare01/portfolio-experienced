@@ -15,7 +15,7 @@ import {
   TrendingUp,
   Activity,
   MessageSquare,
-  Calendar,
+  // Calendar,
   Cpu,
 } from "lucide-react";
 import { ScrollReveal } from "@/components/reactBits/scrollReveal";
@@ -267,37 +267,37 @@ const MarketJD = () => {
     },
   ];
 
-  const cronJobs = [
-    {
-      name: "Calls Cron",
-      description: "Automated call tracking and analytics processing",
-    },
-    {
-      name: "Contact Forms Cron",
-      description: "Form submission processing and lead management",
-    },
-    {
-      name: "Chats Cron",
-      description: "Chat conversation data synchronization",
-    },
-    {
-      name: "Off-Page SEO Cron",
-      description: "Backlink monitoring and off-page SEO metrics",
-    },
-    {
-      name: "Technical SEO Cron",
-      description: "Technical SEO audits and monitoring",
-    },
-    {
-      name: "Search Console Cron",
-      description: "Search performance data aggregation",
-    },
-    { name: "MyCase Cron", description: "Legal case data synchronization" },
-    {
-      name: "Facebook Leads Cron",
-      description: "Social media lead processing",
-    },
-  ];
+  // const cronJobs = [
+  //   {
+  //     name: "Calls Cron",
+  //     description: "Automated call tracking and analytics processing",
+  //   },
+  //   {
+  //     name: "Contact Forms Cron",
+  //     description: "Form submission processing and lead management",
+  //   },
+  //   {
+  //     name: "Chats Cron",
+  //     description: "Chat conversation data synchronization",
+  //   },
+  //   {
+  //     name: "Off-Page SEO Cron",
+  //     description: "Backlink monitoring and off-page SEO metrics",
+  //   },
+  //   {
+  //     name: "Technical SEO Cron",
+  //     description: "Technical SEO audits and monitoring",
+  //   },
+  //   {
+  //     name: "Search Console Cron",
+  //     description: "Search performance data aggregation",
+  //   },
+  //   { name: "MyCase Cron", description: "Legal case data synchronization" },
+  //   {
+  //     name: "Facebook Leads Cron",
+  //     description: "Social media lead processing",
+  //   },
+  // ];
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -622,7 +622,7 @@ const MarketJD = () => {
         </div>
 
         {/* Automation & Cron Jobs - Enhanced */}
-        <div className="mb-16 relative">
+        {/* <div className="mb-16 relative">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-2">
               <Calendar className="w-8 h-8 text-primary" />
@@ -673,7 +673,7 @@ const MarketJD = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Project Summary - Enhanced */}
         <div className="mb-12">

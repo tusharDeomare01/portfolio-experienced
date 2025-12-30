@@ -21,6 +21,7 @@
     "@react-three/fiber": "^9.4.2",
     "@react-three/rapier": "^2.2.0",
     "@reduxjs/toolkit": "^2.11.0",
+    "@tabler/icons-react": "^3.36.0",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.9.1",
     "clsx": "^2.1.1",

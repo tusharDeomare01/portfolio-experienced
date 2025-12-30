@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useCallback, useMemo } from "react";
 
 export interface CardSwapItem {
   id: string | number;
@@ -26,11 +25,10 @@ export const CardSwap: React.FC<CardSwapProps> = ({
   defaultIndex = 0,
   autoRotate = false,
   rotationInterval = 5000,
-  className = '',
-  cardClassName = '',
+  className = "",
+  cardClassName = "",
   onCardChange,
   enableHover = true,
-  transitionDuration = 0.5,
 }) => {
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -63,39 +61,16 @@ export const CardSwap: React.FC<CardSwapProps> = ({
     return () => clearInterval(interval);
   }, [autoRotate, rotationInterval, items, onCardChange]);
 
-  const cardVariants = {
-    inactive: {
-      scale: 0.95,
-      opacity: 0.7,
-      y: 20,
-    },
-    active: {
-      scale: 1,
-      opacity: 1,
-      y: 0,
-    },
-    hover: {
-      scale: 1.05,
-      y: -5,
-    },
-  };
-
   return (
     <div className={`relative ${className}`}>
       {/* Active Card Display */}
       <div className="relative mb-8 min-h-[400px] bg-transparent">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeItem.id}
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -20 }}
-            transition={{ duration: transitionDuration, ease: [0.16, 1, 0.3, 1] }}
-            className={`w-full h-full bg-transparent ${cardClassName}`}
-          >
-            {activeItem.content}
-          </motion.div>
-        </AnimatePresence>
+        <div
+          key={activeItem.id}
+          className={`w-full h-full bg-transparent ${cardClassName}`}
+        >
+          {activeItem.content}
+        </div>
       </div>
 
       {/* Card Selector Grid */}
@@ -105,18 +80,19 @@ export const CardSwap: React.FC<CardSwapProps> = ({
           const isHovered = hoveredIndex === index;
 
           return (
-            <motion.button
+            <button
               key={item.id}
               onClick={() => handleCardClick(index)}
               onMouseEnter={() => enableHover && setHoveredIndex(index)}
               onMouseLeave={() => enableHover && setHoveredIndex(null)}
-              variants={cardVariants}
-              animate={isActive ? 'active' : isHovered ? 'hover' : 'inactive'}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
               className={`
                 relative p-4 rounded-xl border-2 transition-all duration-300
-                ${isActive ? 'border-primary shadow-lg shadow-primary/20' : 'border-border/50'}
-                ${isHovered && !isActive ? 'border-primary/50 shadow-md' : ''}
+                ${
+                  isActive
+                    ? "border-primary shadow-lg shadow-primary/20"
+                    : "border-border/50"
+                }
+                ${isHovered && !isActive ? "border-primary/50 shadow-md" : ""}
                 bg-background/80 backdrop-blur-xl
                 hover:bg-background/90
                 cursor-pointer
@@ -127,12 +103,7 @@ export const CardSwap: React.FC<CardSwapProps> = ({
             >
               {/* Active indicator */}
               {isActive && (
-                <motion.div
-                  layoutId="activeIndicator"
-                  className="absolute top-0 left-0 right-0 h-1 bg-primary"
-                  initial={false}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
               )}
 
               {/* Icon */}
@@ -140,7 +111,7 @@ export const CardSwap: React.FC<CardSwapProps> = ({
                 <div
                   className={`
                     mb-3 transition-colors duration-300
-                    ${isActive ? 'text-primary' : 'text-muted-foreground'}
+                    ${isActive ? "text-primary" : "text-muted-foreground"}
                   `}
                 >
                   {item.icon}
@@ -151,7 +122,7 @@ export const CardSwap: React.FC<CardSwapProps> = ({
               <h3
                 className={`
                   font-semibold text-sm transition-colors duration-300
-                  ${isActive ? 'text-foreground' : 'text-muted-foreground'}
+                  ${isActive ? "text-foreground" : "text-muted-foreground"}
                 `}
               >
                 {item.title}
@@ -165,7 +136,7 @@ export const CardSwap: React.FC<CardSwapProps> = ({
                   pointer-events-none
                 `}
               />
-            </motion.button>
+            </button>
           );
         })}
       </div>
@@ -174,4 +145,3 @@ export const CardSwap: React.FC<CardSwapProps> = ({
 };
 
 export default CardSwap;
-

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import { Renderer, Camera, Geometry, Program, Mesh } from 'ogl';
 
 interface ParticlesProps {
@@ -72,7 +72,6 @@ const vertex = /* glsl */ `
     }
     
     gl_Position = projectionMatrix * mvPos;
-    gl_Position = projectionMatrix * mvPos;
   }
 `;
 
@@ -117,45 +116,22 @@ const Particles: React.FC<ParticlesProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const resizeTimeoutRef = useRef<number | null>(null);
+  const rendererRef = useRef<Renderer | null>(null);
+  const cameraRef = useRef<Camera | null>(null);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+  // Memoize color palette
+  const palette = useMemo(() => 
+    particleColors && particleColors.length > 0 ? particleColors : defaultColors,
+    [particleColors]
+  );
 
-    const renderer = new Renderer({ dpr: pixelRatio, depth: false, alpha: true });
-    const gl = renderer.gl;
-    container.appendChild(gl.canvas);
-    gl.clearColor(0, 0, 0, 0);
-
-    const camera = new Camera(gl, { fov: 15 });
-    camera.position.set(0, 0, cameraDistance);
-
-    const resize = () => {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      renderer.setSize(width, height);
-      camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
-    };
-    window.addEventListener('resize', resize, false);
-    resize();
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      mouseRef.current = { x, y };
-    };
-
-    if (moveParticlesOnHover) {
-      // Listen to window mousemove so it works even when content is on top
-      window.addEventListener('mousemove', handleMouseMove);
-    }
-
+  // Memoize particle geometry data generation
+  const particleData = useMemo(() => {
     const count = particleCount;
     const positions = new Float32Array(count * 3);
     const randoms = new Float32Array(count * 4);
     const colors = new Float32Array(count * 3);
-    const palette = particleColors && particleColors.length > 0 ? particleColors : defaultColors;
 
     for (let i = 0; i < count; i++) {
       let x: number, y: number, z: number, len: number;
@@ -172,10 +148,64 @@ const Particles: React.FC<ParticlesProps> = ({
       colors.set(col, i * 3);
     }
 
+    return { positions, randoms, colors, count };
+  }, [particleCount, palette]);
+
+  // Debounced resize handler
+  const handleResize = useCallback(() => {
+    if (!containerRef.current || !rendererRef.current || !cameraRef.current) return;
+
+    const width = containerRef.current.clientWidth;
+    const height = containerRef.current.clientHeight;
+    rendererRef.current.setSize(width, height);
+    cameraRef.current.perspective({ 
+      aspect: rendererRef.current.gl.canvas.width / rendererRef.current.gl.canvas.height 
+    });
+  }, []);
+
+  const debouncedResize = useCallback(() => {
+    if (resizeTimeoutRef.current !== null) {
+      clearTimeout(resizeTimeoutRef.current);
+    }
+    resizeTimeoutRef.current = window.setTimeout(() => {
+      handleResize();
+    }, 100);
+  }, [handleResize]);
+
+  // Optimized mouse move handler
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    mouseRef.current = { x, y };
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const renderer = new Renderer({ dpr: pixelRatio, depth: false, alpha: true });
+    rendererRef.current = renderer;
+    const gl = renderer.gl;
+    container.appendChild(gl.canvas);
+    gl.clearColor(0, 0, 0, 0);
+
+    const camera = new Camera(gl, { fov: 15 });
+    cameraRef.current = camera;
+    camera.position.set(0, 0, cameraDistance);
+
+    window.addEventListener('resize', debouncedResize, { passive: true });
+    handleResize();
+
+    if (moveParticlesOnHover) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    }
+
     const geometry = new Geometry(gl, {
-      position: { size: 3, data: positions },
-      random: { size: 4, data: randoms },
-      color: { size: 3, data: colors }
+      position: { size: 3, data: particleData.positions },
+      random: { size: 4, data: particleData.randoms },
+      color: { size: 3, data: particleData.colors }
     });
 
     const program = new Program(gl, {
@@ -209,9 +239,6 @@ const Particles: React.FC<ParticlesProps> = ({
       if (moveParticlesOnHover) {
         particles.position.x = -mouseRef.current.x * particleHoverFactor;
         particles.position.y = -mouseRef.current.y * particleHoverFactor;
-      } else {
-        particles.position.x = 0;
-        particles.position.y = 0;
       }
 
       if (!disableRotation) {
@@ -226,18 +253,35 @@ const Particles: React.FC<ParticlesProps> = ({
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', debouncedResize);
       if (moveParticlesOnHover) {
         window.removeEventListener('mousemove', handleMouseMove);
       }
+      if (resizeTimeoutRef.current !== null) {
+        clearTimeout(resizeTimeoutRef.current);
+        resizeTimeoutRef.current = null;
+      }
       cancelAnimationFrame(animationFrameId);
+      
+      // Proper WebGL cleanup
+      try {
+        const loseContextExt = gl.getExtension('WEBGL_lose_context');
+        if (loseContextExt) {
+          loseContextExt.loseContext();
+        }
+      } catch (error) {
+        console.warn('Error during WebGL cleanup:', error);
+      }
+
       if (container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
       }
+
+      rendererRef.current = null;
+      cameraRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    particleCount,
+    particleData,
     particleSpread,
     speed,
     moveParticlesOnHover,
@@ -247,7 +291,10 @@ const Particles: React.FC<ParticlesProps> = ({
     sizeRandomness,
     cameraDistance,
     disableRotation,
-    pixelRatio
+    pixelRatio,
+    debouncedResize,
+    handleResize,
+    handleMouseMove
   ]);
 
   return <div ref={containerRef} className={`relative w-full h-full ${className || ''}`} />;

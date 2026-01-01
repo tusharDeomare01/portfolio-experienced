@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useMemo, useCallback } from "react";
+import { memo, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme } from "@/store/hooks";
 import {
@@ -76,75 +76,116 @@ const SKILL_CATEGORIES: SkillCategory[] = [
   },
 ];
 
-// Move color classes outside component to prevent recreation
-const getColorClasses = (isDarkMode: boolean) => ({
-  blue: {
-    bg: isDarkMode ? "bg-blue-500/15" : "bg-blue-50/80",
-    border: isDarkMode ? "border-blue-400/40" : "border-blue-500/60",
-    text: isDarkMode ? "text-blue-300" : "text-blue-600",
-    badge: isDarkMode
-      ? "bg-gradient-to-br from-blue-500/25 to-blue-600/15 text-blue-200 border-blue-400/50"
-      : "bg-gradient-to-br from-blue-100/90 to-blue-200/80 text-blue-700 border-blue-500/60",
-    iconBg: isDarkMode
-      ? "bg-gradient-to-br from-blue-500/20 to-blue-600/10"
-      : "bg-gradient-to-br from-blue-100/80 to-blue-200/60",
+const TRANSITION_DURATION = 150;
+const AUTO_ADVANCE_INTERVAL = 4000;
+
+// Memoize color classes - created once and reused
+const COLOR_CLASSES = {
+  dark: {
+    blue: {
+      bg: "bg-blue-500/15",
+      border: "border-blue-400/40",
+      text: "text-blue-300",
+      badge: "bg-gradient-to-br from-blue-500/25 to-blue-600/15 text-blue-200 border-blue-400/50",
+      iconBg: "bg-gradient-to-br from-blue-500/20 to-blue-600/10",
+    },
+    purple: {
+      bg: "bg-purple-500/15",
+      border: "border-purple-400/40",
+      text: "text-purple-300",
+      badge: "bg-gradient-to-br from-purple-500/25 to-purple-600/15 text-purple-200 border-purple-400/50",
+      iconBg: "bg-gradient-to-br from-purple-500/20 to-purple-600/10",
+    },
+    green: {
+      bg: "bg-green-500/15",
+      border: "border-green-400/40",
+      text: "text-green-300",
+      badge: "bg-gradient-to-br from-green-500/25 to-green-600/15 text-green-200 border-green-400/50",
+      iconBg: "bg-gradient-to-br from-green-500/20 to-green-600/10",
+    },
+    orange: {
+      bg: "bg-orange-500/15",
+      border: "border-orange-400/40",
+      text: "text-orange-300",
+      badge: "bg-gradient-to-br from-orange-500/25 to-orange-600/15 text-orange-200 border-orange-400/50",
+      iconBg: "bg-gradient-to-br from-orange-500/20 to-orange-600/10",
+    },
+    teal: {
+      bg: "bg-teal-500/15",
+      border: "border-teal-400/40",
+      text: "text-teal-300",
+      badge: "bg-gradient-to-br from-teal-500/25 to-teal-600/15 text-teal-200 border-teal-400/50",
+      iconBg: "bg-gradient-to-br from-teal-500/20 to-teal-600/10",
+    },
+    indigo: {
+      bg: "bg-indigo-500/15",
+      border: "border-indigo-400/40",
+      text: "text-indigo-300",
+      badge: "bg-gradient-to-br from-indigo-500/25 to-indigo-600/15 text-indigo-200 border-indigo-400/50",
+      iconBg: "bg-gradient-to-br from-indigo-500/20 to-indigo-600/10",
+    },
   },
-  purple: {
-    bg: isDarkMode ? "bg-purple-500/15" : "bg-purple-50/80",
-    border: isDarkMode ? "border-purple-400/40" : "border-purple-500/60",
-    text: isDarkMode ? "text-purple-300" : "text-purple-600",
-    badge: isDarkMode
-      ? "bg-gradient-to-br from-purple-500/25 to-purple-600/15 text-purple-200 border-purple-400/50"
-      : "bg-gradient-to-br from-purple-100/90 to-purple-200/80 text-purple-700 border-purple-500/60",
-    iconBg: isDarkMode
-      ? "bg-gradient-to-br from-purple-500/20 to-purple-600/10"
-      : "bg-gradient-to-br from-purple-100/80 to-purple-200/60",
+  light: {
+    blue: {
+      bg: "bg-blue-50/80",
+      border: "border-blue-500/60",
+      text: "text-blue-600",
+      badge: "bg-gradient-to-br from-blue-100/90 to-blue-200/80 text-blue-700 border-blue-500/60",
+      iconBg: "bg-gradient-to-br from-blue-100/80 to-blue-200/60",
+    },
+    purple: {
+      bg: "bg-purple-50/80",
+      border: "border-purple-500/60",
+      text: "text-purple-600",
+      badge: "bg-gradient-to-br from-purple-100/90 to-purple-200/80 text-purple-700 border-purple-500/60",
+      iconBg: "bg-gradient-to-br from-purple-100/80 to-purple-200/60",
+    },
+    green: {
+      bg: "bg-green-50/80",
+      border: "border-green-500/60",
+      text: "text-green-600",
+      badge: "bg-gradient-to-br from-green-100/90 to-green-200/80 text-green-700 border-green-500/60",
+      iconBg: "bg-gradient-to-br from-green-100/80 to-green-200/60",
+    },
+    orange: {
+      bg: "bg-orange-50/80",
+      border: "border-orange-500/60",
+      text: "text-orange-600",
+      badge: "bg-gradient-to-br from-orange-100/90 to-orange-200/80 text-orange-700 border-orange-500/60",
+      iconBg: "bg-gradient-to-br from-orange-100/80 to-orange-200/60",
+    },
+    teal: {
+      bg: "bg-teal-50/80",
+      border: "border-teal-500/60",
+      text: "text-teal-600",
+      badge: "bg-gradient-to-br from-teal-100/90 to-teal-200/80 text-teal-700 border-teal-500/60",
+      iconBg: "bg-gradient-to-br from-teal-100/80 to-teal-200/60",
+    },
+    indigo: {
+      bg: "bg-indigo-50/80",
+      border: "border-indigo-500/60",
+      text: "text-indigo-600",
+      badge: "bg-gradient-to-br from-indigo-100/90 to-indigo-200/80 text-indigo-700 border-indigo-500/60",
+      iconBg: "bg-gradient-to-br from-indigo-100/80 to-indigo-200/60",
+    },
   },
-  green: {
-    bg: isDarkMode ? "bg-green-500/15" : "bg-green-50/80",
-    border: isDarkMode ? "border-green-400/40" : "border-green-500/60",
-    text: isDarkMode ? "text-green-300" : "text-green-600",
-    badge: isDarkMode
-      ? "bg-gradient-to-br from-green-500/25 to-green-600/15 text-green-200 border-green-400/50"
-      : "bg-gradient-to-br from-green-100/90 to-green-200/80 text-green-700 border-green-500/60",
-    iconBg: isDarkMode
-      ? "bg-gradient-to-br from-green-500/20 to-green-600/10"
-      : "bg-gradient-to-br from-green-100/80 to-green-200/60",
+} as const;
+
+// Memoized background styles
+const BACKGROUND_STYLES = {
+  dark: {
+    background: "radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 100%)",
   },
-  orange: {
-    bg: isDarkMode ? "bg-orange-500/15" : "bg-orange-50/80",
-    border: isDarkMode ? "border-orange-400/40" : "border-orange-500/60",
-    text: isDarkMode ? "text-orange-300" : "text-orange-600",
-    badge: isDarkMode
-      ? "bg-gradient-to-br from-orange-500/25 to-orange-600/15 text-orange-200 border-orange-400/50"
-      : "bg-gradient-to-br from-orange-100/90 to-orange-200/80 text-orange-700 border-orange-500/60",
-    iconBg: isDarkMode
-      ? "bg-gradient-to-br from-orange-500/20 to-orange-600/10"
-      : "bg-gradient-to-br from-orange-100/80 to-orange-200/60",
+  light: {
+    background: "radial-gradient(ellipse at center, #ffffff 0%, #f5f5f5 100%)",
   },
-  teal: {
-    bg: isDarkMode ? "bg-teal-500/15" : "bg-teal-50/80",
-    border: isDarkMode ? "border-teal-400/40" : "border-teal-500/60",
-    text: isDarkMode ? "text-teal-300" : "text-teal-600",
-    badge: isDarkMode
-      ? "bg-gradient-to-br from-teal-500/25 to-teal-600/15 text-teal-200 border-teal-400/50"
-      : "bg-gradient-to-br from-teal-100/90 to-teal-200/80 text-teal-700 border-teal-500/60",
-    iconBg: isDarkMode
-      ? "bg-gradient-to-br from-teal-500/20 to-teal-600/10"
-      : "bg-gradient-to-br from-teal-100/80 to-teal-200/60",
-  },
-  indigo: {
-    bg: isDarkMode ? "bg-indigo-500/15" : "bg-indigo-50/80",
-    border: isDarkMode ? "border-indigo-400/40" : "border-indigo-500/60",
-    text: isDarkMode ? "text-indigo-300" : "text-indigo-600",
-    badge: isDarkMode
-      ? "bg-gradient-to-br from-indigo-500/25 to-indigo-600/15 text-indigo-200 border-indigo-400/50"
-      : "bg-gradient-to-br from-indigo-100/90 to-indigo-200/80 text-indigo-700 border-indigo-500/60",
-    iconBg: isDarkMode
-      ? "bg-gradient-to-br from-indigo-500/20 to-indigo-600/10"
-      : "bg-gradient-to-br from-indigo-100/80 to-indigo-200/60",
-  },
-});
+} as const;
+
+// Memoized text shadow styles
+const TEXT_SHADOW_STYLES = {
+  dark: { textShadow: "0 2px 8px rgba(0,0,0,0.5)" },
+  light: { textShadow: "0 2px 4px rgba(0,0,0,0.1)" },
+} as const;
 
 const TechSkillsPresentation = memo(
   ({ className = "" }: TechSkillsPresentationProps) => {
@@ -153,82 +194,98 @@ const TechSkillsPresentation = memo(
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const intervalRef = useRef<number | null>(null);
+    const transitionTimeoutRef = useRef<number | null>(null);
 
-    // Memoize color classes to prevent recreation
+    // Get color classes based on theme
     const colorClasses = useMemo(
-      () => getColorClasses(isDarkMode),
+      () => (isDarkMode ? COLOR_CLASSES.dark : COLOR_CLASSES.light),
       [isDarkMode]
     );
 
-    // Auto-advance slides every 4 seconds (pause on hover)
-    useEffect(() => {
-      if (isHovered || isTransitioning) return;
+    // Cleanup function for transitions
+    const clearTransitionTimeout = useCallback(() => {
+      if (transitionTimeoutRef.current !== null) {
+        clearTimeout(transitionTimeoutRef.current);
+        transitionTimeoutRef.current = null;
+      }
+    }, []);
 
-      const interval = setInterval(() => {
+    // Optimized slide change with single timeout
+    const changeSlide = useCallback(
+      (newIndex: number) => {
+        if (newIndex === currentSlide || isTransitioning) return;
+        
+        clearTransitionTimeout();
         setIsTransitioning(true);
-        setTimeout(() => {
+        
+        transitionTimeoutRef.current = window.setTimeout(() => {
+          setCurrentSlide(newIndex);
+          setIsTransitioning(false);
+          transitionTimeoutRef.current = null;
+        }, TRANSITION_DURATION);
+      },
+      [currentSlide, isTransitioning, clearTransitionTimeout]
+    );
+
+    // Auto-advance slides
+    useEffect(() => {
+      if (isHovered || isTransitioning) {
+        if (intervalRef.current !== null) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        return;
+      }
+
+      intervalRef.current = window.setInterval(() => {
+        setIsTransitioning(true);
+        transitionTimeoutRef.current = window.setTimeout(() => {
           setCurrentSlide((prev) => (prev + 1) % SKILL_CATEGORIES.length);
           setIsTransitioning(false);
-        }, 150);
-      }, 4000);
+          transitionTimeoutRef.current = null;
+        }, TRANSITION_DURATION);
+      }, AUTO_ADVANCE_INTERVAL);
 
-      return () => clearInterval(interval);
+      return () => {
+        if (intervalRef.current !== null) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      };
     }, [isHovered, isTransitioning]);
 
-    const goToSlide = useCallback(
-      (index: number) => {
-        if (index === currentSlide) return;
-        setIsTransitioning(true);
-        setTimeout(() => {
-          setCurrentSlide(index);
-          setIsTransitioning(false);
-        }, 150);
-      },
-      [currentSlide]
-    );
+    // Cleanup on unmount
+    useEffect(() => {
+      return () => {
+        if (intervalRef.current !== null) {
+          clearInterval(intervalRef.current);
+        }
+        clearTransitionTimeout();
+      };
+    }, [clearTransitionTimeout]);
 
     const nextSlide = useCallback(() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentSlide((prev) => (prev + 1) % SKILL_CATEGORIES.length);
-        setIsTransitioning(false);
-      }, 150);
-    }, []);
+      const newIndex = (currentSlide + 1) % SKILL_CATEGORIES.length;
+      changeSlide(newIndex);
+    }, [currentSlide, changeSlide]);
 
     const prevSlide = useCallback(() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentSlide(
-          (prev) =>
-            (prev - 1 + SKILL_CATEGORIES.length) % SKILL_CATEGORIES.length
-        );
-        setIsTransitioning(false);
-      }, 150);
-    }, []);
+      const newIndex = (currentSlide - 1 + SKILL_CATEGORIES.length) % SKILL_CATEGORIES.length;
+      changeSlide(newIndex);
+    }, [currentSlide, changeSlide]);
 
-    const currentCategory = useMemo(
-      () => SKILL_CATEGORIES[currentSlide],
-      [currentSlide]
-    );
+    const currentCategory = SKILL_CATEGORIES[currentSlide];
     const Icon = currentCategory.icon;
-    const colors = useMemo(
-      () => colorClasses[currentCategory.color as keyof typeof colorClasses],
-      [colorClasses, currentCategory.color]
-    );
+    const colors = colorClasses[currentCategory.color as keyof typeof colorClasses];
 
     // Memoize handlers
     const handleMouseEnter = useCallback(() => setIsHovered(true), []);
     const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
-    // Memoize background style
-    const backgroundStyle = useMemo(
-      () => ({
-        background: isDarkMode
-          ? "radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 100%)"
-          : "radial-gradient(ellipse at center, #ffffff 0%, #f5f5f5 100%)",
-      }),
-      [isDarkMode]
-    );
+    // Get memoized styles
+    const backgroundStyle = isDarkMode ? BACKGROUND_STYLES.dark : BACKGROUND_STYLES.light;
+    const textShadowStyle = isDarkMode ? TEXT_SHADOW_STYLES.dark : TEXT_SHADOW_STYLES.light;
 
     return (
       <div
@@ -274,11 +331,7 @@ const TechSkillsPresentation = memo(
               className={`text-xl md:text-2xl lg:text-3xl font-extrabold ${
                 isDarkMode ? "text-white" : "text-gray-900"
               } text-center mb-2 tracking-tight px-2 animate-title-enter`}
-              style={{
-                textShadow: isDarkMode
-                  ? "0 2px 8px rgba(0,0,0,0.5)"
-                  : "0 2px 4px rgba(0,0,0,0.1)",
-              }}
+              style={textShadowStyle}
             >
               {currentCategory.title}
             </h2>
@@ -294,19 +347,15 @@ const TechSkillsPresentation = memo(
             className="flex flex-wrap justify-center items-center gap-2 md:gap-2.5 lg:gap-3 w-full px-2 md:px-3 overflow-y-auto flex-1 min-h-0 max-h-full pb-2 animate-skills-enter"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {useMemo(
-              () =>
-                currentCategory.skills.map((skill, index) => (
-                  <SkillBadge
-                    key={skill}
-                    skill={skill}
-                    index={index}
-                    colors={colors}
-                    isDarkMode={isDarkMode}
-                  />
-                )),
-              [currentCategory.skills, colors, isDarkMode]
-            )}
+            {currentCategory.skills.map((skill, index) => (
+              <SkillBadge
+                key={skill}
+                skill={skill}
+                index={index}
+                colors={colors}
+                isDarkMode={isDarkMode}
+              />
+            ))}
           </div>
 
           {/* Slide Counter */}
@@ -344,7 +393,7 @@ const TechSkillsPresentation = memo(
           <SlideIndicators
             totalSlides={SKILL_CATEGORIES.length}
             currentSlide={currentSlide}
-            onSlideClick={goToSlide}
+            onSlideClick={changeSlide}
             isDarkMode={isDarkMode}
             activeColors={colors}
           />
@@ -464,8 +513,7 @@ const NavButton = memo(
     ariaLabel: string;
   }) => {
     const Icon = direction === "left" ? ChevronLeft : ChevronRight;
-    const positionClass =
-      direction === "left" ? "left-1 md:left-2" : "right-1 md:right-2";
+    const positionClass = direction === "left" ? "left-1 md:left-2" : "right-1 md:right-2";
 
     return (
       <button
@@ -508,9 +556,7 @@ const SlideIndicators = memo(
     currentSlide: number;
     onSlideClick: (index: number) => void;
     isDarkMode: boolean;
-    activeColors: ReturnType<typeof getColorClasses>[keyof ReturnType<
-      typeof getColorClasses
-    >];
+    activeColors: { bg: string; border: string; text: string; badge: string; iconBg: string };
   }) => {
     return (
       <div className="absolute bottom-2 md:bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2 z-20">
@@ -549,16 +595,17 @@ const SkillBadge = memo(
   }: {
     skill: string;
     index: number;
-    colors: ReturnType<typeof getColorClasses>[keyof ReturnType<
-      typeof getColorClasses
-    >];
+    colors: { bg: string; border: string; text: string; badge: string; iconBg: string };
     isDarkMode: boolean;
   }) => {
+    const badgeStyle = useMemo(
+      () => ({ animationDelay: `${0.5 + index * 0.06}s` }),
+      [index]
+    );
+
     return (
       <div
-        style={{
-          animationDelay: `${0.5 + index * 0.06}s`,
-        }}
+        style={badgeStyle}
         className={`px-4 md:px-5 py-2 md:py-2.5 rounded-lg ${
           colors.badge
         } border-2 backdrop-blur-md font-bold text-xs md:text-sm lg:text-base cursor-pointer transition-all duration-300 ${

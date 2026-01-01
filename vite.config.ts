@@ -126,11 +126,18 @@ export default defineConfig(({ mode }) => ({
       // Ensure proper handling of circular dependencies
       treeshake: {
         moduleSideEffects: (id) => {
-          // Preserve side effects for modules that might have circular dependencies
+          // More aggressive tree-shaking: only preserve side effects for known problematic packages
           if (id.includes("node_modules")) {
-            return true;
+            // Only preserve side effects for packages that actually need them
+            return (
+              id.includes("framer-motion") ||
+              id.includes("three") ||
+              id.includes("@react-three") ||
+              id.includes("@tsparticles") ||
+              id.includes("lightswind")
+            );
           }
-          return false;
+          return false; // Tree-shake everything else aggressively
         },
         // More aggressive tree shaking to reduce bundle size
         propertyReadSideEffects: false,
@@ -138,7 +145,7 @@ export default defineConfig(({ mode }) => ({
       },
       output: {
         // Ensure proper chunk loading order
-        experimentalMinChunkSize: 20000,
+        experimentalMinChunkSize: 30000, // Increased for better chunk optimization
         // Ensure proper module format to handle circular dependencies
         format: "es",
         // ROOT CAUSE FIX: Prevent TDZ violations in generated code

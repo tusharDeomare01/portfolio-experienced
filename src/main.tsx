@@ -82,15 +82,15 @@ createRoot(document.getElementById("root")!).render(
           <ThemedClickSpark>
             <div className="fixed inset-0 z-[0] w-full h-full !scroll-smooth">
               <Particles
-                particleColors={["#ffffff", "#ffffff"]}
+                particleColors={["#ffffff", "#000000", "#ffffff", "#000000"]}
                 particleCount={200}
                 particleSpread={10}
                 speed={0.1}
                 particleBaseSize={100}
                 moveParticlesOnHover={true}
-                alphaParticles={true}
+                alphaParticles={false}
                 disableRotation={false}
-                pixelRatio={1}
+                pixelRatio={5}
                 cameraDistance={1}
                 className="w-full h-full pointer-events-none"
               />

@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
 import { seoPlugin } from "./vite-plugin-seo";
 // import { varBindingsPlugin } from "./vite-plugin-var-bindings"; // Disabled - causing runtime issues
+import babel from "vite-plugin-babel";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +23,7 @@ const getBaseUrl = () => {
   if (process.env.NETLIFY) {
     return process.env.URL || `https://${process.env.DEPLOY_PRIME_URL}`;
   }
-  return 'https://tushar-deomare-portfolio.vercel.app/';
+  return "https://tushar-deomare-portfolio.vercel.app/";
 };
 
 export default defineConfig(({ mode }) => ({
@@ -37,20 +38,44 @@ export default defineConfig(({ mode }) => ({
   },
   // Worker configuration for parallel processing
   worker: {
-    format: 'es',
+    format: "es",
     plugins: () => [react()],
   },
   plugins: [
     react(),
+    babel({
+      babelConfig: {
+        presets: [
+          [
+            "@babel/preset-react",
+            {
+              runtime: "automatic", // Use automatic JSX runtime (no need to import React)
+            },
+          ],
+          "@babel/preset-typescript",
+        ],
+        plugins: ["babel-plugin-react-compiler"],
+      },
+      // Exclude node_modules from Babel processing to avoid warnings and improve performance
+      // Only process source files in src/ directory - React Compiler doesn't need to process vendor code
+      filter: (id) => {
+        // Only process files in src/ directory, exclude all node_modules
+        return (
+          /\.(jsx?|tsx?)$/.test(id) &&
+          !id.includes("node_modules") &&
+          (id.includes("/src/") || id.includes("\\src\\"))
+        );
+      },
+    }),
     tailwindcss(),
     mode === "development" ? vitePluginErrorOverlay() : null,
     seoPlugin({
       baseUrl: getBaseUrl(),
       routes: [
-        { path: '/', priority: 1.0, changefreq: 'weekly' },
-        { path: '/marketjd', priority: 0.8, changefreq: 'monthly' },
-        { path: '/portfolio', priority: 0.8, changefreq: 'monthly' }
-      ]
+        { path: "/", priority: 1.0, changefreq: "weekly" },
+        { path: "/marketjd", priority: 0.8, changefreq: "monthly" },
+        { path: "/portfolio", priority: 0.8, changefreq: "monthly" },
+      ],
     }),
     // DISABLED: varBindingsPlugin causing runtime issues
     // Keeping minification enabled without this plugin
@@ -62,26 +87,26 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    exclude: ['lightswind'], // Exclude lightswind from optimization since we use local components
+    exclude: ["lightswind"], // Exclude lightswind from optimization since we use local components
     // Enable parallel optimization with worker threads
     esbuildOptions: {
       // Use all available CPU cores for faster builds
-      logLevel: 'info',
+      logLevel: "info",
     },
     // Ensure proper dependency resolution
     include: [
-      'react',
-      'react-dom',
-      'react-redux',
-      '@reduxjs/toolkit',
-      'redux-persist',
-      'reselect',
+      "react",
+      "react-dom",
+      "react-redux",
+      "@reduxjs/toolkit",
+      "redux-persist",
+      "reselect",
     ],
   },
   build: {
     chunkSizeWarningLimit: 600,
     // Minification enabled with esbuild (faster and safer than terser)
-    minify: mode === 'production' ? 'esbuild' : false,
+    minify: mode === "production" ? "esbuild" : false,
     sourcemap: false, // Disable sourcemaps in production for smaller bundle
     // Note: terserOptions only apply when minify: 'terser', we're using esbuild instead
     commonjsOptions: {
@@ -91,9 +116,9 @@ export default defineConfig(({ mode }) => ({
       strictRequires: false, // Don't use strict requires which can cause initialization order issues
       esmExternals: true,
       // Ensure proper transformation order
-      requireReturnsDefault: 'auto',
+      requireReturnsDefault: "auto",
       // Prevent hoisting issues
-      defaultIsModuleExports: 'auto',
+      defaultIsModuleExports: "auto",
     },
     rollupOptions: {
       // Maximize parallel processing
@@ -101,11 +126,18 @@ export default defineConfig(({ mode }) => ({
       // Ensure proper handling of circular dependencies
       treeshake: {
         moduleSideEffects: (id) => {
-          // Preserve side effects for modules that might have circular dependencies
-          if (id.includes('node_modules')) {
-            return true;
+          // More aggressive tree-shaking: only preserve side effects for known problematic packages
+          if (id.includes("node_modules")) {
+            // Only preserve side effects for packages that actually need them
+            return (
+              id.includes("framer-motion") ||
+              id.includes("three") ||
+              id.includes("@react-three") ||
+              id.includes("@tsparticles") ||
+              id.includes("lightswind")
+            );
           }
-          return false;
+          return false; // Tree-shake everything else aggressively
         },
         // More aggressive tree shaking to reduce bundle size
         propertyReadSideEffects: false,
@@ -113,9 +145,9 @@ export default defineConfig(({ mode }) => ({
       },
       output: {
         // Ensure proper chunk loading order
-        experimentalMinChunkSize: 20000,
+        experimentalMinChunkSize: 30000, // Increased for better chunk optimization
         // Ensure proper module format to handle circular dependencies
-        format: 'es',
+        format: "es",
         // ROOT CAUSE FIX: Prevent TDZ violations in generated code
         // The issue is that Rollup creates const/let bindings that can cause TDZ errors
         // when modules have circular dependencies or initialization order issues
@@ -130,101 +162,124 @@ export default defineConfig(({ mode }) => ({
         // CRITICAL: Ensure proper module initialization order
         // This ensures that chunks are loaded and initialized in dependency order
         // three-vendor must initialize completely before vendor chunk uses its exports
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
+        chunkFileNames: "assets/js/[name]-[hash].js",
+        entryFileNames: "assets/js/[name]-[hash].js",
         // Ensure proper interop for default exports to prevent initialization issues
-        interop: 'compat', // Use compatibility interop to handle module initialization better
+        interop: "compat", // Use compatibility interop to handle module initialization better
         manualChunks: (id) => {
           // More granular chunking for better caching and to avoid circular dependencies
-          if (id.includes('node_modules')) {
+          if (id.includes("node_modules")) {
             // CRITICAL: Three.js MUST be first and isolated to avoid TDZ issues
             // Three.js has internal circular dependencies and uses const/let in source code
             // Isolating it ensures it initializes before any code that depends on it
             // Also include packages that extend Three.js classes (like gainmap-js)
-            if (id.includes('three') || id.includes('meshline') || id.includes('ogl') || 
-                id.includes('gainmap') || id.includes('@monogrid')) {
-              return 'three-vendor';
+            if (
+              id.includes("three") ||
+              id.includes("meshline") ||
+              id.includes("ogl") ||
+              id.includes("gainmap") ||
+              id.includes("@monogrid")
+            ) {
+              return "three-vendor";
             }
             // React core - must load early but after Three.js
-            if (id.includes('react/') || id.includes('react-dom/') || id.includes('scheduler/')) {
-              return 'react-core';
+            if (
+              id.includes("react/") ||
+              id.includes("react-dom/") ||
+              id.includes("scheduler/")
+            ) {
+              return "react-core";
             }
             // React Three Fiber - depends on both React and Three.js
-            if (id.includes('@react-three')) {
-              return 'react-three-vendor';
+            if (id.includes("@react-three")) {
+              return "react-three-vendor";
             }
             // Redux core - separate from persist to avoid circular deps
-            if (id.includes('@reduxjs/toolkit') && !id.includes('redux-persist')) {
-              return 'redux-core';
+            if (
+              id.includes("@reduxjs/toolkit") &&
+              !id.includes("redux-persist")
+            ) {
+              return "redux-core";
             }
             // Redux persist - separate chunk
-            if (id.includes('redux-persist')) {
-              return 'redux-persist';
+            if (id.includes("redux-persist")) {
+              return "redux-persist";
             }
             // Other redux-related (reselect, etc)
-            if ((id.includes('redux') || id.includes('reselect')) && !id.includes('redux-persist') && !id.includes('@reduxjs/toolkit')) {
-              return 'redux-utils';
+            if (
+              (id.includes("redux") || id.includes("reselect")) &&
+              !id.includes("redux-persist") &&
+              !id.includes("@reduxjs/toolkit")
+            ) {
+              return "redux-utils";
             }
             // React Router - depends on React
-            if (id.includes('react-router')) {
-              return 'react-router';
+            if (id.includes("react-router")) {
+              return "react-router";
             }
             // Framer Motion - separate chunk as it's large
-            if (id.includes('framer-motion')) {
-              return 'animation-vendor';
+            if (id.includes("framer-motion")) {
+              return "animation-vendor";
             }
             // Particles - separate chunk
-            if (id.includes('@tsparticles') || id.includes('tsparticles')) {
-              return 'particles-vendor';
+            if (id.includes("@tsparticles") || id.includes("tsparticles")) {
+              return "particles-vendor";
             }
             // OpenAI - separate chunk
-            if (id.includes('openai')) {
-              return 'ai-vendor';
+            if (id.includes("openai")) {
+              return "ai-vendor";
             }
             // UI libraries
-            if (id.includes('lucide-react')) {
-              return 'ui-icons';
+            if (id.includes("lucide-react")) {
+              return "ui-icons";
             }
             // Markdown
-            if (id.includes('react-markdown') || id.includes('remark') || id.includes('rehype')) {
-              return 'markdown-vendor';
+            if (
+              id.includes("react-markdown") ||
+              id.includes("remark") ||
+              id.includes("rehype")
+            ) {
+              return "markdown-vendor";
             }
             // EmailJS
-            if (id.includes('@emailjs')) {
-              return 'emailjs-vendor';
+            if (id.includes("@emailjs")) {
+              return "emailjs-vendor";
             }
             // Utility libraries
-            if (id.includes('clsx') || id.includes('tailwind-merge')) {
-              return 'utils-vendor';
+            if (id.includes("clsx") || id.includes("tailwind-merge")) {
+              return "utils-vendor";
             }
             // Font source
-            if (id.includes('@fontsource') || id.includes('@vercel/fonts')) {
-              return 'fonts-vendor';
+            if (id.includes("@fontsource") || id.includes("@vercel/fonts")) {
+              return "fonts-vendor";
             }
             // Geist package
-            if (id.includes('geist')) {
-              return 'geist-vendor';
+            if (id.includes("geist")) {
+              return "geist-vendor";
             }
             // Other vendor code - keep together but smaller
-            return 'vendor';
+            return "vendor";
           }
           // Route-based code splitting
-          if (id.includes('/pages/MarketJD')) {
-            return 'marketjd-page';
+          if (id.includes("/pages/MarketJD")) {
+            return "marketjd-page";
           }
-          if (id.includes('/pages/Portfolio')) {
-            return 'portfolio-page';
+          if (id.includes("/pages/Portfolio")) {
+            return "portfolio-page";
           }
           // Heavy components
-          if (id.includes('ThreeDCarousel') || id.includes('3d-carousel')) {
-            return 'carousel-components';
+          if (id.includes("ThreeDCarousel") || id.includes("3d-carousel")) {
+            return "carousel-components";
           }
-          if (id.includes('InteractiveCard') || id.includes('interactive-card')) {
-            return 'interactive-components';
+          if (
+            id.includes("InteractiveCard") ||
+            id.includes("interactive-card")
+          ) {
+            return "interactive-components";
           }
         },
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name?.split('.') || [];
+          const info = assetInfo.name?.split(".") || [];
           const ext = info[info.length - 1];
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
             return `assets/images/[name]-[hash][extname]`;
@@ -240,11 +295,14 @@ export default defineConfig(({ mode }) => ({
     // Production optimizations
     cssCodeSplit: true, // Split CSS into separate files
     reportCompressedSize: true, // Report compressed sizes
-    target: 'esnext', // Target modern browsers for smaller output
+    target: "esnext", // Target modern browsers for smaller output
     // Enable watch mode optimization
-    watch: mode === 'development' ? {
-      buildDelay: 100,
-    } : null,
+    watch:
+      mode === "development"
+        ? {
+            buildDelay: 100,
+          }
+        : null,
     // Ensure modules are properly resolved
     modulePreload: {
       polyfill: true,
@@ -252,17 +310,17 @@ export default defineConfig(({ mode }) => ({
   },
   // Enable esbuild for faster transpilation and minification
   esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' },
-    legalComments: 'none',
+    logOverride: { "this-is-undefined-in-esm": "silent" },
+    legalComments: "none",
     treeShaking: true,
     // FIXED: Only drop console/debugger in production, keep them in dev for debugging
-    drop: mode === 'production' ? ['console', 'debugger'] : [],
+    drop: mode === "production" ? ["console", "debugger"] : [],
     // esbuild minification settings (only used when minify: 'esbuild')
     // The varBindingsPlugin will convert const/let to var after minification
-    minifyIdentifiers: mode === 'production',
-    minifySyntax: mode === 'production',
-    minifyWhitespace: mode === 'production',
+    minifyIdentifiers: mode === "production",
+    minifySyntax: mode === "production",
+    minifyWhitespace: mode === "production",
     keepNames: false, // Don't keep names in production for smaller bundle
-    target: 'esnext', // Target modern browsers
+    target: "esnext", // Target modern browsers
   },
 }));

@@ -47,7 +47,7 @@ ENV NODE_ENV=production
 
 # Performance optimization: Increase libuv thread pool size for better parallel I/O
 # Improves build performance by enabling concurrent file operations
-ENV UV_THREADPOOL_SIZE=16
+ENV UV_THREADPOOL_SIZE=24
 
 # Node.js memory optimization for large builds
 ENV NODE_OPTIONS="--max-old-space-size=4096"

@@ -355,7 +355,7 @@ const Portfolio = () => {
               Modern technologies powering this portfolio
             </ScrollReveal>
           </div>
-          <div className="relative py-8 px-4 rounded-2xl bg-transparent z-10">
+          <div className="relative py-8 px-2 rounded-2xl bg-transparent z-10">
             <LogoLoop
               logos={techLogos}
               speed={80}

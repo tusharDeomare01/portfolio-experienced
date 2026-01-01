@@ -16,6 +16,7 @@
   src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
+  font-display: swap; /* Prevent invisible text during font load */
 }
 
 @font-face {
@@ -23,11 +24,13 @@
   src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
+  font-display: swap; /* Prevent invisible text during font load */
 }
 
 @font-face {
   font-family: "Geist Sans";
   src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Bold.woff2") format("woff2");
+  font-display: swap; /* Prevent invisible text during font load */
   font-weight: 700;
   font-style: normal;
 }

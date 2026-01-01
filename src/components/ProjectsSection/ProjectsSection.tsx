@@ -16,6 +16,7 @@ import { useIsMobile } from "../hooks/use-mobile";
 // Lazy load LightRays for performance
 const LightRays = lazy(() => import("../reactBits/lightRays"));
 
+// Static constants - moved outside to prevent recreation
 const CONTAINER_CLASSES =
   "min-h-screen flex flex-col justify-center !scroll-smooth transition-all duration-400 ease-in animate-fade-in-up";
 const SECTION_CLASSES =
@@ -26,7 +27,7 @@ const ICON_CLASSES =
   "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-primary flex-shrink-0 mt-1.5 md:mt-2 lg:mt-2.5";
 const SUBTITLE_CLASSES = "text-lg font-bold text-muted-foreground";
 
-// Static CSS styles - moved outside component to prevent recreation
+// Static CSS styles - created once, never recreated
 const PROJECT_STYLES = `
   @keyframes projectItemEnter {
     0% {
@@ -106,6 +107,23 @@ const PROJECTS_DATA = [
   },
 ] as const;
 
+// Pre-compute static class name combinations - created once, reused
+const CLASS_NAMES = {
+  logoContainerBase:
+    "relative flex-shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/50 to-background/30 border border-border/40 group-hover:border-primary/60 transition-all duration-500",
+  contentBase: "relative flex flex-col gap-6 md:gap-8",
+  cardBase:
+    "relative group bg-background/80 backdrop-blur-xl border border-border/60 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out animate-project-card-enter",
+  gradientLeft:
+    "absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
+  gradientRight:
+    "absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
+  cornerLeft:
+    "absolute top-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+  cornerRight:
+    "absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+} as const;
+
 interface ProjectItemProps {
   project: (typeof PROJECTS_DATA)[number];
   index: number;
@@ -115,6 +133,48 @@ interface ProjectItemProps {
   onMouseLeave: () => void;
   onNavigate: (route: string) => void;
 }
+
+// Memoized status badge component - prevents recreation
+const StatusBadge = memo(({ status }: { status: string }) => (
+  <div className="absolute top-4 right-4 z-10">
+    <Badge
+      variant="success"
+      size="sm"
+      className="backdrop-blur-md bg-green-500/90 text-white border-0 shadow-lg"
+    >
+      <span className="relative flex h-2 w-2 mr-1.5">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+      </span>
+      {status}
+    </Badge>
+  </div>
+));
+StatusBadge.displayName = "StatusBadge";
+
+// Memoized logo display component
+const ProjectLogo = memo(
+  ({ logoPath, title }: { logoPath: string; title: string }) => (
+    <>
+      {logoPath ? (
+        <div className="w-full h-full flex items-center justify-center p-6 sm:p-8">
+          <img
+            src={logoPath}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <Sparkles className="w-16 h-16 text-primary/40" />
+        </div>
+      )}
+    </>
+  )
+);
+ProjectLogo.displayName = "ProjectLogo";
 
 const ProjectItem = memo(
   ({
@@ -132,11 +192,7 @@ const ProjectItem = memo(
     // Pre-compute logo path based on theme
     const logoPath = useMemo(() => {
       const logoConfig = LOGO_PATHS[project.title as keyof typeof LOGO_PATHS];
-      return logoConfig
-        ? isDarkMode
-          ? logoConfig.dark
-          : logoConfig.light
-        : "";
+      return logoConfig ? (isDarkMode ? logoConfig.dark : logoConfig.light) : "";
     }, [project.title, isDarkMode]);
 
     // Memoize technology badges to prevent recreation
@@ -155,11 +211,9 @@ const ProjectItem = memo(
       [project.id, project.technologies]
     );
 
-    // Memoize style objects to prevent recreation
+    // Memoize style objects - only recreate when dependencies change
     const containerStyle = useMemo(
-      () => ({
-        animationDelay: `${index * 0.1}s`,
-      }),
+      () => ({ animationDelay: `${index * 0.1}s` }),
       [index]
     );
 
@@ -171,49 +225,43 @@ const ProjectItem = memo(
       [index, isEven]
     );
 
-    // Memoize className strings
+    // Pre-compute className strings based on state
     const cardClassName = useMemo(
       () =>
-        `relative group bg-background/80 backdrop-blur-xl border border-border/60 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out ${
+        `${CLASS_NAMES.cardBase} ${
           isHovered
             ? "shadow-2xl shadow-primary/20 scale-[1.02] border-primary/40"
             : "shadow-lg"
-        } animate-project-card-enter`,
+        }`,
       [isHovered]
-    );
-
-    const gradientClassName = useMemo(
-      () =>
-        `absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
-          isEven
-            ? "from-primary/5 via-transparent to-transparent"
-            : "from-transparent via-transparent to-primary/5"
-        } pointer-events-none`,
-      [isEven]
     );
 
     const contentClassName = useMemo(
       () =>
-        `relative p-6 sm:p-8 md:p-10 flex flex-col ${
+        `${CLASS_NAMES.contentBase} p-6 sm:p-8 md:p-10 ${
           isMobile ? "" : isEven ? "md:flex-row" : "md:flex-row-reverse"
-        } gap-6 md:gap-8`,
+        }`,
       [isMobile, isEven]
     );
 
     const logoContainerClassName = useMemo(
       () =>
-        `relative flex-shrink-0 ${
+        `${CLASS_NAMES.logoContainerBase} ${
           isMobile
             ? "w-full h-48 sm:h-56"
             : "md:w-80 md:h-64 lg:w-96 lg:h-72"
-        } rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/50 to-background/30 border border-border/40 group-hover:border-primary/60 transition-all duration-500`,
+        }`,
       [isMobile]
     );
 
-    const cornerAccentClassName = useMemo(
-      () =>
-        `absolute ${isEven ? "top-0 right-0" : "top-0 left-0"} w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`,
-      [isEven]
+    // Select pre-computed gradient class
+    const gradientClassName = isEven ? CLASS_NAMES.gradientLeft : CLASS_NAMES.gradientRight;
+    const cornerAccentClassName = isEven ? CLASS_NAMES.cornerLeft : CLASS_NAMES.cornerRight;
+
+    // Memoize button click handler
+    const handleButtonClick = useCallback(
+      () => onNavigate(project.route),
+      [onNavigate, project.route]
     );
 
     return (
@@ -251,36 +299,8 @@ const ProjectItem = memo(
           <div className={contentClassName}>
             {/* Logo/Image Section */}
             <div className={logoContainerClassName}>
-              {logoPath ? (
-                <div className="w-full h-full flex items-center justify-center p-6 sm:p-8">
-                  <img
-                    src={logoPath}
-                    alt={project.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Sparkles className="w-16 h-16 text-primary/40" />
-                </div>
-              )}
-
-              {/* Status Badge */}
-              <div className="absolute top-4 right-4 z-10">
-                <Badge
-                  variant="success"
-                  size="sm"
-                  className="backdrop-blur-md bg-green-500/90 text-white border-0 shadow-lg"
-                >
-                  <span className="relative flex h-2 w-2 mr-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-                  </span>
-                  {project.status}
-                </Badge>
-              </div>
+              <ProjectLogo logoPath={logoPath} title={project.title} />
+              <StatusBadge status={project.status} />
             </div>
 
             {/* Content Section */}
@@ -313,7 +333,7 @@ const ProjectItem = memo(
                 <Button
                   variant="outline"
                   size="lg"
-                  onClick={() => onNavigate(project.route)}
+                  onClick={handleButtonClick}
                   className="cursor-pointer w-full sm:w-auto group/btn relative overflow-hidden border-2 hover:border-primary transition-all duration-300 bg-background/50 backdrop-blur-sm"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2 font-semibold">
@@ -343,15 +363,12 @@ const ProjectItem = memo(
     );
   },
   (prevProps, nextProps) => {
-    // Optimized comparison function - only check what actually changes
-    // Project data is static, so we can skip deep comparison
+    // Optimized comparison - only check what changes
     return (
       prevProps.project.id === nextProps.project.id &&
       prevProps.index === nextProps.index &&
       prevProps.isDarkMode === nextProps.isDarkMode &&
-      prevProps.isHovered === nextProps.isHovered &&
-      // Handlers are stable, so we don't need to compare them
-      prevProps.onNavigate === nextProps.onNavigate
+      prevProps.isHovered === nextProps.isHovered
     );
   }
 );
@@ -379,41 +396,33 @@ const ProjectsSectionComponent = () => {
     [navigate]
   );
 
-  // Create stable hover handlers using useCallback
-  const handleMouseLeave = useCallback(() => {
-    setHoveredProject(null);
-  }, []);
+  // Create stable hover handlers - memoized outside render loop
+  const createHoverHandlers = useCallback(
+    (projectId: number) => ({
+      onMouseEnter: () => setHoveredProject(projectId),
+      onMouseLeave: () => setHoveredProject(null),
+    }),
+    []
+  );
 
-  // Memoize hover handlers for each project - create stable closures
-  const projectHandlers = useMemo(() => {
-    const handlers: Record<number, { onMouseEnter: () => void; onMouseLeave: () => void }> = {};
-    PROJECTS_DATA.forEach((project) => {
-      handlers[project.id] = {
-        onMouseEnter: () => setHoveredProject(project.id),
-        onMouseLeave: handleMouseLeave,
-      };
-    });
-    return handlers;
-  }, [handleMouseLeave]);
-
-  // Memoize project items - React.memo in ProjectItem will prevent unnecessary re-renders
-  // Only the hovered item will re-render when hover state changes
-  const projectItems = useMemo(
-    () =>
-      PROJECTS_DATA.map((project, index) => (
+  // Memoize project items with stable handlers
+  const projectItems = useMemo(() => {
+    return PROJECTS_DATA.map((project, index) => {
+      const handlers = createHoverHandlers(project.id);
+      return (
         <ProjectItem
           key={project.id}
           project={project}
           index={index}
           isDarkMode={isDarkMode}
           isHovered={hoveredProject === project.id}
-          onMouseEnter={projectHandlers[project.id].onMouseEnter}
-          onMouseLeave={projectHandlers[project.id].onMouseLeave}
+          onMouseEnter={handlers.onMouseEnter}
+          onMouseLeave={handlers.onMouseLeave}
           onNavigate={handleNavigate}
         />
-      )),
-    [isDarkMode, hoveredProject, projectHandlers, handleNavigate]
-  );
+      );
+    });
+  }, [isDarkMode, hoveredProject, createHoverHandlers, handleNavigate]);
 
   return (
     <div id="projects" className={CONTAINER_CLASSES}>

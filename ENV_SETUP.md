@@ -19,7 +19,7 @@ VITE_EMAILJS_TEMPLATE_ID=your-emailjs-template-id
 VITE_BASE_URL=https://your-domain.com
 
 # Performance Optimization (Automatically configured)
-UV_THREADPOOL_SIZE=16
+UV_THREADPOOL_SIZE=24
 NODE_OPTIONS=--max-old-space-size=4096
 ```
 
@@ -50,7 +50,7 @@ NODE_OPTIONS=--max-old-space-size=4096
 
 ## Performance Optimization Variables
 
-### UV_THREADPOOL_SIZE=16
+### UV_THREADPOOL_SIZE=24
 
 **What it does:**
 Controls the Node.js libuv thread pool size for concurrent I/O operations.
@@ -79,13 +79,13 @@ Controls the Node.js libuv thread pool size for concurrent I/O operations.
 **Manual configuration (if needed):**
 ```bash
 # Linux/macOS
-export UV_THREADPOOL_SIZE=16
+export UV_THREADPOOL_SIZE=24
 
 # Windows CMD
-set UV_THREADPOOL_SIZE=16
+set UV_THREADPOOL_SIZE=24
 
 # Windows PowerShell
-$env:UV_THREADPOOL_SIZE=16
+$env:UV_THREADPOOL_SIZE=24
 ```
 
 ### NODE_OPTIONS
@@ -117,7 +117,7 @@ Environment variables are configured in `docker-compose.yml`:
 ```yaml
 environment:
   - NODE_ENV=production
-  - UV_THREADPOOL_SIZE=16
+  - UV_THREADPOOL_SIZE=24
 ```
 
 Build arguments are passed during build:
@@ -127,7 +127,7 @@ docker-compose up --build
 
 ## Build Performance Comparison
 
-### Without UV_THREADPOOL_SIZE=16 (Default: 4)
+### Without UV_THREADPOOL_SIZE=24 (Default: 4)
 ```
 Build time: ~45-60 seconds
 Concurrent file operations: 4
@@ -135,7 +135,7 @@ Memory usage: Moderate
 CPU utilization: 40-60%
 ```
 
-### With UV_THREADPOOL_SIZE=16
+### With UV_THREADPOOL_SIZE=24
 ```
 Build time: ~20-30 seconds (40-50% faster)
 Concurrent file operations: 16
@@ -181,7 +181,7 @@ node -e "console.log(process.env.UV_THREADPOOL_SIZE)"
 
 ## Best Practices
 
-1. ✅ Always set UV_THREADPOOL_SIZE=16 for development and builds
+1. ✅ Always set UV_THREADPOOL_SIZE=24 for development and builds
 2. ✅ Use cross-env package for cross-platform compatibility (already configured)
 3. ✅ Keep .env files out of version control (.gitignore)
 4. ✅ Document required variables for team members

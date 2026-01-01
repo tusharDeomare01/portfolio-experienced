@@ -535,7 +535,7 @@ const MarketJD = () => {
               Modern, scalable technologies powering the platform
             </ScrollReveal>
           </div>
-          <div className="relative py-8 px-4 rounded-2xl bg-transparent">
+          <div className="relative py-8 px-2 rounded-2xl bg-transparent">
             <LogoLoop
               logos={techLogos}
               speed={80}

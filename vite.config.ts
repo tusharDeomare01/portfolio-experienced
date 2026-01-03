@@ -14,16 +14,18 @@ const __dirname = path.dirname(__filename);
 
 // Get base URL from environment or use default
 const getBaseUrl = () => {
+  let url: string;
   if (process.env.VITE_BASE_URL) {
-    return process.env.VITE_BASE_URL;
+    url = process.env.VITE_BASE_URL;
+  } else if (process.env.VERCEL_URL) {
+    url = `https://${process.env.VERCEL_URL}`;
+  } else if (process.env.NETLIFY) {
+    url = process.env.URL || `https://${process.env.DEPLOY_PRIME_URL}`;
+  } else {
+    url = "https://tushar-deomare-portfolio.vercel.app";
   }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  if (process.env.NETLIFY) {
-    return process.env.URL || `https://${process.env.DEPLOY_PRIME_URL}`;
-  }
-  return "https://tushar-deomare-portfolio.vercel.app/";
+  // Remove trailing slash to prevent double slashes
+  return url.replace(/\/+$/, '');
 };
 
 export default defineConfig(({ mode }) => ({

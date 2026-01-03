@@ -1,6 +1,6 @@
 # robots.txt
-# Auto-generated at build time for https://tushar-deomare-portfolio.vercel.app/
-# Last updated: 2026-01-01
+# Auto-generated at build time for https://tushar-deomare-portfolio.vercel.app
+# Last updated: 2026-01-03
 
 # Allow all search engines
 User-agent: *
@@ -11,7 +11,7 @@ Allow: /
 # Disallow: /api/
 
 # Sitemap location
-Sitemap: https://tushar-deomare-portfolio.vercel.app//sitemap.xml
+Sitemap: https://tushar-deomare-portfolio.vercel.app/sitemap.xml
 
 # Crawl delay (be respectful to server resources)
 Crawl-delay: 1

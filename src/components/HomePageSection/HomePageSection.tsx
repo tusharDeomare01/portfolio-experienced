@@ -18,25 +18,11 @@ import {
   Trophy,
   User,
 } from "lucide-react";
-import {
-  ComponentLoader,
-  HeaderLoader,
-  SectionLoader,
-} from "../Loading/LoadingComponents";
-// ROOT CAUSE FIX: Ensure Header loads correctly in production
-// Add error handling for lazy loading to prevent silent failures
-const Header = lazy(() =>
-  import("../Header/Header").catch((error) => {
-    console.error("Failed to load Header component:", error);
-    // Return a fallback component if loading fails
-    return { default: () => <div>Header loading...</div> };
-  })
-);
-const HeroSection = lazy(() =>
-  import("../HeroSection/HeroSection").then((module) => ({
-    default: module.HeroSection,
-  }))
-);
+import { ComponentLoader, SectionLoader } from "../Loading/LoadingComponents";
+// SEO FIX: Header and HeroSection are NOT lazy-loaded for better SEO
+// Googlebot needs to see the name "Tushar Deomare" immediately
+import Header from "../Header/Header";
+import { HeroSection } from "../HeroSection/HeroSection";
 const AboutSection = lazy(() =>
   import("../AboutSection/AboutSection").then((module) => ({
     default: module.AboutSection,
@@ -182,18 +168,19 @@ const HomePageSection = () => {
   );
   return (
     <div className="bg-transparent z-10 min-h-screen w-full">
-      <Suspense fallback={<HeaderLoader />}>
-        <Header />
-      </Suspense>
+      {/* SEO FIX: Header loads immediately - no lazy loading */}
+      <Header />
 
       <div
         className="w-full bg-transparent max-w-5xl mx-auto px-4 py-8
           lg:rounded-3xl border-gray-100 dark:border-gray-900"
       >
         <div className="relative z-[10]">
-          {/* Sections with IDs for smooth scrolling navigation */}
+          {/* SEO FIX: HeroSection loads immediately so Googlebot sees "Tushar Deomare" */}
+          <HeroSection />
+
+          {/* Other sections can remain lazy-loaded as they're below the fold */}
           <Suspense fallback={<SectionLoader />}>
-            <HeroSection />
             <AboutSection />
             <EducationSection />
             <CareerTimeline />

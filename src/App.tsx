@@ -6,17 +6,16 @@ import { useIsMobile } from "./components/hooks/use-mobile";
 import { TourProvider } from "./components/Tour/TourContext";
 import {
   PageLoader,
-  HomePageSkeleton,
   // BackgroundLoader,
   AIAssistantLoader,
 } from "./components/Loading/LoadingComponents";
 
-// Lazy load other components
+// SEO FIX: HomePageSection loads immediately so critical content (name) is visible to Googlebot
+import HomePageSection from "./components/HomePageSection/HomePageSection";
+
+// Lazy load other components (not critical for SEO)
 const AIAssistant = lazy(() => import("./components/AIAssistant/AIAssistant"));
 const LightRays = lazy(() => import("./components/reactBits/lightRays"));
-const HomePageSection = lazy(
-  () => import("./components/HomePageSection/HomePageSection")
-);
 
 // const ParticlesBackground = lazy(
 //   () => import("./components/lightswind/particles-background")
@@ -134,14 +133,8 @@ function App() {
           />
 
           {/* Main Portfolio Page */}
-          <Route
-            path="/"
-            element={
-              <Suspense fallback={<HomePageSkeleton />}>
-                <HomePageSection />
-              </Suspense>
-            }
-          />
+          {/* SEO FIX: No Suspense wrapper - loads immediately for better SEO */}
+          <Route path="/" element={<HomePageSection />} />
         </Routes>
         {/* AI Assistant - Available on all routes */}
         <Suspense fallback={<AIAssistantLoader />}>

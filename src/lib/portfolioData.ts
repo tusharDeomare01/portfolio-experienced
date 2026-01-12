@@ -75,7 +75,7 @@ export const portfolioData: PortfolioData = {
     name: "Tushar Deomare",
     pronouns: "He/him",
     title: "Full-Stack Developer",
-    bio: "Passionate Full-Stack Developer with 2+ years of expertise building scalable web applications using MERN Stack, Next.js, and NestJS. Specialized in developing enterprise-grade solutions with advanced authentication, real-time analytics, and AI-powered automation. Proven track record of delivering high-performance applications with 10+ third-party API integrations, dynamic reporting systems, and seamless user experiences. Recognized as 'Above and Beyond Developer' and selected for Tech Star Team at Thinkitive Technologies.",
+    bio: "Passionate Full-Stack Developer with 2+ years of expertise building scalable web applications using MERN Stack, Next.js, and NestJS. Specialized in developing enterprise-grade solutions with advanced authentication, real-time analytics, and AI-powered automation. Proven track record of delivering high-performance applications with 10+ third-party API integrations, dynamic reporting systems, and seamless user experiences. Recognized as 'Star Performer of 2025' and 'Above and Beyond Performer of 2024' at Thinkitive Technologies, with selection to the Tech Star Team.",
     email: "tdeomare1@gmail.com",
     location: "Pandharpur",
     // website: "https://yourwebsite.com",
@@ -117,11 +117,11 @@ export const portfolioData: PortfolioData = {
     {
       title: "Software Engineer - E2",
       company: "Thinkitive Technologies Private Limited",
-      period: "Jan 2025 - Jan 2026",
+      period: "Jan 2025 - Present",
       description:
         "Working on enterprise-level applications, focusing on scalable web solutions and advanced React development. Contributing to complex projects with emphasis on code quality, performance optimization, and best practices.",
       achievements: [
-        "Awarded as Above and Beyond developer",
+        "Honored with Star Performer Award 2025",
         "Selected in Tech Star Team of Thinkitive",
       ],
       technologies: [
@@ -141,7 +141,7 @@ export const portfolioData: PortfolioData = {
       description:
         "Developed and maintained full-stack web applications using modern JavaScript frameworks. Collaborated with cross-functional teams to deliver high-quality software solutions. Gained expertise in building responsive user interfaces and robust backend services.",
       achievements: [
-        "Awarded as Above and Beyond developer",
+        "Honored with Above and Beyond Performer Award 2024",
         "Selected in Tech Star Team of Thinkitive",
       ],
       technologies: [

@@ -35,12 +35,6 @@ const IN_VIEW_OPTIONS = {
   amount: 0.2,
 } as const;
 
-const SECTION_IN_VIEW_OPTIONS = {
-  once: true,
-  margin: "-100px",
-  amount: 0.1,
-} as const;
-
 // Memoized Achievement Item Component with enhanced interactions
 const AchievementItem = memo(
   ({
@@ -420,7 +414,6 @@ CareerContent.displayName = "CareerContent";
 export const CareerTimeline = () => {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
-  const isSectionInView = useInView(sectionRef, SECTION_IN_VIEW_OPTIONS);
 
   // Memoized timeline data to prevent unnecessary recalculations
   // Pass career data directly instead of creating JSX in callback
@@ -445,41 +438,9 @@ export const CareerTimeline = () => {
       aria-label="Career timeline"
       style={{ contain: "layout style" }}
     >
-      <motion.div
-        className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
-        initial={
-          prefersReducedMotion ? NO_ANIMATION_PROPS : { opacity: 0, y: 20 }
-        }
-        animate={
-          isSectionInView || prefersReducedMotion
-            ? { opacity: 1, y: 0 }
-            : { opacity: 0, y: 20 }
-        }
-        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-      >
+      <div className="text-center mb-6 sm:mb-8">
         <div className="flex items-baseline justify-center gap-4 mb-4">
-          <motion.div
-            initial={
-              prefersReducedMotion
-                ? NO_ANIMATION_PROPS
-                : { scale: 0, rotate: -180 }
-            }
-            animate={
-              isSectionInView || prefersReducedMotion
-                ? { scale: 1, rotate: 0 }
-                : { scale: 0, rotate: -180 }
-            }
-            transition={{
-              delay: 0.1,
-              duration: 0.5,
-              ease: [0.34, 1.56, 0.64, 1],
-            }}
-          >
-            <Briefcase
-              className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2"
-              aria-hidden="true"
-            />
-          </motion.div>
+          <Briefcase className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
           <ScrollReveal
             size="xl"
             align="center"
@@ -492,19 +453,10 @@ export const CareerTimeline = () => {
             Career Journey
           </ScrollReveal>
         </div>
-        <motion.p
-          className="text-base md:text-lg lg:text-xl font-bold text-neutral-700 dark:text-neutral-300"
-          initial={prefersReducedMotion ? NO_ANIMATION_PROPS : { opacity: 0 }}
-          animate={
-            isSectionInView || prefersReducedMotion
-              ? { opacity: 1 }
-              : { opacity: 0 }
-          }
-          transition={{ delay: 0.3, duration: 0.4 }}
-        >
+        <p className="text-lg font-bold">
           An evolving path of leadership, innovation, and impact
-        </motion.p>
-      </motion.div>
+        </p>
+      </div>
       <div
         className="relative w-full overflow-clip"
         style={{ contain: "layout style" }}

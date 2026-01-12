@@ -62,7 +62,7 @@ Required environment variables:
 - `VITE_EMAILJS_TEMPLATE_ID` - EmailJS template ID
 
 Optional (automatically configured):
-- `UV_THREADPOOL_SIZE=24` - Node.js thread pool optimization (auto-set in scripts)
+- `UV_THREADPOOL_SIZE=32` - Node.js thread pool optimization (auto-set in scripts)
 - `NODE_OPTIONS` - Node.js memory settings (auto-set in scripts)
 
 For detailed setup instructions, see [ENV_SETUP.md](./ENV_SETUP.md)
@@ -72,20 +72,20 @@ For detailed setup instructions, see [ENV_SETUP.md](./ENV_SETUP.md)
 # Install with optimized settings
 npm install
 
-# Note: UV_THREADPOOL_SIZE=24 is automatically used during installation
+# Note: UV_THREADPOOL_SIZE=32 is automatically used during installation
 # via the configured npm scripts for faster dependency resolution
 ```
 
 5. Start development server:
 ```bash
 npm run dev
-# Runs with UV_THREADPOOL_SIZE=24 for optimal performance
+# Runs with UV_THREADPOOL_SIZE=32 for optimal performance
 ```
 
 6. **Verify Performance Optimization** (Optional):
 ```bash
 ./verify-performance.sh
-# Checks if UV_THREADPOOL_SIZE=24 is properly configured
+# Checks if UV_THREADPOOL_SIZE=32 is properly configured
 ```
 
 ## Deployment
@@ -135,13 +135,13 @@ The application will be available at http://localhost:8080
 ## Available Scripts
 
 - `npm run dev` - Start development server with optimized thread pool
-- `npm run build` - Build for production with UV_THREADPOOL_SIZE=24
+- `npm run build` - Build for production with UV_THREADPOOL_SIZE=32
 - `npm run build:optimized` - Build with maximum memory allocation (4GB)
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 - `npm run generate-seo` - Generate SEO files (sitemap, robots.txt)
 
-**Note:** All scripts automatically use `UV_THREADPOOL_SIZE=24` via cross-env for optimal performance across all platforms (Windows, macOS, Linux).
+**Note:** All scripts automatically use `UV_THREADPOOL_SIZE=32` via cross-env for optimal performance across all platforms (Windows, macOS, Linux).
 
 ## Environment Variables
 
@@ -156,7 +156,7 @@ Required (set in `.env` or deployment platform):
 - `VITE_EMAILJS_TEMPLATE_ID` - EmailJS template ID
 
 Performance Optimization (auto-configured):
-- `UV_THREADPOOL_SIZE=24` - Increases Node.js I/O thread pool from 4 to 16
+- `UV_THREADPOOL_SIZE=32` - Increases Node.js I/O thread pool from 4 to 32
   - Provides 4x more concurrent file operations
   - Reduces build time by 40-60%
   - Automatically set in package.json scripts and Dockerfile
@@ -172,14 +172,14 @@ All `VITE_*` variables are needed at build time and are embedded in the bundle.
 - Gzip compression
 - Security headers
 - Multi-stage Docker builds
-- **UV_THREADPOOL_SIZE=24**: Enhanced I/O performance
-  - 4x increase in concurrent file operations (16 vs default 4 threads)
+- **UV_THREADPOOL_SIZE=32**: Enhanced I/O performance
+  - 8x increase in concurrent file operations (32 vs default 4 threads)
   - 40-60% faster build times on multi-core systems
   - Optimized parallel asset processing (images, fonts, CSS)
   - Better dependency resolution and module compilation
   - Configured automatically in all npm scripts and Docker builds
 - **Node.js Memory Optimization**: 4GB heap size for large builds
-- **Vite Parallel Processing**: maxParallelFileOps=16 for Rollup
+- **Vite Parallel Processing**: maxParallelFileOps=32 for Rollup
 - **Worker Threads**: Enabled for esbuild and asset optimization
 
 ## Security

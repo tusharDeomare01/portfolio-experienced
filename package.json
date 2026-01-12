@@ -5,14 +5,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "cross-env UV_THREADPOOL_SIZE=24 vite",
-    "prebuild": "cross-env UV_THREADPOOL_SIZE=24 node scripts/generate-seo.js",
-    "build": "cross-env UV_THREADPOOL_SIZE=24 tsc -b && cross-env UV_THREADPOOL_SIZE=24 vite build",
+    "dev": "cross-env UV_THREADPOOL_SIZE=32 vite",
+    "prebuild": "cross-env UV_THREADPOOL_SIZE=32 node scripts/generate-seo.js",
+    "build": "cross-env UV_THREADPOOL_SIZE=32 tsc -b && cross-env UV_THREADPOOL_SIZE=32 vite build",
     "lint": "eslint .",
-    "preview": "cross-env UV_THREADPOOL_SIZE=24 vite preview",
-    "start": "cross-env UV_THREADPOOL_SIZE=24 vite preview",
-    "generate-seo": "cross-env UV_THREADPOOL_SIZE=24 node scripts/generate-seo.js",
-    "build:optimized": "cross-env UV_THREADPOOL_SIZE=24 NODE_OPTIONS='--max-old-space-size=4096' npm run build"
+    "preview": "cross-env UV_THREADPOOL_SIZE=32 vite preview",
+    "start": "cross-env UV_THREADPOOL_SIZE=32 vite preview",
+    "generate-seo": "cross-env UV_THREADPOOL_SIZE=32 node scripts/generate-seo.js",
+    "build:optimized": "cross-env UV_THREADPOOL_SIZE=32 NODE_OPTIONS='--max-old-space-size=4096' npm run build"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

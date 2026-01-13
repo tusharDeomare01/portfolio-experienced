@@ -124,7 +124,7 @@ export default defineConfig(({ mode }) => ({
     },
     rollupOptions: {
       // Maximize parallel processing
-      maxParallelFileOps: 32, // Matches UV_THREADPOOL_SIZE
+      maxParallelFileOps: 16, // Matches UV_THREADPOOL_SIZE
       // Ensure proper handling of circular dependencies
       treeshake: {
         moduleSideEffects: (id) => {

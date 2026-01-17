@@ -146,14 +146,15 @@ const ContactSectionComponent = () => {
         devicePerformance === PERFORMANCE_TIERS.LOW
           ? 50
           : devicePerformance === PERFORMANCE_TIERS.MID
-          ? 150
-          : 250;
+          ? 250
+          : 350;
 
       // Trigger confetti from the center of the screen
       window.confetti({
         particleCount,
-        spread: devicePerformance === PERFORMANCE_TIERS.LOW ? 50 : 70,
+        spread: devicePerformance === PERFORMANCE_TIERS.LOW ? 1500 : 2000,
         origin: { x: 0.5, y: 0.5 },
+        zIndex: 99999,
       });
     }
   }, [

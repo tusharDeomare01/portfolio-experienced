@@ -10,6 +10,12 @@ import { useIsMobile } from "../hooks/use-mobile";
 import { useTourContext } from "../Tour/TourContext";
 import { useThrottleRAF } from "@/hooks/useThrottle";
 import {
+  motion,
+  useReducedMotion,
+  AnimatePresence,
+  type Variants,
+} from "framer-motion";
+import {
   Briefcase,
   FolderKanban,
   GraduationCap,
@@ -23,6 +29,101 @@ import { ComponentLoader, SectionLoader } from "../Loading/LoadingComponents";
 // Googlebot needs to see the name "Tushar Deomare" immediately
 import Header from "../Header/Header";
 import { HeroSection } from "../HeroSection/HeroSection";
+
+// Premium spring configurations for buttery smooth animations
+const SPRING_CONFIG = {
+  gentle: { mass: 0.5, stiffness: 100, damping: 15 },
+  snappy: { mass: 0.3, stiffness: 200, damping: 20 },
+  bouncy: { mass: 0.4, stiffness: 300, damping: 25 },
+};
+
+// Custom easing for premium feel
+const PREMIUM_EASE = [0.25, 0.46, 0.45, 0.94] as const;
+
+// Staggered section animation variants
+const sectionVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 60,
+    scale: 0.98,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.8,
+      ease: PREMIUM_EASE,
+    },
+  },
+};
+
+// Dock animation variants with spring physics
+const dockVariants: Variants = {
+  hidden: {
+    y: 100,
+    opacity: 0,
+    scale: 0.9,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      ...SPRING_CONFIG.bouncy,
+      opacity: { duration: 0.4 },
+    },
+  },
+  exit: {
+    y: 100,
+    opacity: 0,
+    scale: 0.95,
+    transition: {
+      type: "spring",
+      ...SPRING_CONFIG.gentle,
+      opacity: { duration: 0.3 },
+    },
+  },
+};
+
+// Animated section wrapper component with scroll-triggered reveal
+const AnimatedSection = ({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) => {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <>{children}</>;
+  }
+
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.15, margin: "-50px" }}
+      variants={{
+        hidden: sectionVariants.hidden,
+        visible: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: {
+            duration: 0.8,
+            ease: PREMIUM_EASE,
+            delay,
+          },
+        },
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 const AboutSection = lazy(() =>
   import("../AboutSection/AboutSection").then((module) => ({
     default: module.AboutSection,
@@ -179,46 +280,66 @@ const HomePageSection = () => {
           {/* SEO FIX: HeroSection loads immediately so Googlebot sees "Tushar Deomare" */}
           <HeroSection />
 
-          {/* Other sections can remain lazy-loaded as they're below the fold */}
+          {/* Premium animated sections with staggered scroll reveals */}
           <Suspense fallback={<SectionLoader />}>
-            <AboutSection />
-            <EducationSection />
-            <CareerTimeline />
-            <ProjectsSection />
-            <AchievementsSection />
-            <ContactSection />
+            <AnimatedSection delay={0}>
+              <AboutSection />
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.05}>
+              <EducationSection />
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.05}>
+              <CareerTimeline />
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.05}>
+              <ProjectsSection />
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.05}>
+              <AchievementsSection />
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.05}>
+              <ContactSection />
+            </AnimatedSection>
           </Suspense>
         </div>
       </div>
 
-      {/* Dock with smooth show/hide animation */}
-
-      {showDock && (
-        <div
-          data-dock
-          className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isDockVisible
-              ? "translate-y-0 opacity-100 scale-100"
-              : "translate-y-[100px] opacity-0 scale-95"
-          } ${
-            tour.isTourActive && tour.currentStep === 9
-              ? "z-[10001]"
-              : "z-[999]"
-          }`}
-          style={{ willChange: "transform, opacity" }}
-        >
-          <Suspense fallback={<ComponentLoader />}>
-            <Dock
-              items={dockItems}
-              position="bottom"
-              magnification={isMobile ? 60 : 85}
-              baseItemSize={isMobile ? 40 : 50}
-              distance={isMobile ? 120 : 200}
-              panelHeight={isMobile ? 56 : 64}
-            />
-          </Suspense>
-        </div>
-      )}
+      {/* Dock with premium spring-based show/hide animation */}
+      <AnimatePresence mode="wait">
+        {showDock && (
+          <motion.div
+            data-dock
+            key="dock"
+            variants={dockVariants}
+            initial="hidden"
+            animate={isDockVisible ? "visible" : "hidden"}
+            exit="exit"
+            className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 ${
+              tour.isTourActive && tour.currentStep === 9
+                ? "z-[10001]"
+                : "z-[999]"
+            }`}
+            style={{ willChange: "transform, opacity" }}
+          >
+            <Suspense fallback={<ComponentLoader />}>
+              <Dock
+                items={dockItems}
+                position="bottom"
+                magnification={isMobile ? 60 : 85}
+                baseItemSize={isMobile ? 40 : 50}
+                distance={isMobile ? 120 : 200}
+                panelHeight={isMobile ? 56 : 64}
+                spring={SPRING_CONFIG.snappy}
+              />
+            </Suspense>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Tour Component */}
       <Suspense fallback={<ComponentLoader />}>

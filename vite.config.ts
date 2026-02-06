@@ -136,7 +136,8 @@ export default defineConfig(({ mode }) => ({
               id.includes("three") ||
               id.includes("@react-three") ||
               id.includes("@tsparticles") ||
-              id.includes("lightswind")
+              id.includes("lightswind") ||
+              id.includes("gsap")
             );
           }
           return false; // Tree-shake everything else aggressively
@@ -171,6 +172,10 @@ export default defineConfig(({ mode }) => ({
         manualChunks: (id) => {
           // More granular chunking for better caching and to avoid circular dependencies
           if (id.includes("node_modules")) {
+            // GSAP animation library — isolated for caching
+            if (id.includes("gsap") || id.includes("@gsap")) {
+              return "gsap-vendor";
+            }
             // CRITICAL: Three.js MUST be first and isolated to avoid TDZ issues
             // Three.js has internal circular dependencies and uses const/let in source code
             // Isolating it ensures it initializes before any code that depends on it

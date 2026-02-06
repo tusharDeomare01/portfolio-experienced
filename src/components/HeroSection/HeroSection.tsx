@@ -1,81 +1,465 @@
-import { useEffect, useRef, useState, useCallback, memo } from "react";
-import { TypingText } from "../lightswind/typing-text";
+import { useRef, useState, useCallback, memo } from "react";
+import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { Button } from "../lightswind/button";
 import { FileText, Sparkles, Mail } from "lucide-react";
 
-// Resume file configuration
 const RESUME_FILE_PATH = "/Tushar_Deomare.pdf";
 
 const HeroSectionComponent = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [leftSectionVisible, setLeftSectionVisible] = useState(false);
-  const [rightSectionVisible, setRightSectionVisible] = useState(false);
   const [hasHoveredEmail, setHasHoveredEmail] = useState(false);
   const [isEmailHovered, setIsEmailHovered] = useState(false);
+
+  // Scene refs
   const heroRef = useRef<HTMLDivElement>(null);
-  const leftSectionRef = useRef<HTMLDivElement>(null);
-  const rightSectionRef = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Main hero section fade in - optimized to single RAF
-    requestAnimationFrame(() => {
-      setIsVisible(true);
-    });
+  // Element refs
+  const nameRef = useRef<HTMLSpanElement>(null);
+  const pronounRef = useRef<HTMLParagraphElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const buttonWrapperRef = useRef<HTMLDivElement>(null);
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const sparkleRef = useRef<HTMLSpanElement>(null);
 
-    // Intersection Observer for left section - optimized to single RAF
-    const leftObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            requestAnimationFrame(() => {
-              setLeftSectionVisible(true);
-            });
-            if (leftSectionRef.current) {
-              leftObserver.unobserve(leftSectionRef.current);
-            }
+  // Decorative refs
+  const accentLineRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (!heroRef.current) return;
+
+      const mm = gsap.matchMedia();
+
+      // ═══════════════════════════════════════════════════════════════════
+      // DESKTOP: Layout-shifting entrance animations
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const cleanups: (() => void)[] = [];
+
+          // ─── Master entrance timeline ──────────────────────────────
+          const tl = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power3.out" },
+          });
+
+          // ─── PHASE 1: Image — Opacity + y only ───
+          if (imageWrapperRef.current) {
+            gsap.set(imageWrapperRef.current, { opacity: 0, y: 60 });
+            tl.to(
+              imageWrapperRef.current,
+              { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+              0
+            );
           }
-        });
-      },
-      { threshold: 0.01, rootMargin: "0px 0px -20px 0px" }
-    );
 
-    // Intersection Observer for right section - optimized to single RAF
-    const rightObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            requestAnimationFrame(() => {
-              setRightSectionVisible(true);
-            });
-            if (rightSectionRef.current) {
-              rightObserver.unobserve(rightSectionRef.current);
-            }
+          // ─── Glow ring: Opacity fade in ───
+          if (glowRef.current) {
+            gsap.set(glowRef.current, { opacity: 0 });
+            tl.to(
+              glowRef.current,
+              { opacity: 1, duration: 1.2, ease: "power2.out" },
+              0.1
+            );
           }
-        });
-      },
-      { threshold: 0.01, rootMargin: "0px 0px -20px 0px" }
-    );
 
-    // Observe elements immediately - refs should be ready
-    const observeTimer = setTimeout(() => {
-      if (leftSectionRef.current) {
-        leftObserver.observe(leftSectionRef.current);
-      }
-      if (rightSectionRef.current) {
-        rightObserver.observe(rightSectionRef.current);
-      }
-    }, 50);
+          // ─── PHASE 2: Name — SplitText chars with 3D wave ───
+          let nameSplit: SplitText | null = null;
+          if (nameRef.current && nameRef.current.textContent?.trim()) {
+            nameSplit = new SplitText(nameRef.current, {
+              type: "chars",
+              mask: "chars",
+            });
+            gsap.set(nameSplit.chars, {
+              opacity: 0,
+              y: 120,
+              rotateX: -90,
+              rotateY: gsap.utils.wrap([-20, 20, -15, 15, -10, 10]),
+              scale: 0.5,
+              transformPerspective: 1200,
+              transformOrigin: "center bottom",
+            });
+            tl.to(
+              nameSplit.chars,
+              {
+                opacity: 1,
+                y: 0,
+                rotateX: 0,
+                rotateY: 0,
+                scale: 1,
+                duration: 1,
+                stagger: { each: 0.04, from: "center", ease: "power2.out" },
+                ease: "back.out(1.7)",
+              },
+              0.15
+            );
+            cleanups.push(() => nameSplit!.revert());
+          } else if (nameRef.current) {
+            gsap.set(nameRef.current, { opacity: 0, y: 50 });
+            tl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.8 }, 0.15);
+          }
 
-    return () => {
-      clearTimeout(observeTimer);
-      if (leftSectionRef.current) {
-        leftObserver.unobserve(leftSectionRef.current);
-      }
-      if (rightSectionRef.current) {
-        rightObserver.unobserve(rightSectionRef.current);
-      }
-    };
-  }, []);
+          // ─── PHASE 3: Pronoun — Slide from left ───
+          if (pronounRef.current) {
+            gsap.set(pronounRef.current, { opacity: 0, x: -40 });
+            tl.to(
+              pronounRef.current,
+              { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" },
+              0.5
+            );
+          }
+
+          // ─── PHASE 4: Accent line — Draws from left ───
+          if (accentLineRef.current) {
+            gsap.set(accentLineRef.current, {
+              scaleX: 0,
+              opacity: 0,
+              transformOrigin: "left center",
+            });
+            tl.to(
+              accentLineRef.current,
+              { scaleX: 1, opacity: 1, duration: 0.6, ease: "power2.out" },
+              0.6
+            );
+          }
+
+          // ─── PHASE 5: Sparkle icon — Spring bounce ───
+          if (sparkleRef.current) {
+            gsap.set(sparkleRef.current, { opacity: 0, scale: 0, rotation: -180 });
+            tl.to(
+              sparkleRef.current,
+              {
+                opacity: 1,
+                scale: 1,
+                rotation: 0,
+                duration: 0.8,
+                ease: "elastic.out(1, 0.4)",
+              },
+              0.7
+            );
+          }
+
+          // ─── PHASE 6: Subtitle — Fade up ───
+          if (subtitleRef.current) {
+            gsap.set(subtitleRef.current, { opacity: 0, y: 30 });
+            tl.to(
+              subtitleRef.current,
+              { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+              0.8
+            );
+          }
+
+          // ─── PHASE 7: Email — Slide from left ───
+          if (emailRef.current) {
+            gsap.set(emailRef.current, { opacity: 0, x: -40 });
+            tl.to(
+              emailRef.current,
+              { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" },
+              0.9
+            );
+          }
+
+          // ─── PHASE 8: CTA button — Elastic cascade ───
+          if (buttonsRef.current) {
+            gsap.set(buttonsRef.current, { opacity: 0, scale: 0, y: 30, rotation: -15 });
+            tl.to(
+              buttonsRef.current,
+              {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                rotation: 0,
+                duration: 0.8,
+                ease: "elastic.out(1, 0.4)",
+              },
+              1.0
+            );
+          }
+
+          // ─── Idle animations ────────────────
+          let floatTween: gsap.core.Tween | null = null;
+          let sparkleTween: gsap.core.Tween | null = null;
+          let glowPulseTween: gsap.core.Tween | null = null;
+
+          if (imageWrapperRef.current) {
+            floatTween = gsap.to(imageWrapperRef.current, {
+              y: -10,
+              duration: 3,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              paused: true,
+            });
+            cleanups.push(() => floatTween?.kill());
+          }
+
+          if (sparkleRef.current) {
+            sparkleTween = gsap.to(sparkleRef.current, {
+              rotation: "+=360",
+              duration: 8,
+              repeat: -1,
+              ease: "none",
+              paused: true,
+            });
+            cleanups.push(() => sparkleTween?.kill());
+          }
+
+          if (glowRef.current) {
+            glowPulseTween = gsap.to(glowRef.current, {
+              opacity: 0.6,
+              duration: 2.5,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              paused: true,
+            });
+            cleanups.push(() => glowPulseTween?.kill());
+          }
+
+          tl.call(() => {
+            floatTween?.play();
+            sparkleTween?.play();
+            glowPulseTween?.play();
+          });
+
+          // ─── Play after intro overlay ──────────────────
+          // Check if intro already completed (sessionStorage flag set by GSAPPageIntro)
+          // or if gsap-intro-complete event fires. The event can fire multiple times
+          // (e.g., when Tour starts), so we use a flag to prevent double-playing.
+          let hasPlayed = false;
+          const play = () => {
+            if (hasPlayed) return;
+            hasPlayed = true;
+            tl.play();
+          };
+
+          // If the intro already played in this session, play immediately
+          if (typeof window !== "undefined" && sessionStorage.getItem("gsap-hero-revealed") === "true") {
+            // Small delay to ensure DOM is ready
+            requestAnimationFrame(() => play());
+          } else {
+            // Listen for the event (can fire multiple times from GSAPPageIntro or Tour)
+            window.addEventListener("gsap-intro-complete", play);
+            // Fallback timeout reduced to 500ms for better UX during navigation
+            const fallback = setTimeout(play, 500);
+            cleanups.push(() => {
+              window.removeEventListener("gsap-intro-complete", play);
+              clearTimeout(fallback);
+            });
+          }
+
+          // Mark as revealed when timeline completes
+          tl.eventCallback("onComplete", () => {
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("gsap-hero-revealed", "true");
+            }
+          });
+
+          // ─── CTA button: Magnetic hover ────────
+          if (buttonWrapperRef.current) {
+            const btn = buttonWrapperRef.current;
+            const xTo = gsap.quickTo(btn, "x", { duration: 0.4, ease: "power3" });
+            const yTo = gsap.quickTo(btn, "y", { duration: 0.4, ease: "power3" });
+
+            const handleBtnMove = (e: MouseEvent) => {
+              const rect = btn.getBoundingClientRect();
+              xTo((e.clientX - (rect.left + rect.width / 2)) * 0.35);
+              yTo((e.clientY - (rect.top + rect.height / 2)) * 0.35);
+            };
+
+            const handleBtnEnter = () => {
+              gsap.to(btn, { scale: 1.08, duration: 0.3, ease: "power2.out" });
+            };
+
+            const handleBtnLeave = () => {
+              gsap.to(btn, { x: 0, y: 0, scale: 1, duration: 1, ease: "elastic.out(1.1, 0.4)" });
+            };
+
+            btn.addEventListener("mousemove", handleBtnMove);
+            btn.addEventListener("mouseenter", handleBtnEnter);
+            btn.addEventListener("mouseleave", handleBtnLeave);
+            cleanups.push(() => {
+              btn.removeEventListener("mousemove", handleBtnMove);
+              btn.removeEventListener("mouseenter", handleBtnEnter);
+              btn.removeEventListener("mouseleave", handleBtnLeave);
+              gsap.killTweensOf(btn, "x,y,scale");
+              gsap.set(btn, { clearProps: "x,y,scale" });
+            });
+          }
+
+          // ═══════════════════════════════════════════════════════════
+          // SCROLL EXIT: Simple yPercent parallax ONLY (no opacity)
+          // ═══════════════════════════════════════════════════════════
+          const hero = heroRef.current!;
+
+          // Left text content — parallax up
+          if (leftRef.current) {
+            gsap.to(leftRef.current, {
+              yPercent: -15,
+              ease: "none",
+              scrollTrigger: {
+                trigger: hero,
+                start: "top top",
+                end: "bottom top",
+                scrub: 1,
+              },
+            });
+          }
+
+          // Right image section — slower parallax
+          const rightSection = hero.querySelector(".hero-right-section");
+          if (rightSection) {
+            gsap.to(rightSection, {
+              yPercent: -8,
+              ease: "none",
+              scrollTrigger: {
+                trigger: hero,
+                start: "top top",
+                end: "bottom top",
+                scrub: 1.5,
+              },
+            });
+          }
+
+          return () => cleanups.forEach((fn) => fn());
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // MOBILE: Simplified animations
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const mobileTl = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+          });
+
+          // Image
+          if (imageWrapperRef.current) {
+            gsap.set(imageWrapperRef.current, { opacity: 0, y: -30 });
+            mobileTl.to(imageWrapperRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0);
+          }
+
+          // Glow
+          if (glowRef.current) {
+            gsap.set(glowRef.current, { opacity: 0 });
+            mobileTl.to(glowRef.current, { opacity: 0.7, duration: 0.6 }, 0.1);
+          }
+
+          // Name
+          if (nameRef.current) {
+            gsap.set(nameRef.current, { opacity: 0, y: 30 });
+            mobileTl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.15);
+          }
+
+          // Pronoun
+          if (pronounRef.current) {
+            gsap.set(pronounRef.current, { opacity: 0, y: 20 });
+            mobileTl.to(pronounRef.current, { opacity: 1, y: 0, duration: 0.4 }, 0.25);
+          }
+
+          // Accent line
+          if (accentLineRef.current) {
+            gsap.set(accentLineRef.current, { scaleX: 0, opacity: 0, transformOrigin: "left center" });
+            mobileTl.to(accentLineRef.current, { scaleX: 1, opacity: 1, duration: 0.5 }, 0.35);
+          }
+
+          // Subtitle
+          if (subtitleRef.current) {
+            gsap.set(subtitleRef.current, { opacity: 0, y: 20 });
+            mobileTl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.4);
+          }
+
+          // Email
+          if (emailRef.current) {
+            gsap.set(emailRef.current, { opacity: 0, y: 20 });
+            mobileTl.to(emailRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.5);
+          }
+
+          // Buttons
+          if (buttonsRef.current) {
+            gsap.set(buttonsRef.current, { opacity: 0, y: 20 });
+            mobileTl.to(buttonsRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.6);
+          }
+
+          // Same logic as desktop — check sessionStorage first, then listen for event
+          let hasPlayed = false;
+          const play = () => {
+            if (hasPlayed) return;
+            hasPlayed = true;
+            mobileTl.play();
+          };
+
+          if (typeof window !== "undefined" && sessionStorage.getItem("gsap-hero-revealed") === "true") {
+            requestAnimationFrame(() => play());
+          } else {
+            window.addEventListener("gsap-intro-complete", play);
+            const fallback = setTimeout(play, 500);
+            return () => {
+              window.removeEventListener("gsap-intro-complete", play);
+              clearTimeout(fallback);
+            };
+          }
+
+          mobileTl.eventCallback("onComplete", () => {
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("gsap-hero-revealed", "true");
+            }
+          });
+
+          return () => {
+            window.removeEventListener("gsap-intro-complete", play);
+          };
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // REDUCED MOTION: Instant visibility
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        let hasShown = false;
+        const show = () => {
+          if (hasShown) return;
+          hasShown = true;
+          const refs = [
+            nameRef, pronounRef, subtitleRef, emailRef,
+            buttonsRef, imageWrapperRef, glowRef, accentLineRef, sparkleRef,
+          ];
+          refs.forEach((ref) => {
+            if (ref.current) {
+              gsap.set(ref.current, { opacity: 1, clearProps: "transform" });
+            }
+          });
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("gsap-hero-revealed", "true");
+          }
+        };
+
+        // Check if already revealed
+        if (typeof window !== "undefined" && sessionStorage.getItem("gsap-hero-revealed") === "true") {
+          requestAnimationFrame(() => show());
+        } else {
+          window.addEventListener("gsap-intro-complete", show);
+          const fallback = setTimeout(show, 100);
+          return () => {
+            window.removeEventListener("gsap-intro-complete", show);
+            clearTimeout(fallback);
+          };
+        }
+
+        return () => {
+          window.removeEventListener("gsap-intro-complete", show);
+        };
+      });
+    },
+    { scope: heroRef }
+  );
 
   const handleResumeView = useCallback(() => {
     window.open(RESUME_FILE_PATH, "_blank");
@@ -91,360 +475,114 @@ const HeroSectionComponent = () => {
   }, []);
 
   return (
-    <>
-      <style>{`
-        /* Premium easing curves - advanced spring physics */
-        :root {
-          --ease-out-ultra: cubic-bezier(0.19, 1, 0.22, 1);
-          --ease-out-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-          --ease-out-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-          --ease-out-spring-soft: cubic-bezier(0.25, 1.46, 0.45, 1);
-          --ease-out-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          --ease-out-fast: cubic-bezier(0.4, 0, 0.2, 1);
-          --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Multi-step blur keyframes for ultra-smooth transitions */
-        @keyframes blurFadeIn {
-          0% {
-            opacity: 0;
-            filter: blur(8px);
-          }
-          40% {
-            opacity: 0.6;
-            filter: blur(4px);
-          }
-          70% {
-            opacity: 0.85;
-            filter: blur(2px);
-          }
-          100% {
-            opacity: 1;
-            filter: blur(0px);
-          }
-        }
-
-        @keyframes slideUpSpring {
-          0% {
-            transform: translate3d(0, 50px, 0) scale(0.96);
-            opacity: 0;
-          }
-          60% {
-            transform: translate3d(0, -3px, 0) scale(1.01);
-            opacity: 0.9;
-          }
-          100% {
-            transform: translate3d(0, 0, 0) scale(1);
-            opacity: 1;
-          }
-        }
-
-        @keyframes slideUpSpringSmall {
-          0% {
-            transform: translate3d(0, 24px, 0) scale(0.94);
-            opacity: 0;
-          }
-          50% {
-            transform: translate3d(0, -2px, 0) scale(1.01);
-            opacity: 0.8;
-          }
-          100% {
-            transform: translate3d(0, 0, 0) scale(1);
-            opacity: 1;
-          }
-        }
-
-        @keyframes scaleRotateSpring {
-          0% {
-            transform: translate3d(0, 0, 0) scale(0.7) rotate(-3deg);
-            opacity: 0;
-          }
-          50% {
-            transform: translate3d(0, 0, 0) scale(1.05) rotate(1deg);
-            opacity: 0.7;
-          }
-          100% {
-            transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-            opacity: 1;
-          }
-        }
-
-        .hero-fade-in {
-          opacity: 0;
-          transition: opacity 1s var(--ease-out-ultra);
-        }
-
-        .hero-fade-in.visible {
-          opacity: 1;
-        }
-
-        .hero-left-section {
-          opacity: 0;
-          transform: translate3d(0, 50px, 0) scale(0.96);
-          filter: blur(8px);
-          will-change: opacity, transform, filter;
-          backface-visibility: hidden;
-          perspective: 1000px;
-          transform-origin: center center;
-        }
-
-        .hero-left-section.visible {
-          animation: slideUpSpring 2.2s var(--ease-out-spring-soft) forwards,
-                     blurFadeIn 2s var(--ease-out-smooth) forwards;
-        }
-
-        .hero-title {
-          opacity: 0;
-          transform: translate3d(0, 24px, 0) scale(0.94);
-          filter: blur(6px);
-          will-change: opacity, transform, filter;
-          backface-visibility: hidden;
-          transform-origin: left center;
-        }
-
-        .hero-title.visible {
-          animation: slideUpSpringSmall 1.2s var(--ease-out-spring-soft) 0.15s forwards,
-                     blurFadeIn 1s var(--ease-out-smooth) 0.2s forwards;
-        }
-
-        .hero-subtitle {
-          opacity: 0;
-          transform: translate3d(0, 22px, 0) scale(0.95);
-          filter: blur(5px);
-          will-change: opacity, transform, filter;
-          backface-visibility: hidden;
-          transform-origin: left center;
-        }
-
-        .hero-subtitle.visible {
-          animation: slideUpSpringSmall 1.1s var(--ease-out-spring-soft) 0.45s forwards,
-                     blurFadeIn 0.9s var(--ease-out-smooth) 0.5s forwards;
-        }
-
-        .hero-email {
-          opacity: 0;
-          transform: translate3d(0, 20px, 0) scale(0.96);
-          filter: blur(5px);
-          will-change: opacity, transform, filter;
-          backface-visibility: hidden;
-          transform-origin: left center;
-        }
-
-        .hero-email.visible {
-          animation: slideUpSpringSmall 1s var(--ease-out-spring-soft) 0.6s forwards,
-                     blurFadeIn 0.85s var(--ease-out-smooth) 0.65s forwards;
-        }
-
-        .hero-buttons {
-          opacity: 0;
-          transform: translate3d(0, 20px, 0) scale(0.96);
-          filter: blur(5px);
-          will-change: opacity, transform, filter;
-          backface-visibility: hidden;
-          transform-origin: left center;
-        }
-
-        .hero-buttons.visible {
-          animation: slideUpSpringSmall 1s var(--ease-out-spring-soft) 0.7s forwards,
-                     blurFadeIn 0.85s var(--ease-out-smooth) 0.75s forwards;
-        }
-
-        .hero-right-section {
-          opacity: 0;
-          transform: translate3d(0, 0, 0) scale(0.7) rotate(-3deg);
-          filter: blur(12px);
-          will-change: opacity, transform, filter;
-          backface-visibility: hidden;
-          perspective: 1000px;
-          transform-origin: center center;
-        }
-
-        .hero-right-section.visible {
-          animation: scaleRotateSpring 1.6s var(--ease-out-spring-soft) 0.35s forwards,
-                     blurFadeIn 1.2s var(--ease-out-smooth) 0.4s forwards;
-        }
-
-        .hero-button-wrapper {
-          will-change: transform;
-          transition: transform 0.3s var(--ease-out-spring-soft);
-          transform: translateZ(0);
-          position: relative;
-        }
-
-        .hero-button-wrapper::before {
-          content: '';
-          position: absolute;
-          inset: -2px;
-          border-radius: inherit;
-          opacity: 0;
-          background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(219, 39, 119, 0.3));
-          filter: blur(8px);
-          transition: opacity 0.3s var(--ease-out-smooth);
-          z-index: -1;
-        }
-
-        .hero-button-wrapper:hover {
-          transform: translateZ(0) scale(1.08) translateY(-2px);
-        }
-
-        .hero-button-wrapper:hover::before {
-          opacity: 1;
-        }
-
-        .hero-button-wrapper:active {
-          transform: translateZ(0) scale(0.96) translateY(0px);
-        }
-
-        .hero-email-link {
-          will-change: transform;
-          transition: transform 0.3s var(--ease-out-spring-soft);
-          transform: translateZ(0);
-          position: relative;
-        }
-
-        .hero-email-link:hover {
-          transform: translateZ(0) scale(1.08) translateY(-1px);
-        }
-
-        .hero-email-link:active {
-          transform: translateZ(0) scale(0.96);
-        }
-
-        /* Stagger animation for button children */
-        .hero-buttons.visible .hero-button-wrapper {
-          opacity: 0;
-          transform: translate3d(0, 15px, 0) scale(0.98);
-        }
-
-        .hero-buttons.visible .hero-button-wrapper:nth-child(1) {
-          animation: slideUpSpringSmall 0.8s var(--ease-out-spring-soft) 0.85s forwards;
-        }
-
-        /* Optimize performance for animations */
-        @media (prefers-reduced-motion: reduce) {
-          .hero-left-section,
-          .hero-title,
-          .hero-subtitle,
-          .hero-email,
-          .hero-buttons,
-          .hero-right-section {
-            animation: none !important;
-            transition: opacity 0.3s ease-out;
-            transform: none !important;
-            filter: none !important;
-          }
-        }
-      `}</style>
+    <div
+      ref={heroRef}
+      id="hero"
+      className="text-foreground bg-transparent flex flex-col md:flex-row items-center justify-center max-w-7xl mx-auto w-full min-h-screen"
+    >
+      {/* Left Section */}
       <div
-        ref={heroRef}
-        id="hero"
-        className={`text-foreground bg-transparent flex flex-col md:flex-row 
-        items-center justify-center max-w-7xl mx-auto w-full min-h-screen hero-fade-in ${
-          isVisible ? "visible" : ""
-        }`}
+        ref={leftRef}
+        className="flex-1 space-y-6 p-6 text-left md:text-left flex flex-col justify-center hero-left-section"
       >
-        {/* Left Section */}
+        <h1 className="text-3xl sm:text-3xl md:text-5xl font-bold">
+          <span
+            ref={nameRef}
+            className="text-3xl sm:text-3xl md:text-5xl font-extrabold tracking-wider text-foreground inline-block"
+          >
+            Tushar Deomare
+          </span>
+
+          <p
+            ref={pronounRef}
+            className="text-xs sm:text-sm text-pink-500 font-semibold block"
+          >
+            He / Him
+          </p>
+        </h1>
+
+        {/* Accent line */}
         <div
-          ref={leftSectionRef}
-          className={`flex-1 space-y-6 p-6 text-left md:text-left flex flex-col justify-center hero-left-section ${
-            leftSectionVisible ? "visible" : ""
-          }`}
+          ref={accentLineRef}
+          className="h-[2px] w-20 bg-gradient-to-r from-pink-500 to-purple-500/50 origin-left"
+        />
+
+        {/* Key Highlight */}
+        <div
+          ref={subtitleRef}
+          className="flex items-center gap-2 text-lg sm:text-xl md:text-2xl text-muted-foreground"
         >
-          <h1
-            className={`text-3xl sm:text-3xl md:text-5xl font-bold hero-title ${
-              leftSectionVisible ? "visible" : ""
-            }`}
-          >
-            <TypingText
-              delay={0.5}
-              duration={2.5}
-              fontSize="text-3xl sm:text-3xl md:text-5xl"
-              fontWeight="font-extrabold"
-              color="text-foreground"
-              letterSpacing="tracking-wider"
-              align="left"
-            >
-              Tushar Deomare
-            </TypingText>
-
-            <p className="text-xs sm:text-sm text-pink-500 font-semibold block">
-              He / Him
-            </p>
-          </h1>
-
-          {/* Key Highlight - Concise and Impactful */}
-          <div
-            className={`flex items-center gap-2 text-lg sm:text-xl md:text-2xl text-muted-foreground hero-subtitle ${
-              leftSectionVisible ? "visible" : ""
-            }`}
-          >
+          <span ref={sparkleRef} className="inline-block">
             <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
-            <div className="p-1">
-              Building scalable solutions with 2+ years of expertise
-            </div>
-          </div>
-
-          {/* Email Contact */}
-          <div
-            className={`flex items-center gap-2 mt-4 relative hero-email ${
-              leftSectionVisible ? "visible" : ""
-            }`}
-          >
-            <a
-              href="mailto:tdeomare1@gmail.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hero-email-link flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-pink-500 transition-colors duration-300 group relative"
-              onMouseEnter={handleEmailMouseEnter}
-              onMouseLeave={handleEmailMouseLeave}
-            >
-              <Mail className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-              <span className="font-medium relative">
-                tdeomare1@gmail.com
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-pink-500 transition-all duration-300 group-hover:w-full"></span>
-              </span>
-              {/* Tooltip */}
-              <span
-                className={`absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-md pointer-events-none transition-opacity duration-300 whitespace-nowrap z-10 shadow-lg ${
-                  hasHoveredEmail
-                    ? isEmailHovered
-                      ? "opacity-100"
-                      : "opacity-0"
-                    : "opacity-100"
-                }`}
-              >
-                Click to compose email message
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></span>
-              </span>
-            </a>
-          </div>
-
-          {/* CTA Button */}
-          <div
-            className={`flex flex-wrap gap-4 mt-6 hero-buttons ${
-              leftSectionVisible ? "visible" : ""
-            }`}
-          >
-            <div className="hero-button-wrapper">
-              <Button
-                onClick={handleResumeView}
-                className="bg-pink-500 hover:bg-pink-600 cursor-pointer text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 group"
-              >
-                My Resume
-                <FileText className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-              </Button>
-            </div>
+          </span>
+          <div className="p-1">
+            Building scalable solutions with 2+ years of expertise
           </div>
         </div>
 
-        {/* Right Section */}
-        <div
-          ref={rightSectionRef}
-          className={`flex-1 flex justify-center p-6 hero-right-section ${
-            rightSectionVisible ? "visible" : ""
-          }`}
-        >
-          <div className="w-64 h-64 rounded-full overflow-hidden shadow-lg">
+        {/* Email Contact */}
+        <div ref={emailRef} className="flex items-center gap-2 mt-4 relative">
+          <a
+            href="mailto:tdeomare1@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-pink-500 transition-colors duration-300 group relative"
+            onMouseEnter={handleEmailMouseEnter}
+            onMouseLeave={handleEmailMouseLeave}
+          >
+            <Mail className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
+            <span className="font-medium relative">
+              tdeomare1@gmail.com
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-pink-500 transition-all duration-300 group-hover:w-full"></span>
+            </span>
+            {/* Tooltip */}
+            <span
+              className={`absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-md pointer-events-none transition-opacity duration-300 whitespace-nowrap z-10 shadow-lg ${
+                hasHoveredEmail
+                  ? isEmailHovered
+                    ? "opacity-100"
+                    : "opacity-0"
+                  : "opacity-100"
+              }`}
+            >
+              Click to compose email message
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></span>
+            </span>
+          </a>
+        </div>
+
+        {/* CTA Button */}
+        <div ref={buttonsRef} className="flex flex-wrap gap-4 mt-6">
+          <div ref={buttonWrapperRef} className="will-change-transform">
+            <Button
+              onClick={handleResumeView}
+              className="bg-pink-500 hover:bg-pink-600 cursor-pointer text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 group"
+            >
+              My Resume
+              <FileText className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Section */}
+      <div className="flex-1 flex justify-center p-6 hero-right-section">
+        <div className="relative">
+          {/* Gradient glow ring — behind image */}
+          <div
+            ref={glowRef}
+            className="absolute -inset-8 rounded-full -z-10"
+            style={{
+              background:
+                "conic-gradient(from 0deg, rgba(236,72,153,0.3), rgba(168,85,247,0.25), rgba(59,130,246,0.2), rgba(236,72,153,0.3))",
+              filter: "blur(40px)",
+            }}
+          />
+          {/* Profile image */}
+          <div
+            ref={imageWrapperRef}
+            className="w-64 h-64 rounded-full overflow-hidden shadow-lg"
+          >
             <img
               src="/Tushar_Deomare.jpg"
               alt="Tushar Deomare"
@@ -455,7 +593,7 @@ const HeroSectionComponent = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

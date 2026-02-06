@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "../lightswind/button";
 import { BorderBeam } from "../lightswind/border-beam";
+import { gsap } from "@/lib/gsap";
 
 export interface TourStep {
   id: string;
@@ -149,6 +150,10 @@ export function useTour() {
         // First time visiting - auto-start tour after a short delay
         const timer = setTimeout(() => {
           setIsTourActive(true);
+          // Dispatch gsap-intro-complete event to ensure Hero elements are visible
+          window.dispatchEvent(new CustomEvent("gsap-intro-complete"));
+          // Dispatch tour-start event to disable scroll-triggered exit animations
+          window.dispatchEvent(new CustomEvent("tour-start"));
         }, 1500);
         return () => clearTimeout(timer);
       }
@@ -163,6 +168,11 @@ export function useTour() {
     setIsTourActive(true);
     // Prevent body scroll during tour
     document.body.style.overflow = "hidden";
+    // Dispatch gsap-intro-complete event to ensure Hero elements are visible
+    // This triggers the Hero entrance animation if it hasn't played yet
+    window.dispatchEvent(new CustomEvent("gsap-intro-complete"));
+    // Dispatch tour-start event to disable scroll-triggered exit animations
+    window.dispatchEvent(new CustomEvent("tour-start"));
   }, []);
 
   const endTour = useCallback(() => {
@@ -176,6 +186,8 @@ export function useTour() {
       console.warn("Tour: Could not save to localStorage", error);
     }
     setHasSeenTour(true);
+    // Dispatch tour-end event to re-enable scroll-triggered animations
+    window.dispatchEvent(new CustomEvent("tour-end"));
   }, []);
 
   const nextStep = useCallback(() => {
@@ -614,39 +626,36 @@ export function Tour({
     };
 
     // Smooth scroll to target first, then position
+    // Use GSAP ScrollToPlugin so scroll coordinates with ScrollTrigger
     try {
       if (step.id === "dock") {
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: "smooth",
+        gsap.to(window, {
+          scrollTo: { y: "max" },
+          duration: 1,
+          ease: "power2.inOut",
+          onComplete: () => {
+            const dockElement = document.querySelector(step.target);
+            performPositioning(dockElement);
+          },
         });
-        const dockElement = document.querySelector(step.target);
-        waitForScrollComplete(
-          () => performPositioning(dockElement),
-          dockElement
-        );
       } else {
         // Special handling for "my-card" step on mobile - position relative to header
         const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
         let targetElement: Element | null = null;
-        
+
         if (step.id === "my-card" && isMobile) {
-          // On mobile, use header element instead of the data-my-card link
           targetElement = document.querySelector("header");
         } else {
           targetElement = document.querySelector(step.target);
         }
-        
+
         if (targetElement) {
-          targetElement.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "nearest",
+          gsap.to(window, {
+            scrollTo: { y: targetElement, offsetY: window.innerHeight / 2 - targetElement.getBoundingClientRect().height / 2 },
+            duration: 1,
+            ease: "power2.inOut",
+            onComplete: () => performPositioning(targetElement),
           });
-          waitForScrollComplete(
-            () => performPositioning(targetElement),
-            targetElement
-          );
         } else {
           performPositioning();
         }
@@ -798,7 +807,7 @@ export function Tour({
 
   return (
     <div className={`fixed inset-0 ${tourZIndex} pointer-events-none`}>
-      {/* Overlay */}
+      {/* Overlay - must have absolute inset-0 to fill parent and apply clipPath */}
       <motion.div
         key={`overlay-${currentStep}`}
         initial={{ opacity: 0 }}
@@ -808,7 +817,7 @@ export function Tour({
           duration: 0.4,
           ease: [0.4, 0, 0.2, 1],
         }}
-        className="bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
         style={{ clipPath: overlayClipPath }}
       />
 

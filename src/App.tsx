@@ -13,6 +13,12 @@ import {
 // SEO FIX: HomePageSection loads immediately so critical content (name) is visible to Googlebot
 import HomePageSection from "./components/HomePageSection/HomePageSection";
 
+// GSAP global components (scroll progress, page intro, cursor, overlays)
+import { GSAPScrollProgress } from "./components/gsap/GSAPScrollProgress";
+import { GSAPPageIntro } from "./components/gsap/GSAPPageIntro";
+// import { NoiseOverlay } from "./components/gsap/NoiseOverlay";
+// import { VignetteOverlay } from "./components/gsap/VignetteOverlay";
+
 // Lazy load other components (not critical for SEO)
 const AIAssistant = lazy(() => import("./components/AIAssistant/AIAssistant"));
 const LightRays = lazy(() => import("./components/reactBits/lightRays"));
@@ -101,6 +107,10 @@ function App() {
   return (
     <TourProvider>
       <BrowserRouter>
+        {/* GSAP global enhancements */}
+        <GSAPScrollProgress />
+        <GSAPPageIntro />
+        {/* <NoiseOverlay /> */}
         <Routes>
           {/* MarketJD Project Detail Page */}
           <Route

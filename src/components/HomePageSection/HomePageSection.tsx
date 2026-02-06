@@ -6,9 +6,11 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useLocation } from "react-router-dom";
 import { useIsMobile } from "../hooks/use-mobile";
 import { useTourContext } from "../Tour/TourContext";
 import { useThrottleRAF } from "@/hooks/useThrottle";
+import { gsap } from "@/lib/gsap";
 import {
   Briefcase,
   FolderKanban,
@@ -65,6 +67,26 @@ const HomePageSection = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = useIsMobile();
   const tour = useTourContext();
+  const location = useLocation();
+  // Handle scroll-to-section when navigating back from project pages
+  useEffect(() => {
+    const scrollTarget = (location.state as { scrollTo?: string })?.scrollTo;
+    if (scrollTarget) {
+      // Clear the state so it doesn't re-trigger on re-renders
+      window.history.replaceState({}, "");
+      // Wait for the DOM to be ready before scrolling
+      requestAnimationFrame(() => {
+        const el = document.getElementById(scrollTarget);
+        if (el) {
+          gsap.to(window, {
+            scrollTo: { y: el, offsetY: 80 },
+            duration: 1,
+            ease: "power2.inOut",
+          });
+        }
+      });
+    }
+  }, [location.state]);
 
   // Sync visibility state with showDock for smooth animations
   useEffect(() => {
@@ -109,17 +131,13 @@ const HomePageSection = () => {
     };
   }, [handleScroll, tour.isTourActive, tour.currentStep]);
 
-  // Helper for smooth scroll using native browser API
   const scrollToSection = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const offset = 80;
-      const elementPosition = el.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
+      gsap.to(window, {
+        scrollTo: { y: el, offsetY: 80 },
+        duration: 1,
+        ease: "power2.inOut",
       });
     }
   }, []);

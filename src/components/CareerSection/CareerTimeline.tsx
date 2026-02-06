@@ -1,9 +1,9 @@
 import { portfolioData } from "@/lib/portfolioData";
 import { Briefcase, Copy, Check, Sparkles } from "lucide-react";
-import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { Timeline } from "../ui/timeline";
 import { motion, useReducedMotion, useInView } from "framer-motion";
 import { useMemo, memo, useCallback, useState, useRef, useEffect } from "react";
+import { gsap, SplitText, useGSAP, ScrollTrigger } from "@/lib/gsap";
 
 // Animation constants for consistency and performance
 const ANIMATION_CONFIG = {
@@ -411,12 +411,253 @@ const CareerContent = memo(
 
 CareerContent.displayName = "CareerContent";
 
-export const CareerTimeline = () => {
+const CareerTimelineComponent = () => {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const iconRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useGSAP(
+    () => {
+      if (!sectionRef.current) return;
+
+      const mm = gsap.matchMedia();
+
+      // ═══════════════════════════════════════════════════════════════════
+      // DESKTOP: Orchestrated heading reveal, subtitle fade,
+      // timeline wrapper entrance
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const cleanups: (() => void)[] = [];
+          const section = sectionRef.current!;
+
+          // ─── Icon spring entrance ─────────────────────────────────
+          if (iconRef.current) {
+            gsap.set(iconRef.current, {
+              scale: 0,
+              rotation: -180,
+              opacity: 0,
+            });
+
+            gsap.to(iconRef.current, {
+              scale: 1,
+              rotation: 0,
+              opacity: 1,
+              duration: 0.6,
+              ease: "spring",
+              scrollTrigger: {
+                trigger: section,
+                start: "top 80%",
+                end: "top 58%",
+                scrub: 1,
+              },
+            });
+          }
+
+          // ─── Heading: SplitText chars masked reveal ───────────────
+          if (
+            headingRef.current &&
+            headingRef.current.textContent?.trim()
+          ) {
+            const headingSplit = new SplitText(headingRef.current, {
+              type: "chars",
+              charsClass: "gsap-career-heading-char",
+              mask: "chars",
+            });
+
+            headingSplit.chars.forEach((char: Element) => {
+              (char as HTMLElement).style.display = "inline-block";
+            });
+
+            gsap.set(headingSplit.chars, { yPercent: 120, opacity: 0 });
+
+            gsap.to(headingSplit.chars, {
+              yPercent: 0,
+              opacity: 1,
+              stagger: { each: 0.03, from: "start" },
+              duration: 0.7,
+              ease: "smooth.out",
+              scrollTrigger: {
+                trigger: section,
+                start: "top 77%",
+                end: "top 50%",
+                scrub: 1,
+              },
+            });
+
+            cleanups.push(() => headingSplit.revert());
+          }
+
+          // ─── Subtitle: Fade + slide up ────────────────────────────
+          const subtitle =
+            section.querySelector<HTMLElement>(".career-subtitle");
+          if (subtitle) {
+            gsap.fromTo(
+              subtitle,
+              { y: 20, opacity: 0, filter: "blur(4px)" },
+              {
+                y: 0,
+                opacity: 1,
+                filter: "blur(0px)",
+                duration: 0.6,
+                ease: "smooth.out",
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top 72%",
+                  end: "top 48%",
+                  scrub: 1,
+                },
+              }
+            );
+          }
+
+          // ─── Decorative line: Grows from center ───────────────────
+          const decorLine =
+            section.querySelector<HTMLElement>(".career-decor-line");
+          if (decorLine) {
+            gsap.set(decorLine, {
+              scaleX: 0,
+              transformOrigin: "center center",
+            });
+
+            gsap.to(decorLine, {
+              scaleX: 1,
+              duration: 0.5,
+              ease: "smooth.out",
+              scrollTrigger: {
+                trigger: section,
+                start: "top 68%",
+                end: "top 45%",
+                scrub: 1,
+              },
+            });
+          }
+
+          // ─── Timeline wrapper: Scale-in entrance ──────────────────
+          const timelineWrap =
+            section.querySelector<HTMLElement>(".career-timeline-wrap");
+          if (timelineWrap) {
+            gsap.fromTo(
+              timelineWrap,
+              { y: 50, opacity: 0, scale: 0.97 },
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.8,
+                ease: "smooth.out",
+                scrollTrigger: {
+                  trigger: timelineWrap,
+                  start: "top 92%",
+                  end: "top 62%",
+                  scrub: 1,
+                },
+              }
+            );
+          }
+
+          // ─── Scroll exit: Career → Projects transition ─────────
+          // Header recedes with blur as user scrolls past the section
+          const exitScrollTriggers: ScrollTrigger[] = [];
+          const header =
+            section.querySelector<HTMLElement>(".career-header");
+          if (header) {
+            const exitTween = gsap.to(header, {
+              yPercent: -15,
+              opacity: 0,
+              filter: "blur(3px)",
+              ease: "none",
+              scrollTrigger: {
+                trigger: section,
+                start: "bottom 65%",
+                end: "bottom 10%",
+                scrub: true,
+              },
+            });
+            if (exitTween.scrollTrigger) {
+              exitScrollTriggers.push(exitTween.scrollTrigger);
+            }
+          }
+
+          // ─── Tour event handlers: Disable exit animations during tour ─────
+          const handleTourStart = () => {
+            exitScrollTriggers.forEach((st) => st.disable());
+            if (header) {
+              gsap.set(header, { yPercent: 0, opacity: 1, filter: "none", clearProps: "filter" });
+            }
+          };
+
+          const handleTourEnd = () => {
+            exitScrollTriggers.forEach((st) => st.enable());
+          };
+
+          window.addEventListener("tour-start", handleTourStart);
+          window.addEventListener("tour-end", handleTourEnd);
+
+          cleanups.push(() => {
+            window.removeEventListener("tour-start", handleTourStart);
+            window.removeEventListener("tour-end", handleTourEnd);
+          });
+
+          return () => cleanups.forEach((fn) => fn());
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // MOBILE: Simple fade-in cascade
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
+            ".career-header, .career-timeline-wrap"
+          );
+
+          allEls.forEach((el, i) => {
+            gsap.fromTo(
+              el,
+              { opacity: 0, y: 30 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: "smooth.out",
+                scrollTrigger: {
+                  trigger: el,
+                  start: "top 90%",
+                  toggleActions: "play reverse play reverse",
+                },
+                delay: i * 0.1,
+              }
+            );
+          });
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // REDUCED MOTION: Instant visibility
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
+          ".career-header, .career-subtitle, .career-decor-line, .career-timeline-wrap"
+        );
+        allEls.forEach((el) => {
+          gsap.set(el, { opacity: 1, clearProps: "transform,filter" });
+        });
+        if (iconRef.current) {
+          gsap.set(iconRef.current, {
+            opacity: 1,
+            clearProps: "transform",
+          });
+        }
+      });
+    },
+    { scope: sectionRef }
+  );
 
   // Memoized timeline data to prevent unnecessary recalculations
-  // Pass career data directly instead of creating JSX in callback
   const timelineData = useMemo(() => {
     return portfolioData.career.map((career, idx) => ({
       title: career.period,
@@ -426,7 +667,7 @@ export const CareerTimeline = () => {
           prefersReducedMotion={!!prefersReducedMotion}
         />
       ),
-      key: `${career.company}-${career.period}-${idx}`, // Stable key generation
+      key: `${career.company}-${career.period}-${idx}`,
     }));
   }, [prefersReducedMotion]);
 
@@ -438,27 +679,26 @@ export const CareerTimeline = () => {
       aria-label="Career timeline"
       style={{ contain: "layout style" }}
     >
-      <div className="text-center mb-6 sm:mb-8">
+      <div className="career-header text-center mb-6 sm:mb-8">
         <div className="flex items-baseline justify-center gap-4 mb-4">
-          <Briefcase className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
-          <ScrollReveal
-            size="xl"
-            align="center"
-            variant="default"
-            enableBlur={false}
-            baseOpacity={0.1}
-            baseRotation={0}
-            blurStrength={0}
+          <div ref={iconRef}>
+            <Briefcase className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
+          </div>
+          <h2
+            ref={headingRef}
+            className="text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground leading-relaxed"
           >
             Career Journey
-          </ScrollReveal>
+          </h2>
         </div>
-        <p className="text-lg font-bold">
+        <p className="career-subtitle text-lg font-bold">
           An evolving path of leadership, innovation, and impact
         </p>
+        {/* Decorative line grows from center */}
+        <div className="career-decor-line mx-auto mt-4 h-px w-48 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
       </div>
       <div
-        className="relative w-full overflow-clip"
+        className="career-timeline-wrap relative w-full overflow-clip"
         style={{ contain: "layout style" }}
       >
         <Timeline data={timelineData} showHeader={false} />
@@ -466,3 +706,5 @@ export const CareerTimeline = () => {
     </section>
   );
 };
+
+export const CareerTimeline = memo(CareerTimelineComponent);

@@ -1,11 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ThreeDCarousel from "@/components/lightswind/ThreeDCarousel";
 import type { ThreeDCarouselItem } from "@/components/lightswind/ThreeDCarousel";
-import { ScrollReveal } from "../lightswind/scroll-reveal";
 import { Trophy, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader2 } from "lucide-react";
+import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 
-export const AchievementsSection = () => {
+const AchievementsSectionComponent = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const iconRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const [achievements] = useState<ThreeDCarouselItem[]>([
     {
       id: "2025-1",
@@ -173,42 +176,318 @@ export const AchievementsSection = () => {
     };
   }, [selectedAchievement, closeModal, goToNext, goToPrevious]);
 
+  // ═══════════════════════════════════════════════════════════════════
+  // GSAP: CINEMATIC ENTRANCE ANIMATIONS
+  // Dramatic trophy/heading reveal with 3D carousel entrance
+  // ═══════════════════════════════════════════════════════════════════
+  useGSAP(
+    () => {
+      if (!sectionRef.current) return;
+
+      const mm = gsap.matchMedia();
+
+      // ═══════════════════════════════════════════════════════════════════
+      // DESKTOP: Award-winning trophy celebration animation
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const cleanups: (() => void)[] = [];
+          const section = sectionRef.current!;
+
+          // ─────────────────────────────────────────────────────────────
+          // HEADER ORCHESTRATION TIMELINE
+          // Trophy bursts in with golden glow → Heading cascades → Subtitle
+          // ─────────────────────────────────────────────────────────────
+          const headerTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: "top 65%",
+              toggleActions: "play reverse play reverse",
+            },
+          });
+
+          // ─── Trophy Icon: Golden burst entrance ───────────────────
+          if (iconRef.current) {
+            gsap.set(iconRef.current, {
+              scale: 0,
+              rotation: -720, // 2 full rotations
+              opacity: 0,
+              filter: "blur(25px) brightness(2)",
+              transformOrigin: "center center",
+            });
+
+            // Phase 1: Explosive entrance with golden glow
+            headerTl.to(
+              iconRef.current,
+              {
+                scale: 1.3,
+                rotation: 20,
+                opacity: 1,
+                filter: "blur(0px) brightness(1.5)",
+                duration: 0.6,
+                ease: "power4.out",
+              },
+              0
+            );
+
+            // Phase 2: Settle with elastic bounce
+            headerTl.to(
+              iconRef.current,
+              {
+                scale: 1,
+                rotation: 0,
+                filter: "blur(0px) brightness(1)",
+                duration: 1,
+                ease: "elastic.out(1.8, 0.4)",
+              },
+              0.5
+            );
+          }
+
+          // ─── Heading: 3D perspective chars reveal ─────────────────
+          if (headingRef.current && headingRef.current.textContent?.trim()) {
+            const headingSplit = new SplitText(headingRef.current, {
+              type: "chars",
+              charsClass: "gsap-achievements-char",
+              mask: "chars",
+            });
+
+            headingSplit.chars.forEach((char: Element) => {
+              const el = char as HTMLElement;
+              el.style.display = "inline-block";
+              el.style.transformStyle = "preserve-3d";
+            });
+
+            gsap.set(headingSplit.chars, {
+              yPercent: 250,
+              opacity: 0,
+              rotateX: -120,
+              rotateZ: 15,
+              scale: 0.3,
+              filter: "blur(15px)",
+              transformOrigin: "center bottom",
+              transformPerspective: 500,
+            });
+
+            headerTl.to(
+              headingSplit.chars,
+              {
+                yPercent: 0,
+                opacity: 1,
+                rotateX: 0,
+                rotateZ: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                stagger: {
+                  each: 0.07,
+                  from: "center",
+                  ease: "power2.out",
+                },
+                duration: 1,
+                ease: "back.out(2.5)",
+              },
+              0.2
+            );
+
+            cleanups.push(() => headingSplit.revert());
+          }
+
+          // ─── Subtitle: Dramatic blur-to-sharp with scale ──────────
+          const subtitle = section.querySelector<HTMLElement>(".achievements-subtitle");
+          if (subtitle) {
+            gsap.set(subtitle, {
+              y: 60,
+              opacity: 0,
+              filter: "blur(25px)",
+              scale: 0.6,
+              letterSpacing: "0.5em",
+            });
+
+            headerTl.to(
+              subtitle,
+              {
+                y: 0,
+                opacity: 1,
+                filter: "blur(0px)",
+                scale: 1,
+                letterSpacing: "0em",
+                duration: 0.9,
+                ease: "power3.out",
+              },
+              0.6
+            );
+          }
+
+          // ─────────────────────────────────────────────────────────────
+          // CAROUSEL ENTRANCE
+          // 3D perspective lift with golden shimmer
+          // ─────────────────────────────────────────────────────────────
+          const carouselWrap = section.querySelector<HTMLElement>(".achievements-carousel-wrap");
+          if (carouselWrap) {
+            gsap.set(carouselWrap, {
+              y: 100,
+              opacity: 0,
+              scale: 0.7,
+              rotateX: 25,
+              filter: "blur(20px)",
+              transformPerspective: 1200,
+              transformOrigin: "center top",
+            });
+
+            headerTl.to(
+              carouselWrap,
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                rotateX: 0,
+                filter: "blur(0px)",
+                duration: 1.2,
+                ease: "power3.out",
+              },
+              0.8
+            );
+          }
+
+          // ─────────────────────────────────────────────────────────────
+          // SCROLL EXIT — Achievements → Contact transition
+          // Content recedes with blur as user scrolls past
+          // ─────────────────────────────────────────────────────────────
+          const achievementsHeader = section.querySelector<HTMLElement>(".achievements-header");
+          if (achievementsHeader) {
+            gsap.to(achievementsHeader, {
+              yPercent: -20,
+              opacity: 0,
+              filter: "blur(8px)",
+              scale: 0.92,
+              scrollTrigger: {
+                trigger: section,
+                start: "bottom 55%",
+                end: "bottom 0%",
+                scrub: true,
+              },
+            });
+          }
+
+          return () => cleanups.forEach((fn) => fn());
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // MOBILE: Optimized dramatic entrances
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const section = sectionRef.current!;
+
+          // Header entrance
+          const header = section.querySelector<HTMLElement>(".achievements-header");
+          if (header) {
+            gsap.fromTo(
+              header,
+              {
+                opacity: 0,
+                y: 60,
+                scale: 0.85,
+                filter: "blur(15px)",
+              },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 1,
+                ease: "back.out(1.5)",
+                scrollTrigger: {
+                  trigger: header,
+                  start: "top 85%",
+                  toggleActions: "play reverse play reverse",
+                },
+              }
+            );
+          }
+
+          // Carousel entrance
+          const carouselWrap = section.querySelector<HTMLElement>(".achievements-carousel-wrap");
+          if (carouselWrap) {
+            gsap.fromTo(
+              carouselWrap,
+              {
+                opacity: 0,
+                y: 50,
+                scale: 0.9,
+                filter: "blur(10px)",
+              },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.9,
+                ease: "power3.out",
+                scrollTrigger: {
+                  trigger: carouselWrap,
+                  start: "top 85%",
+                  toggleActions: "play reverse play reverse",
+                },
+              }
+            );
+          }
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // REDUCED MOTION: Instant visibility
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
+          ".achievements-header, .achievements-carousel-wrap, .achievements-subtitle"
+        );
+        allEls.forEach((el) => {
+          gsap.set(el, {
+            opacity: 1,
+            clearProps: "transform,filter,letterSpacing",
+          });
+        });
+        if (iconRef.current) {
+          gsap.set(iconRef.current, {
+            opacity: 1,
+            clearProps: "transform,filter",
+          });
+        }
+      });
+    },
+    { scope: sectionRef }
+  );
+
   return (
-    <motion.section
+    <section
+      ref={sectionRef}
       id="achievements"
       className="text-foreground max-w-7xl mx-auto w-full px-6 py-12 sm:py-16 md:py-20 min-h-screen flex flex-col justify-center"
-      initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 1.8, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.2 }}
     >
       {/* Centered Heading */}
-      <div className="flex flex-col items-center justify-center mb-8 sm:mb-12">
+      <div className="flex flex-col items-center justify-center mb-8 sm:mb-12 achievements-header">
         <div className="flex items-baseline justify-center gap-4 mb-3 sm:mb-4">
-          <Trophy className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
-          <ScrollReveal
-            size="xl"
-            align="center"
-            variant="default"
-            enableBlur={false}
-            baseOpacity={0.1}
-            baseRotation={0}
-            blurStrength={0}
+          <div ref={iconRef}>
+            <Trophy className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-primary flex-shrink-0 mt-1 md:mt-1.5 lg:mt-2" />
+          </div>
+          <h2
+            ref={headingRef}
+            className="text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground leading-relaxed"
           >
             Achievements
-          </ScrollReveal>
+          </h2>
         </div>
-        <p className="text-lg font-bold">
+        <p className="text-lg font-bold achievements-subtitle">
           Showcasing career milestones, awards, and notable accomplishments
         </p>
       </div>
 
       {/* 3D Carousel */}
-      <div
-        className="w-full overflow-hidden opacity-0
-             transition-all duration-400 ease-in
-             animate-fade-in-up"
-      >
+      <div className="w-full overflow-hidden achievements-carousel-wrap">
         <ThreeDCarousel
           items={achievements}
           autoRotate={true}
@@ -405,6 +684,8 @@ export const AchievementsSection = () => {
           </>
         )}
       </AnimatePresence>
-    </motion.section>
+    </section>
   );
 };
+
+export const AchievementsSection = memo(AchievementsSectionComponent);

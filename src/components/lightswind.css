@@ -91,7 +91,7 @@
   --destructive: 0 62% 30%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: #000; /* Direct hex for dark border */
+  --border: 0 0% 20%;
   --input: 0 0% 20%;
   --ring: 0 0% 20%;
 
@@ -308,9 +308,9 @@
   box-sizing: border-box; /* Good practice for all elements */
 }
 
-/* Smooth scroll behavior */
+/* Scroll handled by GSAP ScrollToPlugin */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Body Styling */
@@ -341,11 +341,6 @@ body {
 .border {
   border-width: 1px;
   border-color: hsl(var(--border)); /* Use CSS variable for consistency */
-}
-.dark .border {
-  border-color: var(
-    --darklw-2
-  ); /* Using darklw-2 as per your original config for dark border */
 }
 
 /* Smooth Scroll Utility */

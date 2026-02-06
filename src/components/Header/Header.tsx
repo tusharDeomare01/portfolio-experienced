@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useThrottleRAF } from "@/hooks/useThrottle";
 import { selectTheme } from "@/store/hooks";
+import { gsap } from "@/lib/gsap";
 import {
   Menu,
   X,
@@ -129,18 +130,16 @@ export default function Header() {
       setIsMobileMenuOpen(false);
       return;
     }
-    
-    // Handle scroll navigation for hash links
+
+    // Handle scroll navigation for hash links — use GSAP ScrollToPlugin
+    // so scroll animation coordinates with ScrollTrigger (native scrollTo conflicts)
     const cleanId = href.replace("#", "");
     const el = document.getElementById(cleanId) || document.querySelector(href);
     if (el) {
-      const offset = 80;
-      const elementPosition = el.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
+      gsap.to(window, {
+        scrollTo: { y: el, offsetY: 80 },
+        duration: 1,
+        ease: "power2.inOut",
       });
     }
     setIsMobileMenuOpen(false); // Close mobile menu on click

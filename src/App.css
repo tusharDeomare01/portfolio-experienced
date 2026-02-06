@@ -399,5 +399,6 @@
 }
 
 html {
-  scroll-behavior: smooth !important;
+  /* scroll-behavior handled by GSAP ScrollToPlugin — CSS smooth conflicts with GSAP animations */
+  scroll-behavior: auto !important;
 }

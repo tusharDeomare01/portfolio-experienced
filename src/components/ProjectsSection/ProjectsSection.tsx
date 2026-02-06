@@ -1,10 +1,9 @@
-import { useState, useMemo, useCallback, memo, lazy, Suspense } from "react";
+import { useState, useMemo, useCallback, memo, lazy, Suspense, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { selectTheme } from "@/store/hooks";
 import { useAppSelector } from "@/store/hooks";
 import { Button } from "../lightswind/button";
 import { Badge } from "../lightswind/badge";
-import { ScrollReveal } from "../lightswind/scroll-reveal";
 import {
   ArrowRight,
   Calendar,
@@ -12,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useIsMobile } from "../hooks/use-mobile";
+import { gsap, SplitText, useGSAP, ScrollTrigger } from "@/lib/gsap";
 
 // Lazy load LightRays for performance
 const LightRays = lazy(() => import("../reactBits/lightRays"));
@@ -27,38 +27,7 @@ const ICON_CLASSES =
   "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-primary flex-shrink-0 mt-1.5 md:mt-2 lg:mt-2.5";
 const SUBTITLE_CLASSES = "text-lg font-bold text-muted-foreground";
 
-// Static CSS styles - created once, never recreated
-const PROJECT_STYLES = `
-  @keyframes projectItemEnter {
-    0% {
-      opacity: 0;
-      transform: translateY(50px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes projectCardEnter {
-    0% {
-      opacity: 0;
-      transform: translateX(var(--card-offset, 0));
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  .animate-project-item-enter {
-    animation: projectItemEnter 0.6s ease-out both;
-  }
-  
-  .animate-project-card-enter {
-    animation: projectCardEnter 0.5s ease-out both;
-  }
-`;
+// CSS keyframes removed — GSAP handles all project card reveals now
 
 // Logo path mapping - pre-computed for performance
 const LOGO_PATHS = {
@@ -113,7 +82,7 @@ const CLASS_NAMES = {
     "relative flex-shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/50 to-background/30 border border-border/40 group-hover:border-primary/60 transition-all duration-500",
   contentBase: "relative flex flex-col gap-6 md:gap-8",
   cardBase:
-    "relative group bg-background/80 backdrop-blur-xl border border-border/60 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out animate-project-card-enter",
+    "relative group bg-background/80 backdrop-blur-xl border border-border/60 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out project-card",
   gradientLeft:
     "absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
   gradientRight:
@@ -203,7 +172,7 @@ const ProjectItem = memo(
             key={`${project.id}-tech-${techIndex}`}
             variant="outline"
             size="sm"
-            className="text-xs font-medium hover:bg-primary/10 hover:border-primary/50 transition-colors cursor-default"
+            className="text-xs font-medium hover:bg-primary/10 hover:border-primary/50 transition-colors cursor-default project-badge"
           >
             {tech}
           </Badge>
@@ -266,7 +235,8 @@ const ProjectItem = memo(
 
     return (
       <div
-        className="relative w-full mb-8 sm:mb-12 md:mb-16 animate-project-item-enter"
+        className="relative w-full mb-8 sm:mb-12 md:mb-16 project-item"
+        data-index={index}
         style={containerStyle}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -298,38 +268,38 @@ const ProjectItem = memo(
 
           <div className={contentClassName}>
             {/* Logo/Image Section */}
-            <div className={logoContainerClassName}>
+            <div className={`${logoContainerClassName} project-logo-wrap`}>
               <ProjectLogo logoPath={logoPath} title={project.title} />
               <StatusBadge status={project.status} />
             </div>
 
             {/* Content Section */}
-            <div className="flex-1 flex flex-col justify-between min-w-0">
+            <div className="flex-1 flex flex-col justify-between min-w-0 project-content">
               <div className="space-y-4 sm:space-y-5">
                 {/* Title and Date */}
                 <div className="space-y-3">
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight transition-all duration-300 group-hover:text-primary group-hover:translate-x-1">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight transition-all duration-300 group-hover:text-primary group-hover:translate-x-1 project-title">
                     {project.title}
                   </h3>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground project-date">
                     <Calendar className="w-4 h-4 flex-shrink-0" />
                     <span className="font-medium">{project.date}</span>
                   </div>
                 </div>
 
                 {/* Description */}
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed line-clamp-3 sm:line-clamp-none">
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed line-clamp-3 sm:line-clamp-none project-desc">
                   {project.subtitle}
                 </p>
 
                 {/* Technology Tags */}
-                <div className="flex flex-wrap gap-2 pt-2">
+                <div className="flex flex-wrap gap-2 pt-2 project-badges">
                   {technologyBadges}
                 </div>
               </div>
 
               {/* CTA Button */}
-              <div className="pt-4 sm:pt-6">
+              <div className="pt-4 sm:pt-6 project-btn">
                 <Button
                   variant="outline"
                   size="lg"
@@ -384,6 +354,582 @@ const ProjectsSectionComponent = () => {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const theme = useAppSelector(selectTheme);
   const isMobile = useIsMobile();
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const iconRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // ═══════════════════════════════════════════════════════════════════
+  // GSAP: ULTRA-DRAMATIC CINEMATIC ENTRANCE SYSTEM
+  // Aggressive, jaw-dropping animations with maximum attention to detail
+  // ═══════════════════════════════════════════════════════════════════
+  useGSAP(
+    () => {
+      if (!sectionRef.current) return;
+
+      const mm = gsap.matchMedia();
+
+      // ═══════════════════════════════════════════════════════════════════
+      // DESKTOP: CINEMATIC ORCHESTRATION
+      // - Explosive icon entrance with dramatic overshoot
+      // - 3D perspective card sweeps from far off-screen
+      // - Staggered internal reveals with blur-to-sharp transitions
+      // - Premium elastic/back easing throughout
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const cleanups: (() => void)[] = [];
+          const section = sectionRef.current!;
+
+          // ─────────────────────────────────────────────────────────────
+          // PHASE 1: HEADER EXPLOSION SEQUENCE
+          // Icon bursts in → Chars cascade with 3D flip → Subtitle fades
+          // ─────────────────────────────────────────────────────────────
+          const headerTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: "top 65%",
+              toggleActions: "play none none reverse",
+            },
+          });
+
+          // ─── Icon: Explosive scale + rotation burst ───────────────
+          if (iconRef.current) {
+            gsap.set(iconRef.current, {
+              scale: 0,
+              rotation: -540, // 1.5 full rotations
+              opacity: 0,
+              filter: "blur(20px)",
+              transformOrigin: "center center",
+            });
+
+            headerTl.to(
+              iconRef.current,
+              {
+                scale: 1.15, // Overshoot first
+                rotation: 15,
+                opacity: 1,
+                filter: "blur(0px)",
+                duration: 0.5,
+                ease: "power4.out",
+              },
+              0
+            );
+
+            // Settle back with elastic bounce
+            headerTl.to(
+              iconRef.current,
+              {
+                scale: 1,
+                rotation: 0,
+                duration: 0.8,
+                ease: "elastic.out(1.5, 0.4)", // Dramatic overshoot bounce
+              },
+              0.4
+            );
+          }
+
+          // ─── Heading: 3D flip chars with perspective ──────────────
+          if (headingRef.current && headingRef.current.textContent?.trim()) {
+            const headingSplit = new SplitText(headingRef.current, {
+              type: "chars",
+              charsClass: "gsap-projects-char",
+              mask: "chars",
+            });
+
+            headingSplit.chars.forEach((char: Element) => {
+              const el = char as HTMLElement;
+              el.style.display = "inline-block";
+              el.style.transformStyle = "preserve-3d";
+            });
+
+            gsap.set(headingSplit.chars, {
+              yPercent: 200,
+              opacity: 0,
+              rotateX: -90, // Flipped back in 3D
+              rotateY: 25,
+              scale: 0.5,
+              filter: "blur(12px)",
+              transformOrigin: "center bottom",
+              transformPerspective: 600,
+            });
+
+            headerTl.to(
+              headingSplit.chars,
+              {
+                yPercent: 0,
+                opacity: 1,
+                rotateX: 0,
+                rotateY: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                stagger: {
+                  each: 0.06,
+                  from: "start",
+                  ease: "power2.in", // Accelerating stagger
+                },
+                duration: 0.9,
+                ease: "back.out(2)", // Strong overshoot
+              },
+              0.15
+            );
+
+            cleanups.push(() => headingSplit.revert());
+          }
+
+          // ─── Subtitle: Dramatic blur-to-sharp with scale ──────────
+          const subtitle = section.querySelector<HTMLElement>(".projects-subtitle");
+          if (subtitle) {
+            gsap.set(subtitle, {
+              y: 50,
+              opacity: 0,
+              filter: "blur(20px)",
+              scale: 0.7,
+              letterSpacing: "0.3em",
+            });
+
+            headerTl.to(
+              subtitle,
+              {
+                y: 0,
+                opacity: 1,
+                filter: "blur(0px)",
+                scale: 1,
+                letterSpacing: "0em",
+                duration: 0.8,
+                ease: "power3.out",
+              },
+              0.5
+            );
+          }
+
+          // ─── Timeline line: Draws from center outward ─────────────
+          const timelineLine = section.querySelector<HTMLElement>(
+            ".projects-timeline-line"
+          );
+          if (timelineLine) {
+            gsap.set(timelineLine, {
+              scaleY: 0,
+              transformOrigin: "center center",
+              opacity: 0,
+              filter: "blur(4px)",
+            });
+
+            headerTl.to(
+              timelineLine,
+              {
+                scaleY: 1,
+                opacity: 1,
+                filter: "blur(0px)",
+                duration: 1.5,
+                ease: "power2.inOut",
+              },
+              0.6
+            );
+          }
+
+          // ─────────────────────────────────────────────────────────────
+          // PHASE 2: CINEMATIC CARD ENTRANCES
+          // Each card sweeps in from far off-screen with 3D rotation
+          // Internal content cascades with staggered blur-to-focus
+          // ─────────────────────────────────────────────────────────────
+          const projectItems = section.querySelectorAll<HTMLElement>(".project-item");
+
+          projectItems.forEach((item) => {
+            const idx = parseInt(item.getAttribute("data-index") || "0", 10);
+            const isEven = idx % 2 === 0;
+            const card = item.querySelector<HTMLElement>(".project-card");
+            const logoContainer = item.querySelector<HTMLElement>(".project-logo-wrap");
+            const logoImg = logoContainer?.querySelector<HTMLElement>("img");
+            const titleEl = item.querySelector<HTMLElement>(".project-title");
+            const dateEl = item.querySelector<HTMLElement>(".project-date");
+            const descEl = item.querySelector<HTMLElement>(".project-desc");
+            const badgesWrap = item.querySelector<HTMLElement>(".project-badges");
+            const btn = item.querySelector<HTMLElement>(".project-btn");
+
+            if (!card) return;
+
+            // ─── Card timeline with dramatic entrance ───────────────
+            // toggleActions: "play reverse play reverse" = replay on every scroll enter
+            const cardTl = gsap.timeline({
+              scrollTrigger: {
+                trigger: item,
+                start: "top 75%",
+                end: "top 20%",
+                toggleActions: "play reverse play reverse",
+                onEnter: () => {
+                  gsap.set(card, { willChange: "transform, opacity, filter" });
+                },
+                onLeave: () => {
+                  gsap.set(card, { willChange: "auto" });
+                },
+                onEnterBack: () => {
+                  gsap.set(card, { willChange: "transform, opacity, filter" });
+                },
+                onLeaveBack: () => {
+                  gsap.set(card, { willChange: "auto" });
+                },
+              },
+            });
+
+            // ─── Card: Ultra-dramatic 3D sweep ──────────────────────
+            gsap.set(card, {
+              transformPerspective: 1000,
+              transformStyle: "preserve-3d",
+              transformOrigin: isEven ? "right center" : "left center",
+            });
+
+            gsap.set(card, {
+              x: isEven ? -350 : 350, // Far off-screen
+              rotateY: isEven ? 45 : -45, // Heavy 3D rotation
+              rotateX: 15,
+              rotateZ: isEven ? -5 : 5,
+              opacity: 0,
+              scale: 0.6,
+              filter: "blur(15px)",
+            });
+
+            // Phase 1: Sweep into view with rotation
+            cardTl.to(
+              card,
+              {
+                x: isEven ? 30 : -30, // Slight overshoot
+                rotateY: isEven ? -8 : 8,
+                rotateX: -3,
+                rotateZ: 0,
+                opacity: 1,
+                scale: 1.02,
+                filter: "blur(2px)",
+                duration: 0.8,
+                ease: "power3.out",
+              },
+              0
+            );
+
+            // Phase 2: Settle into final position with bounce
+            cardTl.to(
+              card,
+              {
+                x: 0,
+                rotateY: 0,
+                rotateX: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.6,
+                ease: "elastic.out(1, 0.6)",
+              },
+              0.6
+            );
+
+            // ─── Logo: Scale + blur + 3D flip reveal ────────────────
+            if (logoContainer) {
+              gsap.set(logoContainer, {
+                scale: 0.3,
+                opacity: 0,
+                rotateY: isEven ? -30 : 30,
+                filter: "blur(20px)",
+                transformPerspective: 800,
+              });
+
+              cardTl.to(
+                logoContainer,
+                {
+                  scale: 1,
+                  opacity: 1,
+                  rotateY: 0,
+                  filter: "blur(0px)",
+                  duration: 0.9,
+                  ease: "back.out(2.5)", // Strong overshoot
+                },
+                0.3
+              );
+
+              // Logo image parallax zoom
+              if (logoImg) {
+                gsap.set(logoImg, { scale: 1.3 });
+                cardTl.to(
+                  logoImg,
+                  {
+                    scale: 1,
+                    duration: 1.2,
+                    ease: "power2.out",
+                  },
+                  0.3
+                );
+              }
+            }
+
+            // ─── Title: Clip-path wipe with glow ────────────────────
+            if (titleEl) {
+              gsap.set(titleEl, {
+                clipPath: isEven ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
+                opacity: 0,
+                filter: "blur(8px)",
+              });
+
+              cardTl.to(
+                titleEl,
+                {
+                  clipPath: "inset(0 0% 0 0%)",
+                  opacity: 1,
+                  filter: "blur(0px)",
+                  duration: 0.7,
+                  ease: "power3.inOut",
+                },
+                0.5
+              );
+            }
+
+            // ─── Date: Pop in with scale bounce ─────────────────────
+            if (dateEl) {
+              gsap.set(dateEl, {
+                y: 20,
+                opacity: 0,
+                scale: 0.8,
+                filter: "blur(6px)",
+              });
+
+              cardTl.to(
+                dateEl,
+                {
+                  y: 0,
+                  opacity: 1,
+                  scale: 1,
+                  filter: "blur(0px)",
+                  duration: 0.5,
+                  ease: "back.out(3)", // Dramatic pop
+                },
+                0.7
+              );
+            }
+
+            // ─── Description: Word-by-word fade (if SplitText available) ─
+            if (descEl) {
+              gsap.set(descEl, {
+                y: 30,
+                opacity: 0,
+                filter: "blur(10px)",
+              });
+
+              cardTl.to(
+                descEl,
+                {
+                  y: 0,
+                  opacity: 1,
+                  filter: "blur(0px)",
+                  duration: 0.6,
+                  ease: "power2.out",
+                },
+                0.8
+              );
+            }
+
+            // ─── Badges: Explosive center-out wave with 3D tilt ─────
+            if (badgesWrap) {
+              const badges = badgesWrap.querySelectorAll<HTMLElement>(".project-badge");
+              if (badges.length) {
+                gsap.set(badges, {
+                  scale: 0,
+                  opacity: 0,
+                  y: 20,
+                  rotateX: -45,
+                  filter: "blur(10px)",
+                  transformPerspective: 400,
+                });
+
+                cardTl.to(
+                  badges,
+                  {
+                    scale: 1,
+                    opacity: 1,
+                    y: 0,
+                    rotateX: 0,
+                    filter: "blur(0px)",
+                    duration: 0.6,
+                    ease: "back.out(2.5)",
+                    stagger: {
+                      each: 0.05,
+                      from: "center",
+                      ease: "power2.out",
+                    },
+                  },
+                  0.9
+                );
+              }
+            }
+
+            // ─── CTA Button: Dramatic opposite slide with elastic ───
+            if (btn) {
+              gsap.set(btn, {
+                x: isEven ? 150 : -150,
+                opacity: 0,
+                scale: 0.7,
+                rotateY: isEven ? -20 : 20,
+                filter: "blur(8px)",
+                transformPerspective: 600,
+              });
+
+              cardTl.to(
+                btn,
+                {
+                  x: 0,
+                  opacity: 1,
+                  scale: 1,
+                  rotateY: 0,
+                  filter: "blur(0px)",
+                  duration: 0.8,
+                  ease: "elastic.out(1.2, 0.5)",
+                },
+                1.0
+              );
+            }
+          });
+
+          // ─────────────────────────────────────────────────────────────
+          // PHASE 3: SCROLL EXIT — Projects → Achievements transition
+          // Content recedes with blur as user scrolls past
+          // ─────────────────────────────────────────────────────────────
+          const exitScrollTriggers: ScrollTrigger[] = [];
+          const projectsContent = section.querySelector<HTMLElement>(".projects-header");
+          if (projectsContent) {
+            const exitTween = gsap.to(projectsContent, {
+              yPercent: -15,
+              opacity: 0,
+              filter: "blur(6px)",
+              scale: 0.95,
+              scrollTrigger: {
+                trigger: section,
+                start: "bottom 60%",
+                end: "bottom 5%",
+                scrub: true,
+              },
+            });
+            if (exitTween.scrollTrigger) {
+              exitScrollTriggers.push(exitTween.scrollTrigger);
+            }
+          }
+
+          // ─── Tour event handlers: Disable exit animations during tour ─────
+          const handleTourStart = () => {
+            exitScrollTriggers.forEach((st) => st.disable());
+            if (projectsContent) {
+              gsap.set(projectsContent, { yPercent: 0, opacity: 1, filter: "none", scale: 1, clearProps: "filter" });
+            }
+          };
+
+          const handleTourEnd = () => {
+            exitScrollTriggers.forEach((st) => st.enable());
+          };
+
+          window.addEventListener("tour-start", handleTourStart);
+          window.addEventListener("tour-end", handleTourEnd);
+
+          cleanups.push(() => {
+            window.removeEventListener("tour-start", handleTourStart);
+            window.removeEventListener("tour-end", handleTourEnd);
+          });
+
+          return () => cleanups.forEach((fn) => fn());
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // MOBILE: Optimized dramatic entrances (lighter but still impressive)
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const section = sectionRef.current!;
+
+          // Header entrance with scale
+          const header = section.querySelector<HTMLElement>(".projects-header");
+          if (header) {
+            gsap.fromTo(
+              header,
+              {
+                opacity: 0,
+                y: 50,
+                scale: 0.9,
+                filter: "blur(10px)",
+              },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.8,
+                ease: "back.out(1.5)",
+                scrollTrigger: {
+                  trigger: header,
+                  start: "top 85%",
+                  toggleActions: "play reverse play reverse",
+                },
+              }
+            );
+          }
+
+          // Card entrances with 3D tilt
+          const projectItems = section.querySelectorAll<HTMLElement>(".project-item");
+          projectItems.forEach((item) => {
+            const card = item.querySelector<HTMLElement>(".project-card");
+
+            if (card) {
+              gsap.set(card, {
+                transformPerspective: 800,
+              });
+
+              gsap.fromTo(
+                card,
+                {
+                  opacity: 0,
+                  y: 60,
+                  scale: 0.85,
+                  rotateX: 10,
+                  filter: "blur(8px)",
+                },
+                {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  rotateX: 0,
+                  filter: "blur(0px)",
+                  duration: 0.9,
+                  ease: "back.out(1.7)",
+                  scrollTrigger: {
+                    trigger: item,
+                    start: "top 82%",
+                    toggleActions: "play reverse play reverse",
+                  },
+                }
+              );
+            }
+          });
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // REDUCED MOTION: Instant visibility, no animations
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
+          ".projects-header, .project-item, .project-card, .project-btn, .projects-subtitle, .project-logo-wrap, .project-title, .project-date, .project-desc, .project-badge"
+        );
+        allEls.forEach((el) => {
+          gsap.set(el, {
+            opacity: 1,
+            clearProps: "transform,filter,clipPath,letterSpacing",
+          });
+        });
+        if (iconRef.current) {
+          gsap.set(iconRef.current, {
+            opacity: 1,
+            clearProps: "transform,filter",
+          });
+        }
+      });
+    },
+    { scope: sectionRef }
+  );
 
   // Memoize isDarkMode calculation
   const isDarkMode = useMemo(() => theme === "dark", [theme]);
@@ -425,38 +971,36 @@ const ProjectsSectionComponent = () => {
   }, [isDarkMode, hoveredProject, createHoverHandlers, handleNavigate]);
 
   return (
-    <div id="projects" className={CONTAINER_CLASSES}>
+    <div ref={sectionRef} id="projects" className={CONTAINER_CLASSES}>
       <section className={SECTION_CLASSES}>
-        <div className={HEADER_CLASSES}>
+        <div className={`${HEADER_CLASSES} projects-header`}>
           <div className={TITLE_WRAPPER_CLASSES}>
-            <FolderKanban className={ICON_CLASSES} />
-            <ScrollReveal
-              size="xl"
-              align="center"
-              variant="default"
-              enableBlur={false}
-              baseOpacity={0.1}
-              baseRotation={0}
-              blurStrength={0}
+            <div ref={iconRef}>
+              <FolderKanban className={ICON_CLASSES} />
+            </div>
+            <h2
+              ref={headingRef}
+              className="text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground leading-relaxed"
             >
               Projects
-            </ScrollReveal>
+            </h2>
           </div>
-          <p className={SUBTITLE_CLASSES}>Explore my latest work...</p>
+          <p className={`${SUBTITLE_CLASSES} projects-subtitle`}>
+            Explore my latest work...
+          </p>
         </div>
 
         {/* Projects List Container */}
         <div className="relative">
           {/* Vertical timeline line (hidden on mobile) */}
           {!isMobile && (
-            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
+            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-primary/20 to-transparent projects-timeline-line" />
           )}
 
           {/* Projects List */}
           <div className="relative space-y-0">{projectItems}</div>
         </div>
       </section>
-      <style>{PROJECT_STYLES}</style>
     </div>
   );
 };

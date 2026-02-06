@@ -26,6 +26,14 @@ export function TourProvider({ children }: { children: ReactNode }) {
   const startTour = () => {
     setIsTourActive(true);
     setCurrentStep(0);
+    if (typeof window !== "undefined") {
+      // Dispatch gsap-intro-complete event to ensure Hero elements are visible
+      // This triggers the Hero entrance animation if it hasn't played yet
+      window.dispatchEvent(new CustomEvent("gsap-intro-complete"));
+      // Dispatch tour-start event to disable scroll-triggered exit animations
+      // This prevents sections from fading out when Tour scrolls between them
+      window.dispatchEvent(new CustomEvent("tour-start"));
+    }
   };
 
   const endTour = () => {
@@ -34,6 +42,8 @@ export function TourProvider({ children }: { children: ReactNode }) {
     setHasSeenTour(true);
     if (typeof window !== "undefined") {
       localStorage.setItem("hasSeenTour", "true");
+      // Dispatch tour-end event to re-enable scroll-triggered animations
+      window.dispatchEvent(new CustomEvent("tour-end"));
     }
   };
 

@@ -40,9 +40,9 @@
   font-family: "Geist Sans", sans-serif !important;
 }
 
-/* Smooth scrolling optimizations */
+/* Scroll handled by GSAP ScrollToPlugin — CSS smooth conflicts with GSAP animations */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;

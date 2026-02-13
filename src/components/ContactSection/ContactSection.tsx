@@ -444,70 +444,86 @@ const ContactSectionComponent = () => {
       );
 
       // ═══════════════════════════════════════════════════════════════════════
-      // MOBILE — Simplified, performant entrance
+      // MOBILE — Premium entrance animations (FIX: added reduced-motion guard)
       // ═══════════════════════════════════════════════════════════════════════
-      mm.add("(max-width: 767px)", () => {
-        // Icon simple fade-in
-        gsap.set(icon, { opacity: 0, scale: 0.8, y: -20 });
-        gsap.to(icon, {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 80%",
-            toggleActions: "play reverse play reverse",
-          },
-        });
+      mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
+        // ─── Icon: Rotation spin-in with spring ───
+        gsap.fromTo(
+          icon,
+          { opacity: 0, rotation: -90, scale: 0.5 },
+          {
+            opacity: 1, rotation: 0, scale: 1, duration: 0.5, ease: "spring",
+            scrollTrigger: { trigger: section, start: "top 85%", toggleActions: "play reverse play reverse" },
+            clearProps: "transform",
+          }
+        );
 
-        // Heading simple reveal
-        gsap.set(heading, { opacity: 0, y: 30 });
-        gsap.to(heading, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 78%",
-            toggleActions: "play reverse play reverse",
-          },
-        });
+        // ─── Heading: clipPath reveal from bottom ───
+        gsap.fromTo(
+          heading,
+          { clipPath: "inset(100% 0 0 0)", opacity: 1 },
+          {
+            clipPath: "inset(0% 0 0 0)", duration: 0.5, ease: "reveal",
+            scrollTrigger: { trigger: section, start: "top 83%", toggleActions: "play reverse play reverse" },
+            onComplete: () => { gsap.set(heading, { clearProps: "clipPath" }); },
+          }
+        );
 
-        // Subtitle
+        // ─── Subtitle: Blur-to-focus ───
         const subtitle = section.querySelector<HTMLElement>(".contact-subtitle");
         if (subtitle) {
-          gsap.set(subtitle, { opacity: 0, y: 20 });
-          gsap.to(subtitle, {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 75%",
-              toggleActions: "play reverse play reverse",
-            },
-          });
+          gsap.fromTo(
+            subtitle,
+            { opacity: 0, filter: "blur(3px)" },
+            {
+              opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "smooth.out",
+              scrollTrigger: { trigger: section, start: "top 80%", toggleActions: "play reverse play reverse" },
+              onComplete: () => { gsap.set(subtitle, { clearProps: "filter" }); },
+            }
+          );
         }
 
-        // Card
+        // ─── Card: Perspective tilt entry ───
         const card = section.querySelector<HTMLElement>(".contact-card");
         if (card) {
-          gsap.set(card, { opacity: 0, y: 40 });
-          gsap.to(card, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 70%",
-              toggleActions: "play reverse play reverse",
-            },
-          });
+          gsap.fromTo(
+            card,
+            { opacity: 0, y: 35, rotateX: 8, transformPerspective: 800, filter: "blur(4px)" },
+            {
+              opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)", duration: 0.6, ease: "smooth.out",
+              scrollTrigger: { trigger: card, start: "top 85%", toggleActions: "play reverse play reverse" },
+              onComplete: () => { gsap.set(card, { clearProps: "filter,transform" }); },
+            }
+          );
+
+          // ─── Form fields: Staggered slide-up with blur clearing ───
+          const formFields = section.querySelectorAll<HTMLElement>(".contact-form-field");
+          if (formFields.length) {
+            gsap.fromTo(
+              formFields,
+              { opacity: 0, y: 20, filter: "blur(2px)" },
+              {
+                opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "smooth.out",
+                stagger: 0.08,
+                scrollTrigger: { trigger: card, start: "top 75%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(formFields, { clearProps: "filter" }); },
+              }
+            );
+          }
+
+          // ─── Submit button: Scale bounce entrance ───
+          const submitBtn = section.querySelector<HTMLElement>(".contact-submit-btn");
+          if (submitBtn) {
+            gsap.fromTo(
+              submitBtn,
+              { opacity: 0, scale: 0.85 },
+              {
+                opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)",
+                scrollTrigger: { trigger: submitBtn, start: "top 92%", toggleActions: "play reverse play reverse" },
+                clearProps: "transform",
+              }
+            );
+          }
         }
       });
 

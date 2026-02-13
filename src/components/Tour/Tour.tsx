@@ -817,7 +817,7 @@ export function Tour({
           duration: 0.4,
           ease: [0.4, 0, 0.2, 1],
         }}
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-black/60 transition-opacity duration-300"
         style={{ clipPath: overlayClipPath }}
       />
 

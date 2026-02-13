@@ -223,30 +223,67 @@ const EducationSectionComponent = () => {
       );
 
       // ═══════════════════════════════════════════════════════════════════
-      // MOBILE: Simple fade-in cascade
+      // MOBILE: Premium entrance animations
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
-          const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
-            ".edu-heading-group, .edu-card"
-          );
+          const section = sectionRef.current!;
 
-          allEls.forEach((el, i) => {
+          // ─── Icon: Spin-in with spring ───
+          if (iconRef.current) {
             gsap.fromTo(
-              el,
-              { opacity: 0, y: 30 },
+              iconRef.current,
+              { opacity: 0, rotation: -90, scale: 0.5 },
               {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                ease: "smooth.out",
-                scrollTrigger: {
-                  trigger: el,
-                  start: "top 90%",
-                  toggleActions: "play reverse play reverse",
-                },
-                delay: i * 0.08,
+                opacity: 1, rotation: 0, scale: 1, duration: 0.5, ease: "spring",
+                scrollTrigger: { trigger: section, start: "top 88%", toggleActions: "play reverse play reverse" },
+                clearProps: "transform",
+              }
+            );
+          }
+
+          // ─── Heading group: clipPath reveal from bottom ───
+          const headingGroup = section.querySelector<HTMLElement>(".edu-heading-group");
+          if (headingGroup) {
+            gsap.fromTo(
+              headingGroup,
+              { clipPath: "inset(100% 0 0 0)", opacity: 1 },
+              {
+                clipPath: "inset(0% 0 0 0)", duration: 0.5, ease: "reveal",
+                scrollTrigger: { trigger: headingGroup, start: "top 90%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(headingGroup, { clearProps: "clipPath" }); },
+              }
+            );
+          }
+
+          // ─── Decorative line: scaleX grow from left (was not animated) ───
+          const decorLine = section.querySelector<HTMLElement>(".edu-decor-line");
+          if (decorLine) {
+            gsap.fromTo(
+              decorLine,
+              { scaleX: 0, transformOrigin: "left center" },
+              {
+                scaleX: 1, duration: 0.5, ease: "smooth.out",
+                scrollTrigger: { trigger: decorLine, start: "top 92%", toggleActions: "play reverse play reverse" },
+              }
+            );
+          }
+
+          // ─── Cards: Alternate slide direction with light rotateY ───
+          const eduCards = section.querySelectorAll<HTMLElement>(".edu-card");
+          eduCards.forEach((card, i) => {
+            const isOdd = i % 2 !== 0;
+            gsap.fromTo(
+              card,
+              {
+                opacity: 0, x: isOdd ? 30 : -30, rotateY: isOdd ? 5 : -5,
+                filter: "blur(3px)", transformPerspective: 800,
+              },
+              {
+                opacity: 1, x: 0, rotateY: 0, filter: "blur(0px)", duration: 0.6, ease: "smooth.out",
+                scrollTrigger: { trigger: card, start: "top 90%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(card, { clearProps: "filter,transform" }); },
               }
             );
           });

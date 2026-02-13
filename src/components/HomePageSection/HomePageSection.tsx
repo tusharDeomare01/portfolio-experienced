@@ -10,6 +10,7 @@ import { useLocation } from "react-router-dom";
 import { useIsMobile } from "../hooks/use-mobile";
 import { useTourContext } from "../Tour/TourContext";
 import { useThrottleRAF } from "@/hooks/useThrottle";
+import { useGSAPScrollRestoration } from "@/hooks/useGSAPScrollRestoration";
 import { gsap } from "@/lib/gsap";
 import {
   Briefcase,
@@ -68,6 +69,7 @@ const HomePageSection = () => {
   const isMobile = useIsMobile();
   const tour = useTourContext();
   const location = useLocation();
+  const { saveScrollPosition: _saveScrollPosition } = useGSAPScrollRestoration();
   // Handle scroll-to-section when navigating back from project pages
   useEffect(() => {
     const scrollTarget = (location.state as { scrollTo?: string })?.scrollTo;

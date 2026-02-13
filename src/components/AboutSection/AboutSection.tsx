@@ -198,30 +198,50 @@ const AboutSectionComponent = () => {
       );
 
       // ═══════════════════════════════════════════════════════════════════
-      // MOBILE: Simple fade-in cascade
+      // MOBILE: Premium entrance animations
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
-          const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
-            ".about-paragraph, .about-heading"
-          );
+          const section = sectionRef.current!;
 
-          allEls.forEach((el, i) => {
+          // ─── Icon: Rotation spin-in with spring ───
+          if (iconRef.current) {
             gsap.fromTo(
-              el,
-              { opacity: 0, y: 25 },
+              iconRef.current,
+              { opacity: 0, rotation: -90, scale: 0.5 },
               {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                ease: "smooth.out",
-                scrollTrigger: {
-                  trigger: el,
-                  start: "top 88%",
-                  toggleActions: "play reverse play reverse",
-                },
-                delay: i * 0.08,
+                opacity: 1, rotation: 0, scale: 1, duration: 0.5, ease: "spring",
+                scrollTrigger: { trigger: section, start: "top 88%", toggleActions: "play reverse play reverse" },
+                clearProps: "transform",
+              }
+            );
+          }
+
+          // ─── Heading: clipPath reveal from left ───
+          const heading = section.querySelector<HTMLElement>(".about-heading");
+          if (heading) {
+            gsap.fromTo(
+              heading,
+              { clipPath: "inset(0 100% 0 0)", opacity: 1 },
+              {
+                clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "reveal",
+                scrollTrigger: { trigger: heading, start: "top 88%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(heading, { clearProps: "clipPath" }); },
+              }
+            );
+          }
+
+          // ─── Paragraphs: Staggered slide from right with blur clearing ───
+          const paragraphs = section.querySelectorAll<HTMLElement>(".about-paragraph");
+          paragraphs.forEach((p) => {
+            gsap.fromTo(
+              p,
+              { opacity: 0, x: 30, filter: "blur(3px)" },
+              {
+                opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "smooth.out",
+                scrollTrigger: { trigger: p, start: "top 90%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(p, { clearProps: "filter" }); },
               }
             );
           });

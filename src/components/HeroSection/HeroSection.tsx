@@ -27,6 +27,40 @@ const HeroSectionComponent = () => {
   const accentLineRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
+  // ─── Shared play-after-intro logic ───
+  // Reusable helper: plays timeline after GSAPPageIntro completes
+  const setupPlayTrigger = (
+    tl: gsap.core.Timeline,
+    cleanups: (() => void)[]
+  ) => {
+    let hasPlayed = false;
+    const play = () => {
+      if (hasPlayed) return;
+      hasPlayed = true;
+      tl.play();
+    };
+
+    if (
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("gsap-hero-revealed") === "true"
+    ) {
+      requestAnimationFrame(() => play());
+    } else {
+      window.addEventListener("gsap-intro-complete", play);
+      const fallback = setTimeout(play, 500);
+      cleanups.push(() => {
+        window.removeEventListener("gsap-intro-complete", play);
+        clearTimeout(fallback);
+      });
+    }
+
+    tl.eventCallback("onComplete", () => {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("gsap-hero-revealed", "true");
+      }
+    });
+  };
+
   useGSAP(
     () => {
       if (!heroRef.current) return;
@@ -34,36 +68,36 @@ const HeroSectionComponent = () => {
       const mm = gsap.matchMedia();
 
       // ═══════════════════════════════════════════════════════════════════
-      // DESKTOP: Layout-shifting entrance animations
+      // DESKTOP (≥1024px): Full cinematic entrance with SplitText
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
-        "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+        "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
         () => {
           const cleanups: (() => void)[] = [];
 
-          // ─── Master entrance timeline ──────────────────────────────
           const tl = gsap.timeline({
             paused: true,
             defaults: { ease: "power3.out" },
           });
 
-          // ─── PHASE 1: Image — Opacity + y only ───
+          // ─── PHASE 1: Image — Opacity + y with soft scale ───
           if (imageWrapperRef.current) {
-            gsap.set(imageWrapperRef.current, { opacity: 0, y: 60 });
+            gsap.set(imageWrapperRef.current, {
+              opacity: 0,
+              y: 60,
+              scale: 0.9,
+            });
             tl.to(
               imageWrapperRef.current,
-              { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 1.1,
+                ease: "power3.out",
+                clearProps: "transform",
+              },
               0
-            );
-          }
-
-          // ─── Glow ring: Opacity fade in ───
-          if (glowRef.current) {
-            gsap.set(glowRef.current, { opacity: 0 });
-            tl.to(
-              glowRef.current,
-              { opacity: 1, duration: 1.2, ease: "power2.out" },
-              0.1
             );
           }
 
@@ -103,12 +137,23 @@ const HeroSectionComponent = () => {
             tl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.8 }, 0.15);
           }
 
-          // ─── PHASE 3: Pronoun — Slide from left ───
+          // ─── PHASE 3: Pronoun — Slide from left with blur clearing ───
           if (pronounRef.current) {
-            gsap.set(pronounRef.current, { opacity: 0, x: -40 });
+            gsap.set(pronounRef.current, {
+              opacity: 0,
+              x: -40,
+              filter: "blur(4px)",
+            });
             tl.to(
               pronounRef.current,
-              { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" },
+              {
+                opacity: 1,
+                x: 0,
+                filter: "blur(0px)",
+                duration: 0.6,
+                ease: "power3.out",
+                clearProps: "filter",
+              },
               0.5
             );
           }
@@ -122,14 +167,18 @@ const HeroSectionComponent = () => {
             });
             tl.to(
               accentLineRef.current,
-              { scaleX: 1, opacity: 1, duration: 0.6, ease: "power2.out" },
+              { scaleX: 1, opacity: 1, duration: 0.7, ease: "power2.inOut" },
               0.6
             );
           }
 
-          // ─── PHASE 5: Sparkle icon — Spring bounce ───
+          // ─── PHASE 5: Sparkle icon — Elastic spin-in ───
           if (sparkleRef.current) {
-            gsap.set(sparkleRef.current, { opacity: 0, scale: 0, rotation: -180 });
+            gsap.set(sparkleRef.current, {
+              opacity: 0,
+              scale: 0,
+              rotation: -180,
+            });
             tl.to(
               sparkleRef.current,
               {
@@ -143,29 +192,56 @@ const HeroSectionComponent = () => {
             );
           }
 
-          // ─── PHASE 6: Subtitle — Fade up ───
+          // ─── PHASE 6: Subtitle — Blur-to-focus with y shift ───
           if (subtitleRef.current) {
-            gsap.set(subtitleRef.current, { opacity: 0, y: 30 });
+            gsap.set(subtitleRef.current, {
+              opacity: 0,
+              y: 25,
+              filter: "blur(3px)",
+            });
             tl.to(
               subtitleRef.current,
-              { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-              0.8
+              {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 0.6,
+                ease: "power2.out",
+                clearProps: "filter",
+              },
+              0.85
             );
           }
 
-          // ─── PHASE 7: Email — Slide from left ───
+          // ─── PHASE 7: Email — Slide from left with blur ───
           if (emailRef.current) {
-            gsap.set(emailRef.current, { opacity: 0, x: -40 });
+            gsap.set(emailRef.current, {
+              opacity: 0,
+              x: -30,
+              filter: "blur(3px)",
+            });
             tl.to(
               emailRef.current,
-              { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" },
-              0.9
+              {
+                opacity: 1,
+                x: 0,
+                filter: "blur(0px)",
+                duration: 0.6,
+                ease: "power3.out",
+                clearProps: "filter",
+              },
+              0.95
             );
           }
 
           // ─── PHASE 8: CTA button — Elastic cascade ───
           if (buttonsRef.current) {
-            gsap.set(buttonsRef.current, { opacity: 0, scale: 0, y: 30, rotation: -15 });
+            gsap.set(buttonsRef.current, {
+              opacity: 0,
+              scale: 0,
+              y: 30,
+              rotation: -15,
+            });
             tl.to(
               buttonsRef.current,
               {
@@ -175,15 +251,15 @@ const HeroSectionComponent = () => {
                 rotation: 0,
                 duration: 0.8,
                 ease: "elastic.out(1, 0.4)",
+                clearProps: "transform",
               },
-              1.0
+              1.05
             );
           }
 
-          // ─── Idle animations ────────────────
+          // ─── Idle: Image float + sparkle slow spin ───
           let floatTween: gsap.core.Tween | null = null;
           let sparkleTween: gsap.core.Tween | null = null;
-          let glowPulseTween: gsap.core.Tween | null = null;
 
           if (imageWrapperRef.current) {
             floatTween = gsap.to(imageWrapperRef.current, {
@@ -208,62 +284,25 @@ const HeroSectionComponent = () => {
             cleanups.push(() => sparkleTween?.kill());
           }
 
-          if (glowRef.current) {
-            glowPulseTween = gsap.to(glowRef.current, {
-              opacity: 0.6,
-              duration: 2.5,
-              repeat: -1,
-              yoyo: true,
-              ease: "sine.inOut",
-              paused: true,
-            });
-            cleanups.push(() => glowPulseTween?.kill());
-          }
-
           tl.call(() => {
             floatTween?.play();
             sparkleTween?.play();
-            glowPulseTween?.play();
           });
 
-          // ─── Play after intro overlay ──────────────────
-          // Check if intro already completed (sessionStorage flag set by GSAPPageIntro)
-          // or if gsap-intro-complete event fires. The event can fire multiple times
-          // (e.g., when Tour starts), so we use a flag to prevent double-playing.
-          let hasPlayed = false;
-          const play = () => {
-            if (hasPlayed) return;
-            hasPlayed = true;
-            tl.play();
-          };
+          // ─── Play after intro overlay ───
+          setupPlayTrigger(tl, cleanups);
 
-          // If the intro already played in this session, play immediately
-          if (typeof window !== "undefined" && sessionStorage.getItem("gsap-hero-revealed") === "true") {
-            // Small delay to ensure DOM is ready
-            requestAnimationFrame(() => play());
-          } else {
-            // Listen for the event (can fire multiple times from GSAPPageIntro or Tour)
-            window.addEventListener("gsap-intro-complete", play);
-            // Fallback timeout reduced to 500ms for better UX during navigation
-            const fallback = setTimeout(play, 500);
-            cleanups.push(() => {
-              window.removeEventListener("gsap-intro-complete", play);
-              clearTimeout(fallback);
-            });
-          }
-
-          // Mark as revealed when timeline completes
-          tl.eventCallback("onComplete", () => {
-            if (typeof window !== "undefined") {
-              sessionStorage.setItem("gsap-hero-revealed", "true");
-            }
-          });
-
-          // ─── CTA button: Magnetic hover ────────
+          // ─── CTA button: Magnetic hover ───
           if (buttonWrapperRef.current) {
             const btn = buttonWrapperRef.current;
-            const xTo = gsap.quickTo(btn, "x", { duration: 0.4, ease: "power3" });
-            const yTo = gsap.quickTo(btn, "y", { duration: 0.4, ease: "power3" });
+            const xTo = gsap.quickTo(btn, "x", {
+              duration: 0.4,
+              ease: "power3",
+            });
+            const yTo = gsap.quickTo(btn, "y", {
+              duration: 0.4,
+              ease: "power3",
+            });
 
             const handleBtnMove = (e: MouseEvent) => {
               const rect = btn.getBoundingClientRect();
@@ -272,11 +311,21 @@ const HeroSectionComponent = () => {
             };
 
             const handleBtnEnter = () => {
-              gsap.to(btn, { scale: 1.08, duration: 0.3, ease: "power2.out" });
+              gsap.to(btn, {
+                scale: 1.08,
+                duration: 0.3,
+                ease: "power2.out",
+              });
             };
 
             const handleBtnLeave = () => {
-              gsap.to(btn, { x: 0, y: 0, scale: 1, duration: 1, ease: "elastic.out(1.1, 0.4)" });
+              gsap.to(btn, {
+                x: 0,
+                y: 0,
+                scale: 1,
+                duration: 1,
+                ease: "elastic.out(1.1, 0.4)",
+              });
             };
 
             btn.addEventListener("mousemove", handleBtnMove);
@@ -292,14 +341,14 @@ const HeroSectionComponent = () => {
           }
 
           // ═══════════════════════════════════════════════════════════
-          // SCROLL EXIT: Simple yPercent parallax ONLY (no opacity)
+          // SCROLL EXIT: Parallax with subtle 3D perspective
           // ═══════════════════════════════════════════════════════════
           const hero = heroRef.current!;
 
-          // Left text content — parallax up
+          // Left text — parallax up + subtle fade at end
           if (leftRef.current) {
             gsap.to(leftRef.current, {
-              yPercent: -15,
+              yPercent: -18,
               ease: "none",
               scrollTrigger: {
                 trigger: hero,
@@ -310,7 +359,292 @@ const HeroSectionComponent = () => {
             });
           }
 
-          // Right image section — slower parallax
+          // Right image — slower parallax with slight scale
+          const rightSection = hero.querySelector(".hero-right-section");
+          if (rightSection) {
+            gsap.to(rightSection, {
+              yPercent: -10,
+              scale: 0.96,
+              ease: "none",
+              scrollTrigger: {
+                trigger: hero,
+                start: "top top",
+                end: "bottom top",
+                scrub: 1.5,
+              },
+            });
+          }
+
+          return () => cleanups.forEach((fn) => fn());
+        }
+      );
+
+      // ═══════════════════════════════════════════════════════════════════
+      // TABLET (768-1023px): Refined entrance — no SplitText, clipPath
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add(
+        "(min-width: 768px) and (max-width: 1023px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const cleanups: (() => void)[] = [];
+
+          const tl = gsap.timeline({
+            paused: true,
+            defaults: { ease: "smooth.out" },
+          });
+
+          // ─── Image: Opacity + y + soft scale ───
+          if (imageWrapperRef.current) {
+            gsap.set(imageWrapperRef.current, {
+              opacity: 0,
+              y: 40,
+              scale: 0.92,
+            });
+            tl.to(
+              imageWrapperRef.current,
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.8,
+                ease: "power3.out",
+                clearProps: "transform",
+              },
+              0
+            );
+          }
+
+          // ─── Name: clipPath reveal from bottom ───
+          if (nameRef.current) {
+            gsap.set(nameRef.current, {
+              clipPath: "inset(100% 0 0 0)",
+              opacity: 1,
+            });
+            tl.to(
+              nameRef.current,
+              {
+                clipPath: "inset(0% 0 0 0)",
+                duration: 0.7,
+                ease: "reveal",
+                clearProps: "clipPath",
+              },
+              0.1
+            );
+          }
+
+          // ─── Pronoun: Slide from left ───
+          if (pronounRef.current) {
+            gsap.set(pronounRef.current, {
+              opacity: 0,
+              x: -30,
+              filter: "blur(3px)",
+            });
+            tl.to(
+              pronounRef.current,
+              {
+                opacity: 1,
+                x: 0,
+                filter: "blur(0px)",
+                duration: 0.5,
+                clearProps: "filter",
+              },
+              0.35
+            );
+          }
+
+          // ─── Accent line: scaleX draw from left ───
+          if (accentLineRef.current) {
+            gsap.set(accentLineRef.current, {
+              scaleX: 0,
+              opacity: 0,
+              transformOrigin: "left center",
+            });
+            tl.to(
+              accentLineRef.current,
+              { scaleX: 1, opacity: 1, duration: 0.6, ease: "power2.inOut" },
+              0.45
+            );
+          }
+
+          // ─── Sparkle: Spin-in with spring ───
+          if (sparkleRef.current) {
+            gsap.set(sparkleRef.current, {
+              opacity: 0,
+              scale: 0,
+              rotation: -120,
+            });
+            tl.to(
+              sparkleRef.current,
+              {
+                opacity: 1,
+                scale: 1,
+                rotation: 0,
+                duration: 0.6,
+                ease: "elastic.out(1, 0.5)",
+              },
+              0.55
+            );
+          }
+
+          // ─── Subtitle: Blur-to-focus ───
+          if (subtitleRef.current) {
+            gsap.set(subtitleRef.current, {
+              opacity: 0,
+              y: 20,
+              filter: "blur(3px)",
+            });
+            tl.to(
+              subtitleRef.current,
+              {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 0.5,
+                clearProps: "filter",
+              },
+              0.65
+            );
+          }
+
+          // ─── Email: Slide from left ───
+          if (emailRef.current) {
+            gsap.set(emailRef.current, {
+              opacity: 0,
+              x: -25,
+              filter: "blur(2px)",
+            });
+            tl.to(
+              emailRef.current,
+              {
+                opacity: 1,
+                x: 0,
+                filter: "blur(0px)",
+                duration: 0.5,
+                clearProps: "filter",
+              },
+              0.75
+            );
+          }
+
+          // ─── CTA button: Scale bounce ───
+          if (buttonsRef.current) {
+            gsap.set(buttonsRef.current, {
+              opacity: 0,
+              scale: 0.85,
+              y: 20,
+            });
+            tl.to(
+              buttonsRef.current,
+              {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: 0.6,
+                ease: "back.out(1.7)",
+                clearProps: "transform",
+              },
+              0.85
+            );
+          }
+
+          // ─── Idle: Image float + sparkle spin ───
+          let floatTween: gsap.core.Tween | null = null;
+          let sparkleTween: gsap.core.Tween | null = null;
+
+          if (imageWrapperRef.current) {
+            floatTween = gsap.to(imageWrapperRef.current, {
+              y: -8,
+              duration: 3,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              paused: true,
+            });
+            cleanups.push(() => floatTween?.kill());
+          }
+
+          if (sparkleRef.current) {
+            sparkleTween = gsap.to(sparkleRef.current, {
+              rotation: "+=360",
+              duration: 10,
+              repeat: -1,
+              ease: "none",
+              paused: true,
+            });
+            cleanups.push(() => sparkleTween?.kill());
+          }
+
+          tl.call(() => {
+            floatTween?.play();
+            sparkleTween?.play();
+          });
+
+          // ─── Play after intro overlay ───
+          setupPlayTrigger(tl, cleanups);
+
+          // ─── CTA button: Magnetic hover (lighter intensity for tablet) ───
+          if (buttonWrapperRef.current) {
+            const btn = buttonWrapperRef.current;
+            const xTo = gsap.quickTo(btn, "x", {
+              duration: 0.4,
+              ease: "power3",
+            });
+            const yTo = gsap.quickTo(btn, "y", {
+              duration: 0.4,
+              ease: "power3",
+            });
+
+            const handleBtnMove = (e: MouseEvent) => {
+              const rect = btn.getBoundingClientRect();
+              xTo((e.clientX - (rect.left + rect.width / 2)) * 0.25);
+              yTo((e.clientY - (rect.top + rect.height / 2)) * 0.25);
+            };
+
+            const handleBtnEnter = () => {
+              gsap.to(btn, {
+                scale: 1.05,
+                duration: 0.3,
+                ease: "power2.out",
+              });
+            };
+
+            const handleBtnLeave = () => {
+              gsap.to(btn, {
+                x: 0,
+                y: 0,
+                scale: 1,
+                duration: 0.8,
+                ease: "elastic.out(1.1, 0.4)",
+              });
+            };
+
+            btn.addEventListener("mousemove", handleBtnMove);
+            btn.addEventListener("mouseenter", handleBtnEnter);
+            btn.addEventListener("mouseleave", handleBtnLeave);
+            cleanups.push(() => {
+              btn.removeEventListener("mousemove", handleBtnMove);
+              btn.removeEventListener("mouseenter", handleBtnEnter);
+              btn.removeEventListener("mouseleave", handleBtnLeave);
+              gsap.killTweensOf(btn, "x,y,scale");
+              gsap.set(btn, { clearProps: "x,y,scale" });
+            });
+          }
+
+          // ─── Scroll exit: Parallax ───
+          const hero = heroRef.current!;
+
+          if (leftRef.current) {
+            gsap.to(leftRef.current, {
+              yPercent: -12,
+              ease: "none",
+              scrollTrigger: {
+                trigger: hero,
+                start: "top top",
+                end: "bottom top",
+                scrub: 1,
+              },
+            });
+          }
+
           const rightSection = hero.querySelector(".hero-right-section");
           if (rightSection) {
             gsap.to(rightSection, {
@@ -330,92 +664,167 @@ const HeroSectionComponent = () => {
       );
 
       // ═══════════════════════════════════════════════════════════════════
-      // MOBILE: Simplified animations
+      // MOBILE (<768px): Premium entrance — no SplitText, GPU-friendly
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
+          const cleanups: (() => void)[] = [];
+
           const mobileTl = gsap.timeline({
             paused: true,
-            defaults: { ease: "power2.out" },
+            defaults: { ease: "smooth.out" },
           });
 
-          // Image
+          // ─── Image: Scale-up with soft blur clearing ───
           if (imageWrapperRef.current) {
-            gsap.set(imageWrapperRef.current, { opacity: 0, y: -30 });
-            mobileTl.to(imageWrapperRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0);
+            gsap.set(imageWrapperRef.current, {
+              opacity: 0,
+              scale: 0.92,
+              filter: "blur(4px)",
+            });
+            mobileTl.to(
+              imageWrapperRef.current,
+              {
+                opacity: 1,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.6,
+                clearProps: "filter,transform",
+              },
+              0
+            );
           }
 
-          // Glow
-          if (glowRef.current) {
-            gsap.set(glowRef.current, { opacity: 0 });
-            mobileTl.to(glowRef.current, { opacity: 0.7, duration: 0.6 }, 0.1);
-          }
-
-          // Name
+          // ─── Name: clipPath reveal from bottom (premium wipe) ───
           if (nameRef.current) {
-            gsap.set(nameRef.current, { opacity: 0, y: 30 });
-            mobileTl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.15);
+            gsap.set(nameRef.current, {
+              clipPath: "inset(100% 0 0 0)",
+              opacity: 1,
+            });
+            mobileTl.to(
+              nameRef.current,
+              {
+                clipPath: "inset(0% 0 0 0)",
+                duration: 0.5,
+                ease: "reveal",
+                clearProps: "clipPath",
+              },
+              0.1
+            );
           }
 
-          // Pronoun
+          // ─── Pronoun: Slide from left ───
           if (pronounRef.current) {
-            gsap.set(pronounRef.current, { opacity: 0, y: 20 });
-            mobileTl.to(pronounRef.current, { opacity: 1, y: 0, duration: 0.4 }, 0.25);
+            gsap.set(pronounRef.current, { opacity: 0, x: -20 });
+            mobileTl.to(
+              pronounRef.current,
+              { opacity: 1, x: 0, duration: 0.4 },
+              0.25
+            );
           }
 
-          // Accent line
+          // ─── Accent line: scaleX draw ───
           if (accentLineRef.current) {
-            gsap.set(accentLineRef.current, { scaleX: 0, opacity: 0, transformOrigin: "left center" });
-            mobileTl.to(accentLineRef.current, { scaleX: 1, opacity: 1, duration: 0.5 }, 0.35);
+            gsap.set(accentLineRef.current, {
+              scaleX: 0,
+              opacity: 0,
+              transformOrigin: "left center",
+            });
+            mobileTl.to(
+              accentLineRef.current,
+              { scaleX: 1, opacity: 1, duration: 0.5 },
+              0.3
+            );
           }
 
-          // Subtitle
+          // ─── Sparkle: Scale + rotation spin-in ───
+          if (sparkleRef.current) {
+            gsap.set(sparkleRef.current, {
+              opacity: 0,
+              scale: 0,
+              rotation: -90,
+            });
+            mobileTl.to(
+              sparkleRef.current,
+              {
+                opacity: 1,
+                scale: 1,
+                rotation: 0,
+                duration: 0.5,
+                ease: "spring",
+              },
+              0.35
+            );
+          }
+
+          // ─── Subtitle: Blur-to-focus ───
           if (subtitleRef.current) {
-            gsap.set(subtitleRef.current, { opacity: 0, y: 20 });
-            mobileTl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.4);
+            gsap.set(subtitleRef.current, {
+              opacity: 0,
+              y: 15,
+              filter: "blur(3px)",
+            });
+            mobileTl.to(
+              subtitleRef.current,
+              {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 0.5,
+                clearProps: "filter",
+              },
+              0.4
+            );
           }
 
-          // Email
+          // ─── Email: Slide from left ───
           if (emailRef.current) {
-            gsap.set(emailRef.current, { opacity: 0, y: 20 });
-            mobileTl.to(emailRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.5);
+            gsap.set(emailRef.current, { opacity: 0, x: -15 });
+            mobileTl.to(
+              emailRef.current,
+              { opacity: 1, x: 0, duration: 0.4 },
+              0.5
+            );
           }
 
-          // Buttons
+          // ─── CTA buttons: Scale bounce ───
           if (buttonsRef.current) {
-            gsap.set(buttonsRef.current, { opacity: 0, y: 20 });
-            mobileTl.to(buttonsRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.6);
+            gsap.set(buttonsRef.current, { opacity: 0, scale: 0.9 });
+            mobileTl.to(
+              buttonsRef.current,
+              {
+                opacity: 1,
+                scale: 1,
+                duration: 0.5,
+                ease: "back.out(1.7)",
+                clearProps: "transform",
+              },
+              0.55
+            );
           }
 
-          // Same logic as desktop — check sessionStorage first, then listen for event
-          let hasPlayed = false;
-          const play = () => {
-            if (hasPlayed) return;
-            hasPlayed = true;
-            mobileTl.play();
-          };
-
-          if (typeof window !== "undefined" && sessionStorage.getItem("gsap-hero-revealed") === "true") {
-            requestAnimationFrame(() => play());
-          } else {
-            window.addEventListener("gsap-intro-complete", play);
-            const fallback = setTimeout(play, 500);
-            return () => {
-              window.removeEventListener("gsap-intro-complete", play);
-              clearTimeout(fallback);
-            };
+          // ─── Idle: Sparkle slow spin after entrance ───
+          let sparkleTween: gsap.core.Tween | null = null;
+          if (sparkleRef.current) {
+            sparkleTween = gsap.to(sparkleRef.current, {
+              rotation: "+=360",
+              duration: 12,
+              repeat: -1,
+              ease: "none",
+              paused: true,
+            });
+            cleanups.push(() => sparkleTween?.kill());
           }
 
-          mobileTl.eventCallback("onComplete", () => {
-            if (typeof window !== "undefined") {
-              sessionStorage.setItem("gsap-hero-revealed", "true");
-            }
+          mobileTl.call(() => {
+            sparkleTween?.play();
           });
 
-          return () => {
-            window.removeEventListener("gsap-intro-complete", play);
-          };
+          // ─── Play logic ───
+          setupPlayTrigger(mobileTl, cleanups);
+
+          return () => cleanups.forEach((fn) => fn());
         }
       );
 
@@ -428,8 +837,15 @@ const HeroSectionComponent = () => {
           if (hasShown) return;
           hasShown = true;
           const refs = [
-            nameRef, pronounRef, subtitleRef, emailRef,
-            buttonsRef, imageWrapperRef, glowRef, accentLineRef, sparkleRef,
+            nameRef,
+            pronounRef,
+            subtitleRef,
+            emailRef,
+            buttonsRef,
+            imageWrapperRef,
+            glowRef,
+            accentLineRef,
+            sparkleRef,
           ];
           refs.forEach((ref) => {
             if (ref.current) {
@@ -441,8 +857,10 @@ const HeroSectionComponent = () => {
           }
         };
 
-        // Check if already revealed
-        if (typeof window !== "undefined" && sessionStorage.getItem("gsap-hero-revealed") === "true") {
+        if (
+          typeof window !== "undefined" &&
+          sessionStorage.getItem("gsap-hero-revealed") === "true"
+        ) {
           requestAnimationFrame(() => show());
         } else {
           window.addEventListener("gsap-intro-complete", show);
@@ -570,13 +988,13 @@ const HeroSectionComponent = () => {
         <div className="relative">
           {/* Gradient glow ring — behind image */}
           <div
-            ref={glowRef}
+            // ref={glowRef}
             className="absolute -inset-8 rounded-full -z-10"
-            style={{
-              background:
-                "conic-gradient(from 0deg, rgba(236,72,153,0.3), rgba(168,85,247,0.25), rgba(59,130,246,0.2), rgba(236,72,153,0.3))",
-              filter: "blur(40px)",
-            }}
+            // style={{
+            //   background:
+            //     "conic-gradient(from 0deg, rgba(236,72,153,0.3), rgba(168,85,247,0.25), rgba(59,130,246,0.2), rgba(236,72,153,0.3))",
+            //   filter: "blur(40px)",
+            // }}
           />
           {/* Profile image */}
           <div

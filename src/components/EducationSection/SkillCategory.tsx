@@ -209,33 +209,94 @@ function ProfessionalProfileComponent() {
       );
 
       // ═══════════════════════════════════════════════════════════════════
-      // MOBILE: Simple fade-in cascade
+      // MOBILE: Premium entrance animations
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
-          const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
-            ".skills-soft-heading, .skills-badge, .skills-tech-heading-group, .skills-macbook-wrap"
-          );
+          const section = sectionRef.current!;
 
-          allEls.forEach((el, i) => {
+          // ─── Soft heading: clipPath reveal from left ───
+          const softHeading = section.querySelector<HTMLElement>(".skills-soft-heading");
+          if (softHeading) {
             gsap.fromTo(
-              el,
-              { opacity: 0, y: 25 },
+              softHeading,
+              { clipPath: "inset(0 100% 0 0)", opacity: 1 },
               {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                ease: "smooth.out",
-                scrollTrigger: {
-                  trigger: el,
-                  start: "top 92%",
-                  toggleActions: "play none none none",
-                },
-                delay: i * 0.04,
+                clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "reveal",
+                scrollTrigger: { trigger: softHeading, start: "top 90%", toggleActions: "play none none none" },
+                onComplete: () => { gsap.set(softHeading, { clearProps: "clipPath" }); },
               }
             );
-          });
+          }
+
+          // ─── Decorative line: scaleX grow (was missing on mobile) ───
+          const softLine = section.querySelector<HTMLElement>(".skills-soft-line");
+          if (softLine) {
+            gsap.fromTo(
+              softLine,
+              { scaleX: 0, transformOrigin: "left center" },
+              {
+                scaleX: 1, duration: 0.5, ease: "smooth.out",
+                scrollTrigger: { trigger: softLine, start: "top 92%", toggleActions: "play none none none" },
+              }
+            );
+          }
+
+          // ─── Badges: Staggered pop-in with scale + rotation jitter ───
+          const badges = section.querySelectorAll<HTMLElement>(".skills-badge");
+          if (badges.length) {
+            gsap.fromTo(
+              badges,
+              { opacity: 0, scale: 0.6, rotation: () => gsap.utils.random(-8, 8) },
+              {
+                opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.7)",
+                stagger: { each: 0.06, from: "start" },
+                scrollTrigger: { trigger: section.querySelector(".skills-badges-wrap"), start: "top 90%", toggleActions: "play none none none" },
+                onComplete: () => { gsap.set(badges, { clearProps: "transform" }); },
+              }
+            );
+          }
+
+          // ─── Tech icon: Spin-in with spring ───
+          if (techIconRef.current) {
+            gsap.fromTo(
+              techIconRef.current,
+              { opacity: 0, rotation: -90, scale: 0.5 },
+              {
+                opacity: 1, rotation: 0, scale: 1, duration: 0.5, ease: "spring",
+                scrollTrigger: { trigger: techIconRef.current, start: "top 90%", toggleActions: "play none none none" },
+                clearProps: "transform",
+              }
+            );
+          }
+
+          // ─── Tech heading group: Slide from left ───
+          const techGroup = section.querySelector<HTMLElement>(".skills-tech-heading-group");
+          if (techGroup) {
+            gsap.fromTo(
+              techGroup,
+              { opacity: 0, x: -25 },
+              {
+                opacity: 1, x: 0, duration: 0.5, ease: "smooth.out",
+                scrollTrigger: { trigger: techGroup, start: "top 90%", toggleActions: "play none none none" },
+              }
+            );
+          }
+
+          // ─── MacBook wrapper: Scale-up with blur clearing ───
+          const macbookWrap = section.querySelector<HTMLElement>(".skills-macbook-wrap");
+          if (macbookWrap) {
+            gsap.fromTo(
+              macbookWrap,
+              { opacity: 0, scale: 0.85, filter: "blur(4px)" },
+              {
+                opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.7, ease: "smooth.out",
+                scrollTrigger: { trigger: macbookWrap, start: "top 92%", toggleActions: "play none none none" },
+                onComplete: () => { gsap.set(macbookWrap, { clearProps: "filter,transform" }); },
+              }
+            );
+          }
         }
       );
 

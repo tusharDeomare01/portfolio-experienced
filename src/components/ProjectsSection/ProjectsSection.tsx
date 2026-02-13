@@ -834,74 +834,80 @@ const ProjectsSectionComponent = () => {
       );
 
       // ═══════════════════════════════════════════════════════════════════
-      // MOBILE: Optimized dramatic entrances (lighter but still impressive)
+      // MOBILE: Premium entrances with internal content stagger
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
           const section = sectionRef.current!;
 
-          // Header entrance with scale
+          // ─── Header: Refined blur + scale with cleanup ───
           const header = section.querySelector<HTMLElement>(".projects-header");
           if (header) {
             gsap.fromTo(
               header,
+              { opacity: 0, y: 40, scale: 0.92, filter: "blur(8px)" },
               {
-                opacity: 0,
-                y: 50,
-                scale: 0.9,
-                filter: "blur(10px)",
-              },
-              {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                filter: "blur(0px)",
-                duration: 0.8,
-                ease: "back.out(1.5)",
-                scrollTrigger: {
-                  trigger: header,
-                  start: "top 85%",
-                  toggleActions: "play reverse play reverse",
-                },
+                opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.7, ease: "back.out(1.5)",
+                scrollTrigger: { trigger: header, start: "top 85%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(header, { clearProps: "filter,transform" }); },
               }
             );
           }
 
-          // Card entrances with 3D tilt
+          // ─── Cards: Entrance + internal content stagger ───
           const projectItems = section.querySelectorAll<HTMLElement>(".project-item");
           projectItems.forEach((item) => {
             const card = item.querySelector<HTMLElement>(".project-card");
+            if (!card) return;
 
-            if (card) {
-              gsap.set(card, {
-                transformPerspective: 800,
-              });
+            gsap.set(card, { transformPerspective: 800 });
 
-              gsap.fromTo(
-                card,
-                {
-                  opacity: 0,
-                  y: 60,
-                  scale: 0.85,
-                  rotateX: 10,
-                  filter: "blur(8px)",
-                },
-                {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  rotateX: 0,
-                  filter: "blur(0px)",
-                  duration: 0.9,
-                  ease: "back.out(1.7)",
-                  scrollTrigger: {
-                    trigger: item,
-                    start: "top 82%",
-                    toggleActions: "play reverse play reverse",
-                  },
-                }
-              );
+            const cardTl = gsap.timeline({
+              scrollTrigger: { trigger: item, start: "top 85%", toggleActions: "play reverse play reverse" },
+            });
+
+            // Card entrance
+            gsap.set(card, { opacity: 0, y: 50, scale: 0.88, rotateX: 8, filter: "blur(6px)" });
+            cardTl.to(card, {
+              opacity: 1, y: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.7, ease: "back.out(1.5)",
+              onComplete: () => { gsap.set(card, { clearProps: "filter,transform" }); },
+            });
+
+            // ─── Internal content stagger ───
+            const logoWrap = item.querySelector<HTMLElement>(".project-logo-wrap");
+            const title = item.querySelector<HTMLElement>(".project-title");
+            const desc = item.querySelector<HTMLElement>(".project-desc");
+            const badgesWrap = item.querySelector<HTMLElement>(".project-badges");
+            const btn = item.querySelector<HTMLElement>(".project-btn");
+
+            if (logoWrap) {
+              gsap.set(logoWrap, { opacity: 0, scale: 0.9 });
+              cardTl.to(logoWrap, { opacity: 1, scale: 1, duration: 0.4, ease: "smooth.out" }, 0.15);
+            }
+            if (title) {
+              gsap.set(title, { opacity: 0, x: -20 });
+              cardTl.to(title, { opacity: 1, x: 0, duration: 0.4, ease: "smooth.out" }, 0.2);
+            }
+            if (desc) {
+              gsap.set(desc, { opacity: 0, y: 10 });
+              cardTl.to(desc, { opacity: 1, y: 0, duration: 0.4, ease: "smooth.out" }, 0.3);
+            }
+            if (badgesWrap) {
+              const badges = badgesWrap.querySelectorAll<HTMLElement>(".project-badge");
+              if (badges.length) {
+                gsap.set(badges, { opacity: 0, scale: 0.7 });
+                cardTl.to(badges, {
+                  opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.7)",
+                  stagger: { each: 0.04, from: "start" },
+                }, 0.35);
+              }
+            }
+            if (btn) {
+              gsap.set(btn, { opacity: 0, scale: 0.85 });
+              cardTl.to(btn, {
+                opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)", clearProps: "transform",
+              }, 0.4);
             }
           });
         }

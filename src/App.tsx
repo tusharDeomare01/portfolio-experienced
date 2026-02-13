@@ -16,6 +16,7 @@ import HomePageSection from "./components/HomePageSection/HomePageSection";
 // GSAP global components (scroll progress, page intro, cursor, overlays)
 import { GSAPScrollProgress } from "./components/gsap/GSAPScrollProgress";
 import { GSAPPageIntro } from "./components/gsap/GSAPPageIntro";
+import { GSAPRouteTransition } from "./components/gsap/GSAPRouteTransition";
 // import { NoiseOverlay } from "./components/gsap/NoiseOverlay";
 // import { VignetteOverlay } from "./components/gsap/VignetteOverlay";
 
@@ -111,7 +112,8 @@ function App() {
         <GSAPScrollProgress />
         <GSAPPageIntro />
         {/* <NoiseOverlay /> */}
-        <Routes>
+        <GSAPRouteTransition>
+          <Routes>
           {/* MarketJD Project Detail Page */}
           <Route
             path="/marketjd"
@@ -145,7 +147,8 @@ function App() {
           {/* Main Portfolio Page */}
           {/* SEO FIX: No Suspense wrapper - loads immediately for better SEO */}
           <Route path="/" element={<HomePageSection />} />
-        </Routes>
+          </Routes>
+        </GSAPRouteTransition>
         {/* AI Assistant - Available on all routes */}
         <Suspense fallback={<AIAssistantLoader />}>
           <AIAssistant />

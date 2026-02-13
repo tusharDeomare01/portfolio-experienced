@@ -606,33 +606,80 @@ const CareerTimelineComponent = () => {
       );
 
       // ═══════════════════════════════════════════════════════════════════
-      // MOBILE: Simple fade-in cascade
+      // MOBILE: Premium entrance animations
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
-          const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
-            ".career-header, .career-timeline-wrap"
-          );
+          const section = sectionRef.current!;
 
-          allEls.forEach((el, i) => {
+          // ─── Icon: Spin-in with spring ───
+          if (iconRef.current) {
             gsap.fromTo(
-              el,
-              { opacity: 0, y: 30 },
+              iconRef.current,
+              { opacity: 0, rotation: -90, scale: 0.5 },
               {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                ease: "smooth.out",
-                scrollTrigger: {
-                  trigger: el,
-                  start: "top 90%",
-                  toggleActions: "play reverse play reverse",
-                },
-                delay: i * 0.1,
+                opacity: 1, rotation: 0, scale: 1, duration: 0.5, ease: "spring",
+                scrollTrigger: { trigger: section, start: "top 88%", toggleActions: "play reverse play reverse" },
+                clearProps: "transform",
               }
             );
-          });
+          }
+
+          // ─── Header: clipPath reveal from bottom ───
+          const header = section.querySelector<HTMLElement>(".career-header");
+          if (header) {
+            gsap.fromTo(
+              header,
+              { clipPath: "inset(100% 0 0 0)", opacity: 1 },
+              {
+                clipPath: "inset(0% 0 0 0)", duration: 0.5, ease: "reveal",
+                scrollTrigger: { trigger: header, start: "top 88%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(header, { clearProps: "clipPath" }); },
+              }
+            );
+          }
+
+          // ─── Subtitle: Blur-to-focus (was missing on mobile) ───
+          const subtitle = section.querySelector<HTMLElement>(".career-subtitle");
+          if (subtitle) {
+            gsap.fromTo(
+              subtitle,
+              { opacity: 0, filter: "blur(3px)" },
+              {
+                opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "smooth.out",
+                scrollTrigger: { trigger: subtitle, start: "top 90%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(subtitle, { clearProps: "filter" }); },
+              }
+            );
+          }
+
+          // ─── Decorative line: scaleX grow from center (was missing) ───
+          const decorLine = section.querySelector<HTMLElement>(".career-decor-line");
+          if (decorLine) {
+            gsap.fromTo(
+              decorLine,
+              { scaleX: 0, transformOrigin: "center center" },
+              {
+                scaleX: 1, duration: 0.5, ease: "smooth.out",
+                scrollTrigger: { trigger: decorLine, start: "top 92%", toggleActions: "play reverse play reverse" },
+              }
+            );
+          }
+
+          // ─── Timeline wrapper: Scale-up with blur clearing ───
+          const timelineWrap = section.querySelector<HTMLElement>(".career-timeline-wrap");
+          if (timelineWrap) {
+            gsap.fromTo(
+              timelineWrap,
+              { opacity: 0, scale: 0.92, filter: "blur(3px)" },
+              {
+                opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.6, ease: "smooth.out",
+                scrollTrigger: { trigger: timelineWrap, start: "top 90%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(timelineWrap, { clearProps: "filter,transform" }); },
+              }
+            );
+          }
         }
       );
 

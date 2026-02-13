@@ -35,236 +35,385 @@ export function GSAPPageIntro() {
 
       document.body.style.overflow = "hidden";
 
-      const tl = gsap.timeline({
-        onComplete: () => {
-          document.body.style.overflow = "";
-          setShouldRender(false);
-        },
-      });
-
+      const mm = gsap.matchMedia();
       const finalText = "Tushar Deomare";
       const chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&";
-      const textEl = textRef.current;
+      const textEl = textRef.current!;
 
-      // ── Phase 0: Professional counter 0 → 100 (top right) ──
-      if (counterRef.current) {
-        const counterEl = counterRef.current;
-        const counterProxy = { value: 0 };
-        const counterNumber = counterEl.querySelector("span:first-child");
+      // Helper: build scramble → resolve animation on a timeline
+      const addScrambleResolve = (tl: gsap.core.Timeline, startAt: number, scrambleDuration: number) => {
+        const scrambleProxy = { value: 0 };
+        const initialScrambled = finalText
+          .split("")
+          .map((char) => {
+            if (char === " ") return " ";
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join("");
 
-        tl.fromTo(
-          counterEl,
-          { opacity: 0, y: -10 },
-          { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" },
-          0
-        ).to(
-          counterProxy,
-          {
-            value: 100,
-            duration: 1.2,
-            ease: "power2.inOut",
-            snap: { value: 1 },
+        tl.set(textEl, { opacity: 1, textContent: initialScrambled }, startAt)
+          .to(scrambleProxy, {
+            value: 1,
+            duration: scrambleDuration,
+            ease: "power2.in",
             onUpdate: () => {
-              if (counterNumber) {
-                counterNumber.textContent = `${Math.round(counterProxy.value)}`;
+              const progress = scrambleProxy.value;
+              const revealed = Math.floor(progress * finalText.length);
+              let display = "";
+              for (let i = 0; i < finalText.length; i++) {
+                if (finalText[i] === " ") {
+                  display += " ";
+                } else if (i < revealed) {
+                  display += finalText[i];
+                } else {
+                  display += chars[Math.floor(Math.random() * chars.length)];
+                }
               }
-              // Sync progress bar
-              if (progressBarRef.current) {
-                gsap.set(progressBarRef.current, {
-                  scaleX: counterProxy.value / 100,
-                });
-              }
+              textEl.textContent = display;
+            },
+            onComplete: () => {
+              textEl.textContent = finalText;
+            },
+          }, startAt + 0.1);
+      };
+
+      // ═══════════════════════════════════════════════════════════════════
+      // DESKTOP: Full cinematic intro (unchanged)
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          onComplete: () => {
+            document.body.style.overflow = "";
+            setShouldRender(false);
+          },
+        });
+
+        // ── Phase 0: Professional counter 0 → 100 (top right) ──
+        if (counterRef.current) {
+          const counterEl = counterRef.current;
+          const counterProxy = { value: 0 };
+          const counterNumber = counterEl.querySelector("span:first-child");
+
+          tl.fromTo(
+            counterEl,
+            { opacity: 0, y: -10 },
+            { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" },
+            0
+          ).to(
+            counterProxy,
+            {
+              value: 100,
+              duration: 1.2,
+              ease: "power2.inOut",
+              snap: { value: 1 },
+              onUpdate: () => {
+                if (counterNumber) {
+                  counterNumber.textContent = `${Math.round(counterProxy.value)}`;
+                }
+                if (progressBarRef.current) {
+                  gsap.set(progressBarRef.current, {
+                    scaleX: counterProxy.value / 100,
+                  });
+                }
+              },
+            },
+            0
+          ).to(
+            counterEl,
+            { opacity: 0, y: -5, duration: 0.25, ease: "power2.in" },
+            1.15
+          );
+        }
+
+        // ── Bottom progress bar animation ──
+        if (progressBarRef.current) {
+          tl.set(progressBarRef.current, { scaleX: 0 }, 0);
+          tl.to(
+            progressBarRef.current,
+            { opacity: 0, duration: 0.2, ease: "power2.in" },
+            1.15
+          );
+        }
+
+        // ── Decorative lines grow (top + bottom, symmetric) ──
+        if (lineRef.current) {
+          tl.fromTo(
+            lineRef.current,
+            { scaleX: 0, opacity: 0 },
+            { scaleX: 1, opacity: 1, duration: 0.8, ease: "power2.inOut" },
+            0.4
+          );
+        }
+        if (lineBottomRef.current) {
+          tl.fromTo(
+            lineBottomRef.current,
+            { scaleX: 0, opacity: 0 },
+            { scaleX: 1, opacity: 1, duration: 0.8, ease: "power2.inOut" },
+            0.4
+          );
+        }
+
+        // ── Phase 1: Scramble → Resolve ──
+        addScrambleResolve(tl, 1.0, 1.2);
+
+        // ── Phase 2: SplitText char scatter (the "fuzzy" detail) ──
+        const phase2 = gsap.timeline({ paused: true });
+
+        tl.add(() => {
+          textEl.textContent = finalText;
+
+          const split = new SplitText(textEl, {
+            type: "chars",
+            charsClass: "intro-char",
+          });
+
+          split.chars.forEach((char: Element) => {
+            if (char instanceof HTMLElement) {
+              char.style.display = "inline-block";
+            }
+          });
+
+          // Breathing pulse from center
+          phase2.to(split.chars, {
+            scale: 1.04,
+            duration: 0.35,
+            stagger: { each: 0.012, from: "center" },
+            ease: "power1.inOut",
+            yoyo: true,
+            repeat: 1,
+          });
+
+          // Scatter outward with random directions
+          phase2.to(split.chars, {
+            opacity: 0,
+            y: () => gsap.utils.random(-50, 50),
+            x: () => gsap.utils.random(-30, 30),
+            rotateZ: () => gsap.utils.random(-20, 20),
+            scale: 0.5,
+            duration: 0.6,
+            stagger: { each: 0.018, from: "edges" },
+            ease: "power2.in",
+            onComplete: () => {
+              split.revert();
+              gsap.set(textEl, {
+                opacity: 0,
+                visibility: "hidden",
+              });
+            },
+          });
+
+          phase2.play();
+        }, "+=0.2");
+
+        // Reserve timeline space for phase2
+        tl.to({}, { duration: 1.6 });
+
+        // ── Phase 3: Subtitle fade ──
+        if (subtitleRef.current) {
+          tl.fromTo(
+            subtitleRef.current,
+            { opacity: 0, y: 12, letterSpacing: "0.3em" },
+            {
+              opacity: 1,
+              y: 0,
+              letterSpacing: "0.2em",
+              duration: 0.5,
+              ease: "smooth.out",
+            },
+            "-=1.0"
+          ).to(
+            subtitleRef.current,
+            { opacity: 0, y: -8, duration: 0.3, ease: "power2.in" },
+            "-=0.3"
+          );
+        }
+
+        // ── Decorative lines shrink (both top + bottom) ──
+        if (lineRef.current) {
+          tl.to(lineRef.current, {
+            scaleX: 0,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.inOut",
+          }, "-=0.3");
+        }
+        if (lineBottomRef.current) {
+          tl.to(lineBottomRef.current, {
+            scaleX: 0,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.inOut",
+          }, "-=0.5");
+        }
+
+        // ── Phase 4: Enhanced overlay wipe — cinematic letterbox (dual inset) ──
+        tl.to(
+          overlayRef.current,
+          {
+            clipPath: "inset(50% 0 50% 0)",
+            duration: 0.9,
+            ease: "power3.inOut",
+            onStart: () => {
+              window.dispatchEvent(new CustomEvent("gsap-intro-complete"));
             },
           },
-          0
-        ).to(
-          counterEl,
-          { opacity: 0, y: -5, duration: 0.25, ease: "power2.in" },
-          1.15
+          "-=0.1"
         );
-      }
+      });
 
-      // ── Bottom progress bar animation ──
-      if (progressBarRef.current) {
-        tl.set(progressBarRef.current, { scaleX: 0 }, 0);
+      // ═══════════════════════════════════════════════════════════════════
+      // MOBILE: Lighter intro — skip SplitText scatter, faster timing
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          onComplete: () => {
+            document.body.style.overflow = "";
+            setShouldRender(false);
+          },
+        });
+
+        // ── Phase 0: Counter (faster on mobile) ──
+        if (counterRef.current) {
+          const counterEl = counterRef.current;
+          const counterProxy = { value: 0 };
+          const counterNumber = counterEl.querySelector("span:first-child");
+
+          tl.fromTo(
+            counterEl,
+            { opacity: 0, y: -10 },
+            { opacity: 1, y: 0, duration: 0.15, ease: "power2.out" },
+            0
+          ).to(
+            counterProxy,
+            {
+              value: 100,
+              duration: 0.8,
+              ease: "power2.inOut",
+              snap: { value: 1 },
+              onUpdate: () => {
+                if (counterNumber) {
+                  counterNumber.textContent = `${Math.round(counterProxy.value)}`;
+                }
+                if (progressBarRef.current) {
+                  gsap.set(progressBarRef.current, {
+                    scaleX: counterProxy.value / 100,
+                  });
+                }
+              },
+            },
+            0
+          ).to(
+            counterEl,
+            { opacity: 0, y: -5, duration: 0.2, ease: "power2.in" },
+            0.75
+          );
+        }
+
+        // ── Progress bar ──
+        if (progressBarRef.current) {
+          tl.set(progressBarRef.current, { scaleX: 0 }, 0);
+          tl.to(
+            progressBarRef.current,
+            { opacity: 0, duration: 0.15, ease: "power2.in" },
+            0.75
+          );
+        }
+
+        // ── Decorative lines (kept, lightweight) ──
+        if (lineRef.current) {
+          tl.fromTo(
+            lineRef.current,
+            { scaleX: 0, opacity: 0 },
+            { scaleX: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" },
+            0.3
+          );
+        }
+        if (lineBottomRef.current) {
+          tl.fromTo(
+            lineBottomRef.current,
+            { scaleX: 0, opacity: 0 },
+            { scaleX: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" },
+            0.3
+          );
+        }
+
+        // ── Phase 1: Scramble → Resolve (faster) ──
+        addScrambleResolve(tl, 0.7, 0.8);
+
+        // ── Phase 2: Simple scale-down + fade (NO SplitText on mobile) ──
+        tl.to(textEl, {
+          opacity: 0,
+          scale: 0.85,
+          filter: "blur(4px)",
+          duration: 0.5,
+          ease: "power2.in",
+          onComplete: () => {
+            gsap.set(textEl, { visibility: "hidden", clearProps: "filter" });
+          },
+        }, "+=0.3");
+
+        // ── Phase 3: Subtitle fade (faster) ──
+        if (subtitleRef.current) {
+          tl.fromTo(
+            subtitleRef.current,
+            { opacity: 0, y: 10, letterSpacing: "0.3em" },
+            {
+              opacity: 1,
+              y: 0,
+              letterSpacing: "0.2em",
+              duration: 0.4,
+              ease: "smooth.out",
+            },
+            "-=0.4"
+          ).to(
+            subtitleRef.current,
+            { opacity: 0, y: -6, duration: 0.25, ease: "power2.in" },
+            "-=0.1"
+          );
+        }
+
+        // ── Lines shrink ──
+        if (lineRef.current) {
+          tl.to(lineRef.current, {
+            scaleX: 0,
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.inOut",
+          }, "-=0.2");
+        }
+        if (lineBottomRef.current) {
+          tl.to(lineBottomRef.current, {
+            scaleX: 0,
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.inOut",
+          }, "-=0.3");
+        }
+
+        // ── Phase 4: Overlay wipe (slightly faster) ──
         tl.to(
-          progressBarRef.current,
-          { opacity: 0, duration: 0.2, ease: "power2.in" },
-          1.15
-        );
-      }
-
-      // ── Decorative lines grow (top + bottom, symmetric) ──
-      // Enhanced with gradient and better timing
-      if (lineRef.current) {
-        tl.fromTo(
-          lineRef.current,
-          { scaleX: 0, opacity: 0 },
-          { scaleX: 1, opacity: 1, duration: 0.8, ease: "power2.inOut" },
-          0.4
-        );
-      }
-      if (lineBottomRef.current) {
-        tl.fromTo(
-          lineBottomRef.current,
-          { scaleX: 0, opacity: 0 },
-          { scaleX: 1, opacity: 1, duration: 0.8, ease: "power2.inOut" },
-          0.4
-        );
-      }
-
-      // ── Phase 1: Scramble → Resolve ──
-      const scrambleProxy = { value: 0 };
-
-      // Initialize with random scrambled characters
-      const initialScrambled = finalText
-        .split("")
-        .map((char) => {
-          if (char === " ") return " ";
-          return chars[Math.floor(Math.random() * chars.length)];
-        })
-        .join("");
-
-      // Set initial scrambled text and make visible
-      tl.set(textEl, { 
-        opacity: 1, 
-        textContent: initialScrambled 
-      }, 1.0)
-        .to(scrambleProxy, {
-          value: 1,
-          duration: 1.2,
-          ease: "power2.in",
-          onUpdate: () => {
-            const progress = scrambleProxy.value;
-            const revealed = Math.floor(progress * finalText.length);
-            let display = "";
-            for (let i = 0; i < finalText.length; i++) {
-              if (finalText[i] === " ") {
-                display += " ";
-              } else if (i < revealed) {
-                display += finalText[i];
-              } else {
-                display += chars[Math.floor(Math.random() * chars.length)];
-              }
-            }
-            textEl.textContent = display;
-          },
-          onComplete: () => {
-            // Ensure final text is set before SplitText
-            textEl.textContent = finalText;
-          },
-        }, 1.1);
-
-      // ── Phase 2: SplitText char scatter (the "fuzzy" detail) ──
-      const phase2 = gsap.timeline({ paused: true });
-
-      tl.add(() => {
-        // Ensure text is set to finalText before splitting
-        textEl.textContent = finalText;
-        
-        const split = new SplitText(textEl, {
-          type: "chars",
-          charsClass: "intro-char",
-        });
-
-        split.chars.forEach((char: Element) => {
-          if (char instanceof HTMLElement) {
-            char.style.display = "inline-block";
-          }
-        });
-
-        // Breathing pulse from center
-        phase2.to(split.chars, {
-          scale: 1.04,
-          duration: 0.35,
-          stagger: { each: 0.012, from: "center" },
-          ease: "power1.inOut",
-          yoyo: true,
-          repeat: 1,
-        });
-
-        // Scatter outward with random directions
-        phase2.to(split.chars, {
-          opacity: 0,
-          y: () => gsap.utils.random(-50, 50),
-          x: () => gsap.utils.random(-30, 30),
-          rotateZ: () => gsap.utils.random(-20, 20),
-          scale: 0.5,
-          duration: 0.6,
-          stagger: { each: 0.018, from: "edges" },
-          ease: "power2.in",
-          onComplete: () => {
-            // Revert SplitText and immediately hide the text element
-            // This prevents the stale static name from appearing
-            split.revert();
-            // Hide text element completely - no stale name visible
-            gsap.set(textEl, { 
-              opacity: 0,
-              visibility: "hidden",
-            });
-          },
-        });
-
-        phase2.play();
-      }, "+=0.2");
-
-      // Reserve timeline space for phase2
-      tl.to({}, { duration: 1.6 });
-
-      // ── Phase 3: Subtitle fade ──
-      if (subtitleRef.current) {
-        tl.fromTo(
-          subtitleRef.current,
-          { opacity: 0, y: 12, letterSpacing: "0.3em" },
+          overlayRef.current,
           {
-            opacity: 1,
-            y: 0,
-            letterSpacing: "0.2em",
-            duration: 0.5,
-            ease: "smooth.out",
+            clipPath: "inset(50% 0 50% 0)",
+            duration: 0.7,
+            ease: "power3.inOut",
+            onStart: () => {
+              window.dispatchEvent(new CustomEvent("gsap-intro-complete"));
+            },
           },
-          "-=1.0"
-        ).to(
-          subtitleRef.current,
-          { opacity: 0, y: -8, duration: 0.3, ease: "power2.in" },
-          "-=0.3"
+          "-=0.1"
         );
-      }
+      });
 
-      // ── Decorative lines shrink (both top + bottom) ──
-      if (lineRef.current) {
-        tl.to(lineRef.current, {
-          scaleX: 0,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.inOut",
-        }, "-=0.3");
-      }
-      if (lineBottomRef.current) {
-        tl.to(lineBottomRef.current, {
-          scaleX: 0,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.inOut",
-        }, "-=0.5");
-      }
-
-      // ── Phase 4: Enhanced overlay wipe — cinematic letterbox (dual inset) ──
-      // Dispatch event so the hero section starts its own GSAP entrance
-      // during the wipe, creating a seamless layered reveal.
-      tl.to(
-        overlayRef.current,
-        {
-          clipPath: "inset(50% 0 50% 0)",
-          duration: 0.9,
-          ease: "power3.inOut",
-          onStart: () => {
-            window.dispatchEvent(new CustomEvent("gsap-intro-complete"));
-          },
-        },
-        "-=0.1"
-      );
+      // ═══════════════════════════════════════════════════════════════════
+      // REDUCED MOTION: Skip intro entirely
+      // ═══════════════════════════════════════════════════════════════════
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        document.body.style.overflow = "";
+        window.dispatchEvent(new CustomEvent("gsap-intro-complete"));
+        setShouldRender(false);
+      });
     },
     { dependencies: [shouldRender] }
   );

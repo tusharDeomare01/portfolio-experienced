@@ -375,63 +375,63 @@ const AchievementsSectionComponent = () => {
       );
 
       // ═══════════════════════════════════════════════════════════════════
-      // MOBILE: Optimized dramatic entrances
+      // MOBILE: Premium entrance animations
       // ═══════════════════════════════════════════════════════════════════
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
           const section = sectionRef.current!;
 
-          // Header entrance
-          const header = section.querySelector<HTMLElement>(".achievements-header");
-          if (header) {
+          // ─── Icon: Rotation with spring (trophy celebration) ───
+          if (iconRef.current) {
             gsap.fromTo(
-              header,
+              iconRef.current,
+              { opacity: 0, rotation: -90, scale: 0.5 },
               {
-                opacity: 0,
-                y: 60,
-                scale: 0.85,
-                filter: "blur(15px)",
-              },
-              {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                filter: "blur(0px)",
-                duration: 1,
-                ease: "back.out(1.5)",
-                scrollTrigger: {
-                  trigger: header,
-                  start: "top 85%",
-                  toggleActions: "play reverse play reverse",
-                },
+                opacity: 1, rotation: 0, scale: 1, duration: 0.6, ease: "spring",
+                scrollTrigger: { trigger: section, start: "top 85%", toggleActions: "play reverse play reverse" },
+                clearProps: "transform",
               }
             );
           }
 
-          // Carousel entrance
+          // ─── Heading: clipPath reveal from bottom ───
+          if (headingRef.current) {
+            gsap.fromTo(
+              headingRef.current,
+              { clipPath: "inset(100% 0 0 0)", opacity: 1 },
+              {
+                clipPath: "inset(0% 0 0 0)", duration: 0.5, ease: "reveal",
+                scrollTrigger: { trigger: section, start: "top 83%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(headingRef.current, { clearProps: "clipPath" }); },
+              }
+            );
+          }
+
+          // ─── Subtitle: Blur-to-focus ───
+          const subtitle = section.querySelector<HTMLElement>(".achievements-subtitle");
+          if (subtitle) {
+            gsap.fromTo(
+              subtitle,
+              { opacity: 0, filter: "blur(3px)", y: 10 },
+              {
+                opacity: 1, filter: "blur(0px)", y: 0, duration: 0.5, ease: "smooth.out",
+                scrollTrigger: { trigger: section, start: "top 80%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(subtitle, { clearProps: "filter" }); },
+              }
+            );
+          }
+
+          // ─── Carousel: Slight rotateX tilt entry with blur clearing ───
           const carouselWrap = section.querySelector<HTMLElement>(".achievements-carousel-wrap");
           if (carouselWrap) {
             gsap.fromTo(
               carouselWrap,
+              { opacity: 0, y: 40, scale: 0.92, rotateX: 5, filter: "blur(6px)", transformPerspective: 800 },
               {
-                opacity: 0,
-                y: 50,
-                scale: 0.9,
-                filter: "blur(10px)",
-              },
-              {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                filter: "blur(0px)",
-                duration: 0.9,
-                ease: "power3.out",
-                scrollTrigger: {
-                  trigger: carouselWrap,
-                  start: "top 85%",
-                  toggleActions: "play reverse play reverse",
-                },
+                opacity: 1, y: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.7, ease: "smooth.out",
+                scrollTrigger: { trigger: carouselWrap, start: "top 85%", toggleActions: "play reverse play reverse" },
+                onComplete: () => { gsap.set(carouselWrap, { clearProps: "filter,transform" }); },
               }
             );
           }

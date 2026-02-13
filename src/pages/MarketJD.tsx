@@ -1,7 +1,9 @@
 import { useEffect, useMemo, lazy, Suspense, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
+import { useGSAPRouteAnimation } from "@/hooks/useGSAPRouteAnimation";
+import { useGSAPScrollRestoration } from "@/hooks/useGSAPScrollRestoration";
 import {
   ArrowLeft,
   Zap,
@@ -41,8 +43,10 @@ const Shield = lazy(() => import("lucide-react").then((mod) => ({ default: mod.S
 
 const MarketJD = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useAppSelector((state) => state.theme.theme);
   const isDarkMode = theme === "dark";
+  const { saveScrollPosition } = useGSAPScrollRestoration();
 
   // GSAP refs
   const pageRef = useRef<HTMLDivElement>(null);
@@ -827,6 +831,15 @@ const MarketJD = () => {
     { scope: pageRef }
   );
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // ROUTE TRANSITION ANIMATIONS
+  // ─────────────────────────────────────────────────────────────────────────────
+  useGSAPRouteAnimation({
+    containerRef: pageRef,
+    transitionType: "home-to-project",
+    enabled: location.state?.from !== undefined,
+  });
+
   // Prepare InteractiveGrid items for features
   const interactiveGridItems: InteractiveGridItem[] = useMemo(
     () =>
@@ -880,7 +893,7 @@ const MarketJD = () => {
   );
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-transparent relative">
+    <div ref={pageRef} className="min-h-screen bg-transparent relative route-enter-content">
       <style>{`
         @keyframes slideInLeft {
           from {
@@ -917,11 +930,18 @@ const MarketJD = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button and Share */}
-        <div className="mb-8 flex items-center justify-between flex-wrap gap-3 sm:gap-4">
+        <div className="mb-8 flex items-center justify-between flex-wrap gap-3 sm:gap-4 route-enter-child">
           <button
             onClick={(e) => {
               e.preventDefault();
-              navigate("/", { state: { scrollTo: "projects" } });
+              const scrollY = saveScrollPosition();
+              navigate("/", {
+                state: {
+                  scrollTo: "projects",
+                  scrollY,
+                  from: "home-to-project",
+                },
+              });
             }}
             className="cursor-pointer flex items-center gap-2 text-foreground hover:text-primary transition-colors group touch-manipulation"
           >
@@ -947,7 +967,7 @@ const MarketJD = () => {
         </div>
 
         {/* Hero Header */}
-        <div ref={heroRef} className="mb-16">
+        <div ref={heroRef} className="mb-16 route-enter-child">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-transparent flex items-center justify-center min-w-[120px] h-[120px] hero-logo">
               <img

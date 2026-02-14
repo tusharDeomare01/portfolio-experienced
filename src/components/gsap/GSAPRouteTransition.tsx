@@ -30,7 +30,7 @@ function getTransitionType(from: string | null, to: string): TransitionType {
 
   const isHome = (path: string) => path === "/";
   const isProject = (path: string) =>
-    ["/marketjd", "/portfolio"].includes(path);
+    ["/marketjd", "/portfolio", "/sitemap"].includes(path);
 
   if (isHome(from) && isProject(to)) return "home-to-project";
   if (isProject(from) && isHome(to)) return "project-to-home";

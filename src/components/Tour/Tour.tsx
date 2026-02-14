@@ -12,6 +12,7 @@ import {
   FolderKanban,
   Trophy,
   Mail,
+  Network,
   Bot,
   Maximize2,
   CreditCard,
@@ -101,6 +102,15 @@ const TOUR_STEPS: TourStep[] = [
       "View my notable achievements and recognitions. This includes awards, certifications, and other milestones in my professional journey.",
     position: "top",
     icon: <Trophy className="w-5 h-5" />,
+  },
+  {
+    id: "site-architecture",
+    target: "[data-site-architecture]",
+    title: "Site Architecture",
+    content:
+      "Explore the interactive site architecture visualizer! See how all sections and pages are connected. Click any node to navigate directly to that section or page.",
+    position: "left",
+    icon: <Network className="w-5 h-5" />,
   },
   {
     id: "contact",
@@ -628,7 +638,11 @@ export function Tour({
     // Smooth scroll to target first, then position
     // Use GSAP ScrollToPlugin so scroll coordinates with ScrollTrigger
     try {
-      if (step.id === "dock") {
+      if (step.id === "site-architecture" || step.id === "ai-assistant") {
+        // Fixed-position floating buttons — no scroll needed, just position tooltip
+        const fixedElement = document.querySelector(step.target);
+        performPositioning(fixedElement);
+      } else if (step.id === "dock") {
         gsap.to(window, {
           scrollTo: { y: "max" },
           duration: 1,

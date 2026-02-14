@@ -27,6 +27,7 @@ const navItems = [
   { name: "Projects", href: "#projects", isRoute: false },
   { name: "Achievements", href: "#achievements", isRoute: false },
   { name: "My Card", href: "/lanyard", isRoute: true },
+  { name: "Architecture", href: "/sitemap", isRoute: true },
   { name: "Contact", href: "#contact", isRoute: false },
 ];
 

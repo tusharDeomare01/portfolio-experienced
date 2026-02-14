@@ -19,6 +19,7 @@ import { GSAPPageIntro } from "./components/gsap/GSAPPageIntro";
 import { GSAPRouteTransition } from "./components/gsap/GSAPRouteTransition";
 // import { NoiseOverlay } from "./components/gsap/NoiseOverlay";
 // import { VignetteOverlay } from "./components/gsap/VignetteOverlay";
+import { FloatingArchitectureButton } from "./components/SiteArchitecture/FloatingArchitectureButton";
 
 // Lazy load other components (not critical for SEO)
 const AIAssistant = lazy(() => import("./components/AIAssistant/AIAssistant"));
@@ -36,6 +37,7 @@ const LightRays = lazy(() => import("./components/reactBits/lightRays"));
 const MarketJD = lazy(() => import("./pages/MarketJD"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
 const LanyardPage = lazy(() => import("./pages/Lanyard"));
+const SiteArchitecture = lazy(() => import("./pages/SiteArchitecture"));
 
 // Wrapper component for MarketJD with conditional LightRays background
 function MarketJDPage() {
@@ -144,12 +146,23 @@ function App() {
             }
           />
 
+          {/* Site Architecture Page */}
+          <Route
+            path="/sitemap"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <SiteArchitecture />
+              </Suspense>
+            }
+          />
+
           {/* Main Portfolio Page */}
           {/* SEO FIX: No Suspense wrapper - loads immediately for better SEO */}
           <Route path="/" element={<HomePageSection />} />
           </Routes>
         </GSAPRouteTransition>
-        {/* AI Assistant - Available on all routes */}
+        {/* Floating buttons - Available on all routes */}
+        <FloatingArchitectureButton />
         <Suspense fallback={<AIAssistantLoader />}>
           <AIAssistant />
         </Suspense>

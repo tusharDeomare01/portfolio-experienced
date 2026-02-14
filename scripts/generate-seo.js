@@ -36,7 +36,8 @@ const publicDir = path.resolve(__dirname, '../public');
 const routes = [
   { path: '/', priority: 1.0, changefreq: 'weekly' },
   { path: '/marketjd', priority: 0.8, changefreq: 'monthly' },
-  { path: '/portfolio', priority: 0.8, changefreq: 'monthly' }
+  { path: '/portfolio', priority: 0.8, changefreq: 'monthly' },
+  { path: '/sitemap', priority: 0.6, changefreq: 'monthly' }
 ];
 
 // Generate robots.txt

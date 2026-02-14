@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useIsMobile } from "../hooks/use-mobile";
 import { useTourContext } from "../Tour/TourContext";
 import { useThrottleRAF } from "@/hooks/useThrottle";
@@ -18,6 +18,7 @@ import {
   GraduationCap,
   Home,
   Mail,
+  Network,
   Trophy,
   User,
 } from "lucide-react";
@@ -63,6 +64,7 @@ const Tour = lazy(() =>
 const Dock = lazy(() => import("../lightswind/dock"));
 
 const HomePageSection = () => {
+  const navigate = useNavigate();
   const [showDock, setShowDock] = useState(false);
   const [isDockVisible, setIsDockVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -106,7 +108,7 @@ const HomePageSection = () => {
     // Show dock if scrolling down OR if tour is active and on dock step
     const shouldShowDock =
       (currentScrollY > lastScrollY && currentScrollY > 100) ||
-      (tour.isTourActive && tour.currentStep === 9); // Step 9 (index) is the dock step
+      (tour.isTourActive && tour.currentStep === 10); // Step 9 (index) is the dock step
 
     if (shouldShowDock) {
       setShowDock(true);
@@ -124,7 +126,7 @@ const HomePageSection = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Show dock if tour is on dock step
-    if (tour.isTourActive && tour.currentStep === 9) {
+    if (tour.isTourActive && tour.currentStep === 10) {
       setShowDock(true);
     }
 
@@ -179,12 +181,17 @@ const HomePageSection = () => {
         onClick: () => scrollToSection("achievements"),
       },
       {
+        icon: <Network size={iconSize} />,
+        label: "Architecture",
+        onClick: () => navigate("/sitemap"),
+      },
+      {
         icon: <Mail size={iconSize} />,
         label: "Contact",
         onClick: () => scrollToSection("contact"),
       },
     ],
-    [iconSize, scrollToSection]
+    [iconSize, scrollToSection, navigate]
   );
   return (
     <div className="bg-transparent z-10 min-h-screen w-full">
@@ -221,7 +228,7 @@ const HomePageSection = () => {
               ? "translate-y-0 opacity-100 scale-100"
               : "translate-y-[100px] opacity-0 scale-95"
           } ${
-            tour.isTourActive && tour.currentStep === 9
+            tour.isTourActive && tour.currentStep === 10
               ? "z-[10001]"
               : "z-[999]"
           }`}

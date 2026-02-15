@@ -181,14 +181,14 @@ const HomePageSection = () => {
         onClick: () => scrollToSection("achievements"),
       },
       {
-        icon: <Network size={iconSize} />,
-        label: "Architecture",
-        onClick: () => navigate("/sitemap"),
-      },
-      {
         icon: <Mail size={iconSize} />,
         label: "Contact",
         onClick: () => scrollToSection("contact"),
+      },
+      {
+        icon: <Network size={iconSize} />,
+        label: "Architecture",
+        onClick: () => navigate("/sitemap"),
       },
     ],
     [iconSize, scrollToSection, navigate]

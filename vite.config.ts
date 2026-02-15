@@ -271,6 +271,9 @@ export default defineConfig(({ mode }) => ({
           if (id.includes("/pages/MarketJD")) {
             return "marketjd-page";
           }
+          if (id.includes("/pages/LineLeader")) {
+            return "lineleader-page";
+          }
           if (id.includes("/pages/Portfolio")) {
             return "portfolio-page";
           }

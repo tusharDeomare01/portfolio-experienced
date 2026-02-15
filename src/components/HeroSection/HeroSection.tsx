@@ -1,7 +1,8 @@
-import { useRef, useState, useCallback, memo } from "react";
+import { useRef, useState, useCallback, useEffect, memo } from "react";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { Button } from "../lightswind/button";
-import { FileText, Sparkles, Mail } from "lucide-react";
+import { FileText, Sparkles, Mail, Linkedin, Github } from "lucide-react";
+import { CircularStatusText } from "./CircularStatusText";
 
 const RESUME_FILE_PATH = "/Tushar_Deomare.pdf";
 
@@ -20,6 +21,8 @@ const HeroSectionComponent = () => {
   const emailRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const buttonWrapperRef = useRef<HTMLDivElement>(null);
+  const socialsRef = useRef<HTMLDivElement>(null);
+  const circularTextRef = useRef<HTMLDivElement>(null);
   const imageWrapperRef = useRef<HTMLDivElement>(null);
   const sparkleRef = useRef<HTMLSpanElement>(null);
 
@@ -98,6 +101,30 @@ const HeroSectionComponent = () => {
                 clearProps: "transform",
               },
               0
+            );
+          }
+
+          // ─── PHASE 1.5: Circular text — Scale 0 → 1.05 → 1 ───
+          if (circularTextRef.current) {
+            gsap.set(circularTextRef.current, { opacity: 0, scale: 0 });
+            tl.to(
+              circularTextRef.current,
+              {
+                opacity: 1,
+                scale: 1.05,
+                duration: 0.7,
+                ease: "power3.out",
+              },
+              0.3
+            ).to(
+              circularTextRef.current,
+              {
+                scale: 1,
+                duration: 0.4,
+                ease: "power2.inOut",
+                clearProps: "transform",
+              },
+              ">"
             );
           }
 
@@ -234,6 +261,32 @@ const HeroSectionComponent = () => {
             );
           }
 
+          // ─── PHASE 7.5: Social links — Staggered pop-in ───
+          if (socialsRef.current) {
+            const socialLinks =
+              socialsRef.current.querySelectorAll<HTMLElement>(".social-link");
+            if (socialLinks.length) {
+              gsap.set(socialLinks, {
+                opacity: 0,
+                scale: 0,
+                rotation: -30,
+              });
+              tl.to(
+                socialLinks,
+                {
+                  opacity: 1,
+                  scale: 1,
+                  rotation: 0,
+                  duration: 0.6,
+                  stagger: 0.1,
+                  ease: "back.out(1.7)",
+                  clearProps: "transform",
+                },
+                1.0
+              );
+            }
+          }
+
           // ─── PHASE 8: CTA button — Elastic cascade ───
           if (buttonsRef.current) {
             gsap.set(buttonsRef.current, {
@@ -253,7 +306,7 @@ const HeroSectionComponent = () => {
                 ease: "elastic.out(1, 0.4)",
                 clearProps: "transform",
               },
-              1.05
+              1.15
             );
           }
 
@@ -413,6 +466,30 @@ const HeroSectionComponent = () => {
             );
           }
 
+          // ─── Circular text: Scale 0 → 1.05 → 1 ───
+          if (circularTextRef.current) {
+            gsap.set(circularTextRef.current, { opacity: 0, scale: 0 });
+            tl.to(
+              circularTextRef.current,
+              {
+                opacity: 1,
+                scale: 1.05,
+                duration: 0.6,
+                ease: "power3.out",
+              },
+              0.2
+            ).to(
+              circularTextRef.current,
+              {
+                scale: 1,
+                duration: 0.35,
+                ease: "power2.inOut",
+                clearProps: "transform",
+              },
+              ">"
+            );
+          }
+
           // ─── Name: clipPath reveal from bottom ───
           if (nameRef.current) {
             gsap.set(nameRef.current, {
@@ -525,6 +602,32 @@ const HeroSectionComponent = () => {
             );
           }
 
+          // ─── Social links: Staggered pop-in ───
+          if (socialsRef.current) {
+            const socialLinks =
+              socialsRef.current.querySelectorAll<HTMLElement>(".social-link");
+            if (socialLinks.length) {
+              gsap.set(socialLinks, {
+                opacity: 0,
+                scale: 0,
+                rotation: -20,
+              });
+              tl.to(
+                socialLinks,
+                {
+                  opacity: 1,
+                  scale: 1,
+                  rotation: 0,
+                  duration: 0.5,
+                  stagger: 0.08,
+                  ease: "back.out(1.7)",
+                  clearProps: "transform",
+                },
+                0.82
+              );
+            }
+          }
+
           // ─── CTA button: Scale bounce ───
           if (buttonsRef.current) {
             gsap.set(buttonsRef.current, {
@@ -542,7 +645,7 @@ const HeroSectionComponent = () => {
                 ease: "back.out(1.7)",
                 clearProps: "transform",
               },
-              0.85
+              0.92
             );
           }
 
@@ -696,6 +799,32 @@ const HeroSectionComponent = () => {
             );
           }
 
+          // ─── Circular text: Scale 0 → 1.05 → 1 ───
+          if (circularTextRef.current) {
+            gsap.set(circularTextRef.current, { opacity: 0, scale: 0 });
+            mobileTl
+              .to(
+                circularTextRef.current,
+                {
+                  opacity: 1,
+                  scale: 1.05,
+                  duration: 0.5,
+                  ease: "power3.out",
+                },
+                0.15
+              )
+              .to(
+                circularTextRef.current,
+                {
+                  scale: 1,
+                  duration: 0.3,
+                  ease: "power2.inOut",
+                  clearProps: "transform",
+                },
+                ">"
+              );
+          }
+
           // ─── Name: clipPath reveal from bottom (premium wipe) ───
           if (nameRef.current) {
             gsap.set(nameRef.current, {
@@ -788,6 +917,27 @@ const HeroSectionComponent = () => {
             );
           }
 
+          // ─── Social links: Staggered pop-in ───
+          if (socialsRef.current) {
+            const socialLinks =
+              socialsRef.current.querySelectorAll<HTMLElement>(".social-link");
+            if (socialLinks.length) {
+              gsap.set(socialLinks, { opacity: 0, scale: 0 });
+              mobileTl.to(
+                socialLinks,
+                {
+                  opacity: 1,
+                  scale: 1,
+                  duration: 0.4,
+                  stagger: 0.08,
+                  ease: "back.out(1.7)",
+                  clearProps: "transform",
+                },
+                0.55
+              );
+            }
+          }
+
           // ─── CTA buttons: Scale bounce ───
           if (buttonsRef.current) {
             gsap.set(buttonsRef.current, { opacity: 0, scale: 0.9 });
@@ -800,7 +950,7 @@ const HeroSectionComponent = () => {
                 ease: "back.out(1.7)",
                 clearProps: "transform",
               },
-              0.55
+              0.62
             );
           }
 
@@ -841,6 +991,8 @@ const HeroSectionComponent = () => {
             pronounRef,
             subtitleRef,
             emailRef,
+            socialsRef,
+            circularTextRef,
             buttonsRef,
             imageWrapperRef,
             glowRef,
@@ -891,6 +1043,15 @@ const HeroSectionComponent = () => {
   const handleEmailMouseLeave = useCallback(() => {
     setIsEmailHovered(false);
   }, []);
+
+  // Auto-dismiss the default email tooltip after 3 seconds
+  useEffect(() => {
+    if (hasHoveredEmail) return;
+    const timer = setTimeout(() => {
+      setHasHoveredEmail(true);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [hasHoveredEmail]);
 
   return (
     <div
@@ -969,6 +1130,40 @@ const HeroSectionComponent = () => {
           </a>
         </div>
 
+        {/* Social Links */}
+        <div ref={socialsRef} className="flex items-center gap-3 mt-4">
+          <div className="relative group/linkedin">
+            <a
+              href="https://www.linkedin.com/in/tushar-deomare-04a34819b/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-link inline-flex items-center justify-center w-10 h-10 rounded-full border border-border bg-background text-muted-foreground hover:text-white hover:bg-[#0A66C2] hover:border-[#0A66C2] transition-all duration-300 shadow-sm hover:shadow-md"
+              aria-label="LinkedIn Profile"
+            >
+              <Linkedin className="w-[18px] h-[18px]" />
+            </a>
+            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-md pointer-events-none opacity-0 group-hover/linkedin:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10 shadow-lg">
+              LinkedIn
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></span>
+            </span>
+          </div>
+          <div className="relative group/github">
+            <a
+              href="https://github.com/tusharDeomare01"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-link inline-flex items-center justify-center w-10 h-10 rounded-full border border-border bg-background text-muted-foreground hover:text-white hover:bg-[#24292f] dark:hover:bg-white dark:hover:text-[#24292f] hover:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
+              aria-label="GitHub Profile"
+            >
+              <Github className="w-[18px] h-[18px]" />
+            </a>
+            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-md pointer-events-none opacity-0 group-hover/github:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10 shadow-lg">
+              GitHub
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></span>
+            </span>
+          </div>
+        </div>
+
         {/* CTA Button */}
         <div ref={buttonsRef} className="flex flex-wrap gap-4 mt-6">
           <div ref={buttonWrapperRef} className="will-change-transform">
@@ -985,21 +1180,15 @@ const HeroSectionComponent = () => {
 
       {/* Right Section */}
       <div className="flex-1 flex justify-center p-6 hero-right-section">
-        <div className="relative">
-          {/* Gradient glow ring — behind image */}
-          <div
-            // ref={glowRef}
-            className="absolute -inset-8 rounded-full -z-10"
-            // style={{
-            //   background:
-            //     "conic-gradient(from 0deg, rgba(236,72,153,0.3), rgba(168,85,247,0.25), rgba(59,130,246,0.2), rgba(236,72,153,0.3))",
-            //   filter: "blur(40px)",
-            // }}
-          />
-          {/* Profile image */}
+        <div className="relative flex items-center justify-center w-[260px] h-[260px] sm:w-[280px] sm:h-[280px] md:w-[300px] md:h-[300px]">
+          {/* Circular "OPEN TO WORK" text ring with green status dots */}
+          <div ref={circularTextRef} className="absolute inset-0">
+            <CircularStatusText />
+          </div>
+          {/* Profile image — centered inside the circular text ring */}
           <div
             ref={imageWrapperRef}
-            className="w-64 h-64 rounded-full overflow-hidden shadow-lg"
+            className="w-[200px] h-[200px] sm:w-[216px] sm:h-[216px] md:w-[232px] md:h-[232px] rounded-full overflow-hidden shadow-lg"
           >
             <img
               src="/Tushar_Deomare.jpg"

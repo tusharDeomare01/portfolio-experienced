@@ -4,11 +4,13 @@ import { ArrowLeft } from "lucide-react";
 import { ShareButton } from "@/components/Share";
 import { getCurrentUrl } from "@/lib/shareUtils";
 import { useNavigate } from "react-router-dom";
+import { useGSAPScrollRestoration } from "@/hooks/useGSAPScrollRestoration";
 
 const Lanyard = lazy(() => import("../components/reactBits/lanYard"));
 
 const LanyardPage = () => {
   const navigate = useNavigate();
+  const { saveScrollPosition } = useGSAPScrollRestoration();
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <Suspense fallback={<PageLoader />}>
@@ -27,7 +29,14 @@ const LanyardPage = () => {
             e.preventDefault();
             const splitUrl = window.location.href.split("#");
             if (splitUrl?.includes("home")) {
-              navigate("/");
+              const scrollY = saveScrollPosition();
+              navigate("/", {
+                state: {
+                  scrollTo: "home",
+                  scrollY,
+                  from: "home-to-home",
+                },
+              });
             } else {
               navigate(-1);
             }

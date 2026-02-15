@@ -11,6 +11,7 @@ import {
   BarChart3,
   Code2,
   Sparkles,
+  Server,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -73,8 +74,9 @@ const SECTION_DEFS: Record<string, Omit<TreeNode, "children" | "level">> = {
 };
 
 const SUB_PAGES: TreeNode[] = [
-  { id: "marketjd",  label: "MarketJD",     type: "subpage", icon: BarChart3,   color: "rose", href: "/marketjd",  isRoute: true, children: [], level: 2, description: "SEO insights platform" },
-  { id: "portfolio", label: "TechShowcase", type: "subpage", icon: Code2,       color: "rose", href: "/portfolio", isRoute: true, children: [], level: 2, description: "Portfolio website" },
+  { id: "marketjd",    label: "MarketJD",     type: "subpage", icon: BarChart3,   color: "rose",   href: "/marketjd",    isRoute: true, children: [], level: 2, description: "SEO insights platform" },
+  { id: "lineleader",  label: "LineLeader",   type: "subpage", icon: Server,      color: "violet", href: "/lineleader",  isRoute: true, children: [], level: 2, description: "ChildCare SaaS platform" },
+  { id: "portfolio",   label: "TechShowcase", type: "subpage", icon: Code2,       color: "rose",   href: "/portfolio",   isRoute: true, children: [], level: 2, description: "Portfolio website" },
 ];
 
 const MY_CARD: TreeNode = {

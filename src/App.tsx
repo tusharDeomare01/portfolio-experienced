@@ -35,6 +35,7 @@ const LightRays = lazy(() => import("./components/reactBits/lightRays"));
 
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
+const LineLeaderPage = lazy(() => import("./pages/LineLeader"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
 const LanyardPage = lazy(() => import("./pages/Lanyard"));
 const SiteArchitecture = lazy(() => import("./pages/SiteArchitecture"));
@@ -67,6 +68,37 @@ function MarketJDPage() {
       {/* MarketJD Content */}
       <div className="relative z-10">
         <MarketJD />
+      </div>
+    </>
+  );
+}
+
+// Wrapper component for LineLeader with conditional LightRays background
+function LineLeaderPageWrapper() {
+  const isMobile = useIsMobile();
+  return (
+    <>
+      {!isMobile && (
+        <div className="fixed inset-0 z-0">
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#ffffff"
+            raysSpeed={2}
+            lightSpread={10}
+            rayLength={0.8}
+            followMouse={true}
+            mouseInfluence={0.1}
+            noiseAmount={0}
+            distortion={0.05}
+            fadeDistance={10}
+            // pulsating={true}
+            // saturation={20}
+            className="custom-rays"
+          />
+        </div>
+      )}
+      <div className="relative z-10">
+        <LineLeaderPage />
       </div>
     </>
   );
@@ -122,6 +154,16 @@ function App() {
             element={
               <Suspense fallback={<PageLoader />}>
                 <MarketJDPage />
+              </Suspense>
+            }
+          />
+
+          {/* LineLeader Project Detail Page */}
+          <Route
+            path="/lineleader"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <LineLeaderPageWrapper />
               </Suspense>
             }
           />

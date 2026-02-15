@@ -104,15 +104,6 @@ const TOUR_STEPS: TourStep[] = [
     icon: <Trophy className="w-5 h-5" />,
   },
   {
-    id: "site-architecture",
-    target: "[data-site-architecture]",
-    title: "Site Architecture",
-    content:
-      "Explore the interactive site architecture visualizer! See how all sections and pages are connected. Click any node to navigate directly to that section or page.",
-    position: "left",
-    icon: <Network className="w-5 h-5" />,
-  },
-  {
     id: "contact",
     target: "#contact",
     title: "Get In Touch",
@@ -129,6 +120,15 @@ const TOUR_STEPS: TourStep[] = [
       "When you scroll down, a navigation dock appears at the bottom. Use it to quickly jump to any section without scrolling back to the top.",
     position: "top",
     icon: <Home className="w-5 h-5" />,
+  },
+  {
+    id: "site-architecture",
+    target: "[data-site-architecture]",
+    title: "Site Architecture",
+    content:
+      "Explore the interactive site architecture visualizer! See how all sections and pages are connected. Click any node to navigate directly to that section or page.",
+    position: "left",
+    icon: <Network className="w-5 h-5" />,
   },
   {
     id: "ai-assistant",

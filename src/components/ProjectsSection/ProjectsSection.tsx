@@ -7,7 +7,9 @@ import { Badge } from "../lightswind/badge";
 import {
   ArrowRight,
   Calendar,
+  ExternalLink,
   FolderKanban,
+  Globe,
   Sparkles,
 } from "lucide-react";
 import { useIsMobile } from "../hooks/use-mobile";
@@ -34,6 +36,10 @@ const LOGO_PATHS = {
   MarketJD: {
     dark: "/logo-horizontal-dark.svg",
     light: "/logo-horizontal-light.svg",
+  },
+  LineLeader: {
+    dark: "/ll_brandmark.svg",
+    light: "/ll_brandmark.svg",
   },
   TechShowcase: {
     dark: "/techshowcase-logo-dark.svg",
@@ -63,9 +69,30 @@ const PROJECTS_DATA = [
       "Tailwind CSS",
     ],
     status: "Active",
+    liveUrl: "https://insightsjd.com/auth/signin/client",
   },
   {
     id: 2,
+    title: "LineLeader",
+    subtitle:
+      "Architected report streaming pipeline, MongoDB aggregation optimization, and Agenda.js job queues for a childcare SaaS platform — eliminating server OOM crashes and improving report delivery for organizations with millions of records.",
+    date: "Mar 2025 - Present",
+    route: "/lineleader",
+    technologies: [
+      "React",
+      "TypeScript",
+      "Next.js",
+      "MongoDB",
+      "AWS S3",
+      "AWS Lambda",
+      "Agenda.js",
+      "Node.js",
+    ],
+    status: "Active",
+    liveUrl: "https://my.discoverchampions.momentpath.com/login/legacy",
+  },
+  {
+    id: 3,
     title: "TechShowcase",
     subtitle:
       "Modern, interactive portfolio website featuring smooth animations, AI-powered assistant, 3D carousel, and responsive design. Built with React, TypeScript, Framer Motion, and advanced UI components.",
@@ -73,6 +100,8 @@ const PROJECTS_DATA = [
     route: "/portfolio",
     technologies: ["React", "TypeScript", "Framer Motion", "Vite"],
     status: "Active",
+    badge: "Personal Project",
+    liveUrl: "https://tushar-deomare-portfolio.vercel.app/",
   },
 ] as const;
 
@@ -103,22 +132,33 @@ interface ProjectItemProps {
   onNavigate: (route: string) => void;
 }
 
-// Memoized status badge component - prevents recreation
-const StatusBadge = memo(({ status }: { status: string }) => (
-  <div className="absolute top-4 right-4 z-10">
-    <Badge
-      variant="success"
-      size="sm"
-      className="backdrop-blur-md bg-green-500/90 text-white border-0 shadow-lg"
-    >
-      <span className="relative flex h-2 w-2 mr-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-      </span>
-      {status}
-    </Badge>
-  </div>
-));
+// Memoized status badge component - clickable production link
+const StatusBadge = memo(
+  ({ status, liveUrl }: { status: string; liveUrl: string }) => (
+    <div className="absolute top-4 right-4 z-10">
+      <a
+        href={liveUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className="group/live"
+      >
+        <Badge
+          variant="success"
+          size="sm"
+          className="backdrop-blur-md bg-green-500/90 text-white border-0 shadow-lg cursor-pointer hover:bg-green-600 hover:shadow-xl hover:scale-105 transition-all duration-300"
+        >
+          <span className="relative flex h-2 w-2 mr-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+          </span>
+          {status}
+          <ExternalLink className="w-3 h-3 ml-1.5 opacity-0 group-hover/live:opacity-100 transition-opacity duration-200" />
+        </Badge>
+      </a>
+    </div>
+  )
+);
 StatusBadge.displayName = "StatusBadge";
 
 // Memoized logo display component
@@ -270,7 +310,7 @@ const ProjectItem = memo(
             {/* Logo/Image Section */}
             <div className={`${logoContainerClassName} project-logo-wrap`}>
               <ProjectLogo logoPath={logoPath} title={project.title} />
-              <StatusBadge status={project.status} />
+              <StatusBadge status={project.status} liveUrl={project.liveUrl} />
             </div>
 
             {/* Content Section */}
@@ -284,6 +324,15 @@ const ProjectItem = memo(
                   <div className="flex items-center gap-2 text-sm text-muted-foreground project-date">
                     <Calendar className="w-4 h-4 flex-shrink-0" />
                     <span className="font-medium">{project.date}</span>
+                    {"badge" in project && (
+                      <Badge
+                        variant="warning"
+                        size="sm"
+                        className="ml-1"
+                      >
+                        {project.badge}
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
@@ -298,8 +347,8 @@ const ProjectItem = memo(
                 </div>
               </div>
 
-              {/* CTA Button */}
-              <div className="pt-4 sm:pt-6 project-btn">
+              {/* CTA Buttons */}
+              <div className="pt-4 sm:pt-6 flex flex-wrap items-center gap-3 project-btn">
                 <Button
                   variant="outline"
                   size="lg"
@@ -314,9 +363,18 @@ const ProjectItem = memo(
                       }`}
                     />
                   </span>
-                  {/* Button hover effect */}
                   <div className="absolute inset-0 bg-primary/10 -translate-x-full group-hover/btn:translate-x-0 transition-transform duration-300" />
                 </Button>
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="group/globe inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-border hover:border-emerald-500 hover:bg-emerald-500/10 transition-all duration-300 cursor-pointer"
+                  aria-label="View live production site"
+                >
+                  <Globe className="w-4 h-4 text-muted-foreground group-hover/globe:text-emerald-500 transition-colors duration-200" />
+                </a>
               </div>
             </div>
           </div>

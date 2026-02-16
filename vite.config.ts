@@ -135,7 +135,6 @@ export default defineConfig(({ mode }) => ({
               id.includes("framer-motion") ||
               id.includes("three") ||
               id.includes("@react-three") ||
-              id.includes("@tsparticles") ||
               id.includes("lightswind") ||
               id.includes("gsap")
             );
@@ -228,9 +227,9 @@ export default defineConfig(({ mode }) => ({
             if (id.includes("framer-motion")) {
               return "animation-vendor";
             }
-            // Particles - separate chunk
-            if (id.includes("@tsparticles") || id.includes("tsparticles")) {
-              return "particles-vendor";
+            // OGL (used by Particles and LightRays) - separate chunk
+            if (id.includes("ogl")) {
+              return "ogl-vendor";
             }
             // OpenAI - separate chunk
             if (id.includes("openai")) {

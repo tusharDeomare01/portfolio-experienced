@@ -227,8 +227,10 @@ const Particles: React.FC<ParticlesProps> = ({
     let animationFrameId: number;
     let lastTime = performance.now();
     let elapsed = 0;
+    let paused = false;
 
     const update = (t: number) => {
+      if (paused) return;
       animationFrameId = requestAnimationFrame(update);
       const delta = t - lastTime;
       lastTime = t;
@@ -250,9 +252,23 @@ const Particles: React.FC<ParticlesProps> = ({
       renderer.render({ scene: particles, camera });
     };
 
+    // Pause rendering when tab is hidden to save CPU/GPU/battery
+    const handleVisibility = () => {
+      if (document.hidden) {
+        paused = true;
+        cancelAnimationFrame(animationFrameId);
+      } else {
+        paused = false;
+        lastTime = performance.now();
+        animationFrameId = requestAnimationFrame(update);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('resize', debouncedResize);
       if (moveParticlesOnHover) {
         window.removeEventListener('mousemove', handleMouseMove);

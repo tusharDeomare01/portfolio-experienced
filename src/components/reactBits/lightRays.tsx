@@ -327,8 +327,10 @@ void main() {
       const mesh = new Mesh(gl, { geometry, program });
       meshRef.current = mesh;
 
+      let loopPaused = false;
+
       const loop = (t: number) => {
-        if (!rendererRef.current || !uniformsRef.current || !meshRef.current) {
+        if (loopPaused || !rendererRef.current || !uniformsRef.current || !meshRef.current) {
           return;
         }
 
@@ -350,11 +352,28 @@ void main() {
         }
       };
 
+      // Pause rendering when tab is hidden to save CPU/GPU/battery
+      const handleVisibility = () => {
+        if (document.hidden) {
+          loopPaused = true;
+          if (animationIdRef.current) {
+            cancelAnimationFrame(animationIdRef.current);
+            animationIdRef.current = null;
+          }
+        } else {
+          loopPaused = false;
+          animationIdRef.current = requestAnimationFrame(loop);
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibility);
+
       window.addEventListener('resize', debouncedResize);
       updatePlacement();
       animationIdRef.current = requestAnimationFrame(loop);
 
       cleanupFunctionRef.current = () => {
+        document.removeEventListener('visibilitychange', handleVisibility);
+
         if (animationIdRef.current) {
           cancelAnimationFrame(animationIdRef.current);
           animationIdRef.current = null;

@@ -348,7 +348,7 @@ const ProjectItem = memo(
               </div>
 
               {/* CTA Buttons */}
-              <div className="pt-4 sm:pt-6 flex flex-wrap items-center gap-3 project-btn">
+              <div className="pt-4 sm:pt-6 flex flex-col sm:flex-row flex-wrap items-center gap-3 project-btn">
                 <Button
                   variant="outline"
                   size="lg"

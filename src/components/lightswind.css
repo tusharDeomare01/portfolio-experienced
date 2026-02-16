@@ -343,9 +343,9 @@ body {
   border-color: hsl(var(--border)); /* Use CSS variable for consistency */
 }
 
-/* Smooth Scroll Utility */
+/* Smooth Scroll Utility — disabled, GSAP ScrollToPlugin handles smooth scrolling */
 .scroll-smooth {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Hide Scrollbar Utility */

@@ -1,12 +1,11 @@
 // App.jsx
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { useIsMobile } from "./components/hooks/use-mobile";
 import { TourProvider } from "./components/Tour/TourContext";
 import {
   PageLoader,
-  // BackgroundLoader,
   AIAssistantLoader,
 } from "./components/Loading/LoadingComponents";
 
@@ -17,21 +16,11 @@ import HomePageSection from "./components/HomePageSection/HomePageSection";
 import { GSAPScrollProgress } from "./components/gsap/GSAPScrollProgress";
 import { GSAPPageIntro } from "./components/gsap/GSAPPageIntro";
 import { GSAPRouteTransition } from "./components/gsap/GSAPRouteTransition";
-// import { NoiseOverlay } from "./components/gsap/NoiseOverlay";
-// import { VignetteOverlay } from "./components/gsap/VignetteOverlay";
 import { FloatingArchitectureButton } from "./components/SiteArchitecture/FloatingArchitectureButton";
 
 // Lazy load other components (not critical for SEO)
 const AIAssistant = lazy(() => import("./components/AIAssistant/AIAssistant"));
 const LightRays = lazy(() => import("./components/reactBits/lightRays"));
-
-// const ParticlesBackground = lazy(
-//   () => import("./components/lightswind/particles-background")
-// );
-
-// const FallBeamBackground = lazy(
-//   () => import("./components/lightswind/fall-beam-background")
-// );
 
 // Lazy load route pages for code splitting
 const MarketJD = lazy(() => import("./pages/MarketJD"));
@@ -40,41 +29,8 @@ const Portfolio = lazy(() => import("./pages/Portfolio"));
 const LanyardPage = lazy(() => import("./pages/Lanyard"));
 const SiteArchitecture = lazy(() => import("./pages/SiteArchitecture"));
 
-// Wrapper component for MarketJD with conditional LightRays background
-function MarketJDPage() {
-  const isMobile = useIsMobile();
-  return (
-    <>
-      {/* LightRays Background - Only render on non-mobile devices */}
-      {!isMobile && (
-        <div className="fixed inset-0 z-0">
-          <LightRays
-            raysOrigin="top-center"
-            raysColor="#ffffff"
-            raysSpeed={2}
-            lightSpread={10}
-            rayLength={0.8}
-            followMouse={true}
-            mouseInfluence={0.1}
-            noiseAmount={0}
-            distortion={0.05}
-            fadeDistance={10}
-            // pulsating={true}
-            // saturation={20}
-            className="custom-rays"
-          />
-        </div>
-      )}
-      {/* MarketJD Content */}
-      <div className="relative z-10">
-        <MarketJD />
-      </div>
-    </>
-  );
-}
-
-// Wrapper component for LineLeader with conditional LightRays background
-function LineLeaderPageWrapper() {
+// Shared wrapper: renders LightRays background on desktop, skips on mobile
+function PageWithLightRays({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
   return (
     <>
@@ -91,48 +47,12 @@ function LineLeaderPageWrapper() {
             noiseAmount={0}
             distortion={0.05}
             fadeDistance={10}
-            // pulsating={true}
-            // saturation={20}
             className="custom-rays"
           />
         </div>
       )}
       <div className="relative z-10">
-        <LineLeaderPage />
-      </div>
-    </>
-  );
-}
-
-// Wrapper component for Portfolio with conditional LightRays background
-function PortfolioPage() {
-  const isMobile = useIsMobile();
-
-  return (
-    <>
-      {/* LightRays Background - Only render on non-mobile devices */}
-      {!isMobile && (
-        <div className="fixed inset-0 z-0">
-          <LightRays
-            raysOrigin="top-center"
-            raysColor="#ffffff"
-            raysSpeed={2}
-            lightSpread={10}
-            rayLength={0.8}
-            followMouse={true}
-            mouseInfluence={0.1}
-            noiseAmount={0}
-            distortion={0.05}
-            fadeDistance={10}
-            // pulsating={true}
-            // saturation={20}
-            className="custom-rays"
-          />
-        </div>
-      )}
-      {/* Portfolio Content */}
-      <div className="relative z-10">
-        <Portfolio />
+        {children}
       </div>
     </>
   );
@@ -145,7 +65,6 @@ function App() {
         {/* GSAP global enhancements */}
         <GSAPScrollProgress />
         <GSAPPageIntro />
-        {/* <NoiseOverlay /> */}
         <GSAPRouteTransition>
           <Routes>
           {/* MarketJD Project Detail Page */}
@@ -153,7 +72,7 @@ function App() {
             path="/marketjd"
             element={
               <Suspense fallback={<PageLoader />}>
-                <MarketJDPage />
+                <PageWithLightRays><MarketJD /></PageWithLightRays>
               </Suspense>
             }
           />
@@ -163,7 +82,7 @@ function App() {
             path="/lineleader"
             element={
               <Suspense fallback={<PageLoader />}>
-                <LineLeaderPageWrapper />
+                <PageWithLightRays><LineLeaderPage /></PageWithLightRays>
               </Suspense>
             }
           />
@@ -173,7 +92,7 @@ function App() {
             path="/portfolio"
             element={
               <Suspense fallback={<PageLoader />}>
-                <PortfolioPage />
+                <PageWithLightRays><Portfolio /></PageWithLightRays>
               </Suspense>
             }
           />
@@ -208,17 +127,6 @@ function App() {
         <Suspense fallback={<AIAssistantLoader />}>
           <AIAssistant />
         </Suspense>
-        {/* <SmokeyCursor
-        followMouse={true}
-        autoColors={true}
-        dyeResolution={1440}
-        simulationResolution={256}
-      /> */}
-        {/* <StripedBackground className={"fixed z-0 blur-xs"} /> */}
-        {/* <Suspense fallback={<BackgroundLoader />}>
-          <ParticlesBackground />
-        </Suspense>
-         */}
       </BrowserRouter>
     </TourProvider>
   );

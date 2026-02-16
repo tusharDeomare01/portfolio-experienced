@@ -114,9 +114,9 @@ body {
   }
 }
 
-/* Smooth scrolling for all anchor links */
+/* GSAP handles all smooth scrolling via ScrollToPlugin — never use native scroll-behavior: smooth */
 a[href^="#"] {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* 3D Carousel Perspective */

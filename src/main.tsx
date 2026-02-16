@@ -80,7 +80,7 @@ createRoot(document.getElementById("root")!).render(
         <ThemeSync />
         <Suspense fallback={<PageLoader />}>
           <ThemedClickSpark>
-            <div className="fixed inset-0 z-[0] w-full h-full !scroll-smooth">
+            <div className="fixed inset-0 z-[0] w-full h-full">
               <Particles
                 particleColors={["#ffffff", "#000000", "#ffffff", "#000000"]}
                 particleCount={200}
@@ -90,13 +90,13 @@ createRoot(document.getElementById("root")!).render(
                 moveParticlesOnHover={true}
                 alphaParticles={false}
                 disableRotation={false}
-                pixelRatio={5}
+                pixelRatio={Math.min(window.devicePixelRatio, 2)}
                 cameraDistance={1}
                 className="w-full h-full pointer-events-none"
               />
             </div>
             <div
-              className="relative z-[10] !bg-transparent !scroll-smooth transition-opacity duration-300 ease-out
+              className="relative z-[10] !bg-transparent transition-opacity duration-300 ease-out
              opacity-100"
             >
               {/* <Suspense fallback={<BackgroundLoader />}>

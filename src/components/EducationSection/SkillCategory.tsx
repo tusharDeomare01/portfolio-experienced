@@ -1,7 +1,8 @@
-import { memo, useMemo, useRef } from "react";
+import { lazy, memo, useMemo, useRef } from "react";
 import { Badge } from "../lightswind/badge.tsx";
 import { MacbookScroll } from "../ui/macbook-scroll";
-import TechSkillsPresentation from "./TechSkillsPresentation";
+// import TechSkillsPresentation from "./TechSkillsPresentation";
+const TechSkillsPresentation = lazy(() => import("./TechSkillsPresentation"));
 import { Users } from "lucide-react";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 

@@ -27,7 +27,7 @@ import { ComponentLoader, SectionLoader } from "../Loading/LoadingComponents";
 // Googlebot needs to see the name "Tushar Deomare" immediately
 import Header from "../Header/Header";
 import { HeroSection } from "../HeroSection/HeroSection";
-import { EducationSection } from "../EducationSection/EducationSection";
+// import { EducationSection } from "../EducationSection/EducationSection";
 const AboutSection = lazy(() =>
   import("../AboutSection/AboutSection").then((module) => ({
     default: module.AboutSection,
@@ -38,11 +38,11 @@ const ProjectsSection = lazy(() =>
     default: module.ProjectsSection,
   }))
 );
-// const EducationSection = lazy(() =>
-//   import("../EducationSection/EducationSection").then((module) => ({
-//     default: module.EducationSection,
-//   }))
-// );
+const EducationSection = lazy(() =>
+  import("../EducationSection/EducationSection").then((module) => ({
+    default: module.EducationSection,
+  }))
+);
 const CareerTimeline = lazy(() =>
   import("../CareerSection/CareerTimeline").then((module) => ({
     default: module.CareerTimeline,

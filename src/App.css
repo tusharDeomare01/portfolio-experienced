@@ -402,3 +402,75 @@ html {
   /* scroll-behavior handled by GSAP ScrollToPlugin — CSS smooth conflicts with GSAP animations */
   scroll-behavior: auto !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   TechSkillsPresentation — Keyframe animations
+   Extracted from inline <style> for better performance
+   (inline <style> re-injects into DOM on every render)
+   ═══════════════════════════════════════════════════════════════ */
+.tech-skills-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes iconEnter {
+  0% { opacity: 0; transform: scale(0) rotate(-180deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes titleEnter {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lineEnter {
+  0% { width: 0; opacity: 0; }
+  100% { width: 80px; opacity: 1; }
+}
+
+@keyframes skillsEnter {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes counterEnter {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes badgeEnter {
+  0% { opacity: 0; transform: scale(0.7) translateY(15px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-icon-enter {
+  animation: iconEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+.animate-title-enter {
+  animation: titleEnter 0.5s ease-out 0.35s both;
+}
+
+.animate-line-enter {
+  animation: lineEnter 0.6s ease-out 0.5s both;
+}
+
+.animate-skills-enter {
+  animation: skillsEnter 0.5s ease-out 0.4s both;
+}
+
+.animate-counter-enter {
+  animation: counterEnter 0.4s ease-out 0.9s both;
+}
+
+.animate-badge-enter {
+  animation: badgeEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Project Pages (MarketJD, LineLeader, Portfolio) — Shared keyframes
+   Extracted from inline <style> tags for better performance
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}

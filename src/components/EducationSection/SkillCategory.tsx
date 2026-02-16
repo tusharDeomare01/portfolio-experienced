@@ -348,7 +348,7 @@ function ProfessionalProfileComponent() {
               <Badge
                 variant="default"
                 size="lg"
-                className="text-sm font-semibold bg-gradient-to-r from-pink-500/90 to-purple-500/90 text-white border-0 hover:from-pink-500 hover:to-purple-500 hover:scale-110 hover:shadow-lg transition-all duration-300 cursor-default"
+                className="text-sm font-semibold bg-gradient-to-r from-pink-500/90 to-purple-500/90 text-white border-0 hover:from-pink-500 hover:to-purple-500 hover:scale-110 hover:shadow-lg transition-[transform,box-shadow] duration-300 cursor-default"
               >
                 {skill}
               </Badge>

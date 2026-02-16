@@ -303,7 +303,7 @@ const TechSkillsPresentation = memo(
 
         {/* Slide Content */}
         <div
-          className={`w-full h-full flex flex-col items-center justify-center px-3 py-4 md:px-4 md:py-5 overflow-hidden relative z-10 transition-all duration-500 ease-out ${
+          className={`w-full h-full flex flex-col items-center justify-center px-3 py-4 md:px-4 md:py-5 overflow-hidden relative z-10 transition-[opacity,transform] duration-500 ease-out ${
             isTransitioning
               ? "opacity-0 translate-x-12"
               : "opacity-100 translate-x-0"
@@ -344,8 +344,8 @@ const TechSkillsPresentation = memo(
 
           {/* Skills Grid */}
           <div
-            className="flex flex-wrap justify-center items-center gap-2 md:gap-2.5 lg:gap-3 w-full px-2 md:px-3 overflow-y-auto flex-1 min-h-0 max-h-full pb-2 animate-skills-enter"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            className="tech-skills-scrollbar flex flex-wrap justify-center items-center gap-2 md:gap-2.5 lg:gap-3 w-full px-2 md:px-3 overflow-y-auto flex-1 min-h-0 max-h-full pb-2 animate-skills-enter"
+            style={{ scrollbarWidth: "none" }}
           >
             {currentCategory.skills.map((skill, index) => (
               <SkillBadge
@@ -399,99 +399,7 @@ const TechSkillsPresentation = memo(
           />
         </div>
 
-        <style>{`
-        .overflow-y-auto::-webkit-scrollbar {
-          display: none;
-        }
-        
-        @keyframes iconEnter {
-          0% {
-            opacity: 0;
-            transform: scale(0) rotate(-180deg);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1) rotate(0deg);
-          }
-        }
-        
-        @keyframes titleEnter {
-          0% {
-            opacity: 0;
-            transform: translateY(15px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes lineEnter {
-          0% {
-            width: 0;
-            opacity: 0;
-          }
-          100% {
-            width: 80px;
-            opacity: 1;
-          }
-        }
-        
-        @keyframes skillsEnter {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-        
-        @keyframes counterEnter {
-          0% {
-            opacity: 0;
-            transform: scale(0.8);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
-        @keyframes badgeEnter {
-          0% {
-            opacity: 0;
-            transform: scale(0.7) translateY(15px);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-        }
-        
-        .animate-icon-enter {
-          animation: iconEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
-        }
-        
-        .animate-title-enter {
-          animation: titleEnter 0.5s ease-out 0.35s both;
-        }
-        
-        .animate-line-enter {
-          animation: lineEnter 0.6s ease-out 0.5s both;
-        }
-        
-        .animate-skills-enter {
-          animation: skillsEnter 0.5s ease-out 0.4s both;
-        }
-        
-        .animate-counter-enter {
-          animation: counterEnter 0.4s ease-out 0.9s both;
-        }
-        
-        .animate-badge-enter {
-          animation: badgeEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-        }
-      `}</style>
+{/* Keyframe animations moved to App.css — avoids re-injecting <style> into DOM on every render */}
       </div>
     );
   }
@@ -522,7 +430,7 @@ const NavButton = memo(
           isDarkMode
             ? "bg-white/10 hover:bg-white/20"
             : "bg-gray-900/10 hover:bg-gray-900/20"
-        } backdrop-blur-md transition-all duration-300 z-20 group cursor-pointer border-2 ${
+        } backdrop-blur-sm transition-[background-color,border-color,box-shadow,transform] duration-300 z-20 group cursor-pointer border-2 ${
           isDarkMode
             ? "border-white/20 hover:border-white/40"
             : "border-gray-700/30 hover:border-gray-700/50"
@@ -564,7 +472,7 @@ const SlideIndicators = memo(
           <button
             key={index}
             onClick={() => onSlideClick(index)}
-            className={`transition-all duration-300 rounded-full cursor-pointer ${
+            className={`transition-[width,height,background-color,transform,box-shadow] duration-300 rounded-full cursor-pointer ${
               index === currentSlide
                 ? `w-8 h-2 md:w-10 md:h-2.5 ${activeColors.bg} ${activeColors.border} border-2 ${
                     isDarkMode ? "shadow-lg" : "shadow-md"
@@ -608,7 +516,7 @@ const SkillBadge = memo(
         style={badgeStyle}
         className={`px-4 md:px-5 py-2 md:py-2.5 rounded-lg ${
           colors.badge
-        } border-2 backdrop-blur-md font-bold text-xs md:text-sm lg:text-base cursor-pointer transition-all duration-300 ${
+        } border-2 font-bold text-xs md:text-sm lg:text-base cursor-pointer transition-[transform,box-shadow,filter] duration-300 ${
           isDarkMode ? "shadow-lg hover:shadow-2xl" : "shadow-md hover:shadow-lg"
         } relative overflow-hidden group animate-badge-enter hover:scale-105 hover:-translate-y-1 hover:rotate-1 ${
           isDarkMode ? "hover:brightness-125" : "hover:brightness-110"

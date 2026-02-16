@@ -1561,25 +1561,20 @@ const MarketJD = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg summary-card">
+              <div className="p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg summary-card">
                   <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                    Scale
+                    Project Name
                   </h3>
                   <p className="text-foreground font-medium text-lg mb-1">
-                    100 Prisma Models
+                    MarketJD
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    202 migrations, 2,400-line schema
+                    SEO Admin Portal
                   </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <Badge variant="info" size="sm">
-                      272 API Handlers
-                    </Badge>
-                    <Badge variant="outline" size="sm">
-                      18 Cron Jobs
-                    </Badge>
-                  </div>
+                  <p className="text-xs text-muted-foreground mt-2 italic">
+                    Previously: InsightsJD
+                  </p>
                 </div>
                 <div className="p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg summary-card">
                   <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">

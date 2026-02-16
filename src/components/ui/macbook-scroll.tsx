@@ -234,7 +234,7 @@ export const KBtn = memo(
     return (
       <div
         className={cn(
-          "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
+          "[transform:translateZ(0)] rounded-[4px] p-[0.5px]",
           backlit && "bg-white/[0.2] shadow-xl shadow-white"
         )}
       >
@@ -676,7 +676,7 @@ SixthRow.displayName = "SixthRow";
 
 export const Keypad = memo(() => {
   return (
-    <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1 [will-change:transform]">
+    <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1">
       <FirstRow />
       <SecondRow />
       <ThirdRow />

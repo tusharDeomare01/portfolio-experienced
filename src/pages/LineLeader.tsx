@@ -757,39 +757,7 @@ const LineLeader = () => {
       ref={pageRef}
       className="min-h-screen bg-transparent relative route-enter-content"
     >
-      <style>{`
-        @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 0.6s ease-out both;
-        }
-      `}</style>
+      {/* Keyframe animations (slideInLeft, etc.) moved to App.css — avoids re-injecting <style> on every render */}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button and Share */}

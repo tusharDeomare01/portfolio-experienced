@@ -685,18 +685,7 @@ const Portfolio = () => {
       ref={pageRef}
       className="min-h-screen bg-transparent relative route-enter-content"
     >
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+      {/* Keyframe animations moved to App.css — avoids re-injecting <style> on every render */}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Back Button and Share */}

@@ -1,9 +1,11 @@
-import { memo, useRef } from "react";
+import { lazy, memo, useRef } from "react";
 import { Card, CardHeader, CardTitle } from "../lightswind/card";
-import ProfessionalProfile from "./SkillCategory";
+// import ProfessionalProfile from "./SkillCategory";
 import { portfolioData } from "@/lib/portfolioData";
 import { MapPin, GraduationCap } from "lucide-react";
 import { gsap, SplitText, useGSAP, ScrollTrigger } from "@/lib/gsap";
+
+const ProfessionalProfile = lazy(() => import("./SkillCategory"));
 
 const EducationSectionComponent = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -49,10 +51,7 @@ const EducationSectionComponent = () => {
             });
           }
 
-          if (
-            headingRef.current &&
-            headingRef.current.textContent?.trim()
-          ) {
+          if (headingRef.current && headingRef.current.textContent?.trim()) {
             const headingSplit = new SplitText(headingRef.current, {
               type: "chars",
               charsClass: "gsap-edu-heading-char",
@@ -107,8 +106,7 @@ const EducationSectionComponent = () => {
           // ─── Education cards: 3D perspective lift ──────────────────
           // Each card starts tilted back as if lying on a table,
           // then lifts to face the viewer on scroll
-          const eduCards =
-            section.querySelectorAll<HTMLElement>(".edu-card");
+          const eduCards = section.querySelectorAll<HTMLElement>(".edu-card");
 
           eduCards.forEach((card, i) => {
             gsap.set(card, {
@@ -139,8 +137,7 @@ const EducationSectionComponent = () => {
                   start: "top 92%",
                   end: "top 58%",
                   scrub: 1,
-                  onLeave: () =>
-                    gsap.set(card, { willChange: "auto" }),
+                  onLeave: () => gsap.set(card, { willChange: "auto" }),
                   onEnterBack: () =>
                     gsap.set(card, {
                       willChange: "transform, opacity",
@@ -178,8 +175,7 @@ const EducationSectionComponent = () => {
           // The edu-top area (heading + cards) recedes as user scrolls
           // past, creating depth handoff to the Career section below
           const exitScrollTriggers: ScrollTrigger[] = [];
-          const eduTop =
-            section.querySelector<HTMLElement>(".edu-top-content");
+          const eduTop = section.querySelector<HTMLElement>(".edu-top-content");
           if (eduTop) {
             const exitTween = gsap.to(eduTop, {
               yPercent: -10,
@@ -202,7 +198,12 @@ const EducationSectionComponent = () => {
           const handleTourStart = () => {
             exitScrollTriggers.forEach((st) => st.disable());
             if (eduTop) {
-              gsap.set(eduTop, { yPercent: 0, opacity: 1, filter: "none", clearProps: "filter" });
+              gsap.set(eduTop, {
+                yPercent: 0,
+                opacity: 1,
+                filter: "none",
+                clearProps: "filter",
+              });
             }
           };
 
@@ -236,36 +237,60 @@ const EducationSectionComponent = () => {
               iconRef.current,
               { opacity: 0, rotation: -90, scale: 0.5 },
               {
-                opacity: 1, rotation: 0, scale: 1, duration: 0.5, ease: "spring",
-                scrollTrigger: { trigger: section, start: "top 88%", toggleActions: "play reverse play reverse" },
+                opacity: 1,
+                rotation: 0,
+                scale: 1,
+                duration: 0.5,
+                ease: "spring",
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top 88%",
+                  toggleActions: "play reverse play reverse",
+                },
                 clearProps: "transform",
               }
             );
           }
 
           // ─── Heading group: clipPath reveal from bottom ───
-          const headingGroup = section.querySelector<HTMLElement>(".edu-heading-group");
+          const headingGroup =
+            section.querySelector<HTMLElement>(".edu-heading-group");
           if (headingGroup) {
             gsap.fromTo(
               headingGroup,
               { clipPath: "inset(100% 0 0 0)", opacity: 1 },
               {
-                clipPath: "inset(0% 0 0 0)", duration: 0.5, ease: "reveal",
-                scrollTrigger: { trigger: headingGroup, start: "top 90%", toggleActions: "play reverse play reverse" },
-                onComplete: () => { gsap.set(headingGroup, { clearProps: "clipPath" }); },
+                clipPath: "inset(0% 0 0 0)",
+                duration: 0.5,
+                ease: "reveal",
+                scrollTrigger: {
+                  trigger: headingGroup,
+                  start: "top 90%",
+                  toggleActions: "play reverse play reverse",
+                },
+                onComplete: () => {
+                  gsap.set(headingGroup, { clearProps: "clipPath" });
+                },
               }
             );
           }
 
           // ─── Decorative line: scaleX grow from left (was not animated) ───
-          const decorLine = section.querySelector<HTMLElement>(".edu-decor-line");
+          const decorLine =
+            section.querySelector<HTMLElement>(".edu-decor-line");
           if (decorLine) {
             gsap.fromTo(
               decorLine,
               { scaleX: 0, transformOrigin: "left center" },
               {
-                scaleX: 1, duration: 0.5, ease: "smooth.out",
-                scrollTrigger: { trigger: decorLine, start: "top 92%", toggleActions: "play reverse play reverse" },
+                scaleX: 1,
+                duration: 0.5,
+                ease: "smooth.out",
+                scrollTrigger: {
+                  trigger: decorLine,
+                  start: "top 92%",
+                  toggleActions: "play reverse play reverse",
+                },
               }
             );
           }
@@ -277,13 +302,27 @@ const EducationSectionComponent = () => {
             gsap.fromTo(
               card,
               {
-                opacity: 0, x: isOdd ? 30 : -30, rotateY: isOdd ? 5 : -5,
-                filter: "blur(3px)", transformPerspective: 800,
+                opacity: 0,
+                x: isOdd ? 30 : -30,
+                rotateY: isOdd ? 5 : -5,
+                filter: "blur(3px)",
+                transformPerspective: 800,
               },
               {
-                opacity: 1, x: 0, rotateY: 0, filter: "blur(0px)", duration: 0.6, ease: "smooth.out",
-                scrollTrigger: { trigger: card, start: "top 90%", toggleActions: "play reverse play reverse" },
-                onComplete: () => { gsap.set(card, { clearProps: "filter,transform" }); },
+                opacity: 1,
+                x: 0,
+                rotateY: 0,
+                filter: "blur(0px)",
+                duration: 0.6,
+                ease: "smooth.out",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 90%",
+                  toggleActions: "play reverse play reverse",
+                },
+                onComplete: () => {
+                  gsap.set(card, { clearProps: "filter,transform" });
+                },
               }
             );
           });
@@ -338,9 +377,7 @@ const EducationSectionComponent = () => {
           {portfolioData.education.map((edu, index) => (
             <Card key={index} className="edu-card">
               <CardHeader>
-                <CardTitle className="edu-card-title">
-                  {edu.degree}
-                </CardTitle>
+                <CardTitle className="edu-card-title">{edu.degree}</CardTitle>
                 <p className="edu-card-detail text-sm text-muted-foreground flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
                   {edu.link ? (

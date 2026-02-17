@@ -5,37 +5,38 @@ import { motion, useReducedMotion, useInView } from "framer-motion";
 import { useMemo, memo, useCallback, useState, useRef, useEffect } from "react";
 import { gsap, SplitText, useGSAP, ScrollTrigger } from "@/lib/gsap";
 
-// Animation constants for consistency and performance
-const ANIMATION_CONFIG = {
-  achievement: {
-    staggerDelay: 0.08,
-    duration: 0.3,
-    ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
-  },
-  technology: {
-    staggerDelay: 0.04,
-    duration: 0.2,
-    ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
-  },
-} as const;
+// Animation constants — hoisted to module scope
+const ACHIEVEMENT_STAGGER = 0.08;
+const ACHIEVEMENT_DURATION = 0.3;
+const ACHIEVEMENT_EASE: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
-// Pre-computed animation props for reduced motion/no animation cases
+const TECH_STAGGER = 0.04;
+const TECH_DURATION = 0.2;
+const TECH_EASE: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
+
+// Pre-computed static animation props — never re-allocated
 const NO_ANIMATION_PROPS = {
   initial: { opacity: 1 },
   animate: { opacity: 1 },
   transition: { duration: 0 },
 } as const;
 
-const NO_HOVER_PROPS = {} as const;
+const NO_HOVER = {} as const;
+const HOVER_SCALE = { scale: 1.15, rotate: 5 } as const;
+const TAP_SCALE = { scale: 0.95 } as const;
+const TECH_TAP = { scale: 0.98 } as const;
 
 // Stable intersection observer options
 const IN_VIEW_OPTIONS = {
   once: true,
-  margin: "-50px",
+  margin: "-50px" as const,
   amount: 0.2,
 } as const;
 
-// Memoized Achievement Item Component with enhanced interactions
+// CSS containment styles — hoisted
+const CONTAIN_LAYOUT_STYLE = { contain: "layout style" } as const;
+
+// Memoized Achievement Item Component
 const AchievementItem = memo(
   ({
     achievement,
@@ -49,54 +50,29 @@ const AchievementItem = memo(
     isInView: boolean;
   }) => {
     const animationProps = useMemo(() => {
-      if (prefersReducedMotion || !isInView) {
-        return NO_ANIMATION_PROPS;
-      }
+      if (prefersReducedMotion || !isInView) return NO_ANIMATION_PROPS;
       return {
         initial: { opacity: 0, x: -8, filter: "blur(4px)" },
         animate: { opacity: 1, x: 0, filter: "blur(0px)" },
         transition: {
-          delay: index * ANIMATION_CONFIG.achievement.staggerDelay,
-          duration: ANIMATION_CONFIG.achievement.duration,
-          ease: ANIMATION_CONFIG.achievement.ease,
+          delay: index * ACHIEVEMENT_STAGGER,
+          duration: ACHIEVEMENT_DURATION,
+          ease: ACHIEVEMENT_EASE,
         },
       };
     }, [index, prefersReducedMotion, isInView]);
-
-    const hoverProps = useMemo(
-      () =>
-        prefersReducedMotion ? NO_HOVER_PROPS : { scale: 1.15, rotate: 5 },
-      [prefersReducedMotion]
-    );
-
-    const tapProps = useMemo(
-      () => (prefersReducedMotion ? NO_HOVER_PROPS : { scale: 0.95 }),
-      [prefersReducedMotion]
-    );
-
-    const willChange = useMemo(
-      () =>
-        prefersReducedMotion || !isInView
-          ? "auto"
-          : "transform, opacity, filter",
-      [prefersReducedMotion, isInView]
-    );
 
     return (
       <motion.div
         {...animationProps}
         className="flex items-start gap-3 group/achievement"
-        style={{
-          willChange,
-          contain: "layout style paint",
-        }}
       >
         <div className="relative mt-0.5 flex-shrink-0">
           <motion.span
             className="relative w-5 h-5 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center text-white text-[10px] font-semibold shadow-md shadow-primary/30 ring-1 ring-white/50 dark:ring-neutral-900/50 transition-all duration-200"
             aria-hidden="true"
-            whileHover={hoverProps}
-            whileTap={tapProps}
+            whileHover={prefersReducedMotion ? NO_HOVER : HOVER_SCALE}
+            whileTap={prefersReducedMotion ? NO_HOVER : TAP_SCALE}
           >
             <Sparkles className="w-3 h-3" />
           </motion.span>
@@ -107,11 +83,11 @@ const AchievementItem = memo(
       </motion.div>
     );
   },
-  (prevProps, nextProps) =>
-    prevProps.achievement === nextProps.achievement &&
-    prevProps.index === nextProps.index &&
-    prevProps.prefersReducedMotion === nextProps.prefersReducedMotion &&
-    prevProps.isInView === nextProps.isInView
+  (prev, next) =>
+    prev.achievement === next.achievement &&
+    prev.index === next.index &&
+    prev.prefersReducedMotion === next.prefersReducedMotion &&
+    prev.isInView === next.isInView
 );
 
 AchievementItem.displayName = "AchievementItem";
@@ -141,17 +117,14 @@ const TechnologyBadge = memo(
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         timeoutRef.current = setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        // Fallback for older browsers
-        console.warn("Failed to copy:", err);
+      } catch {
+        // Fallback for older browsers — silently fail
       }
     }, [tech, copied]);
 
     useEffect(() => {
       return () => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
       };
     }, []);
 
@@ -161,57 +134,39 @@ const TechnologyBadge = memo(
           initial: { opacity: 1, scale: 1 },
           animate: { opacity: 1, scale: 1 },
           transition: { duration: 0 },
-          whileHover: NO_HOVER_PROPS,
         };
       }
       return {
         initial: { opacity: 0, scale: 0.9, y: 4 },
         animate: { opacity: 1, scale: 1, y: 0 },
         transition: {
-          delay: index * ANIMATION_CONFIG.technology.staggerDelay,
-          duration: ANIMATION_CONFIG.technology.duration,
-          ease: ANIMATION_CONFIG.technology.ease,
+          delay: index * TECH_STAGGER,
+          duration: TECH_DURATION,
+          ease: TECH_EASE,
         },
-        whileHover: prefersReducedMotion
-          ? NO_HOVER_PROPS
-          : {
-              scale: 1.05,
-              y: -2,
-              transition: { duration: 0.2 },
-            },
-        whileTap: prefersReducedMotion ? NO_HOVER_PROPS : { scale: 0.98 },
       };
     }, [index, prefersReducedMotion, isInView]);
 
-    const willChange = useMemo(
-      () => (prefersReducedMotion || !isInView ? "auto" : "transform, opacity"),
-      [prefersReducedMotion, isInView]
-    );
+    const hoverProps = prefersReducedMotion
+      ? NO_HOVER
+      : { scale: 1.05, y: -2, transition: { duration: 0.2 } };
 
-    const copyAnimation = useMemo(
-      () =>
-        copied
-          ? {
-              opacity: [1, 0.7, 1],
-              scale: [1, 1.02, 1],
-            }
-          : {},
-      [copied]
-    );
+    const copyAnimation = copied
+      ? { opacity: [1, 0.7, 1], scale: [1, 1.02, 1] }
+      : NO_HOVER;
 
     return (
       <motion.button
         {...animationProps}
+        whileHover={hoverProps}
+        whileTap={prefersReducedMotion ? NO_HOVER : TECH_TAP}
         onClick={handleCopy}
         className="relative px-3 py-1.5 text-xs md:text-sm font-medium rounded-lg overflow-hidden group/tech focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transition-all duration-200"
-        style={{
-          willChange,
-          contain: "layout style paint",
-        }}
+        style={CONTAIN_LAYOUT_STYLE}
         aria-label={`Technology: ${tech}. Click to copy.`}
         title={`Click to copy: ${tech}`}
       >
-        {/* Optimized gradient background with enhanced copy feedback */}
+        {/* Gradient background with copy feedback */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-primary/10 via-blue-500/10 to-purple-500/10 dark:from-primary/20 dark:via-blue-500/20 dark:to-purple-500/20 rounded-lg"
           animate={copyAnimation}
@@ -227,7 +182,7 @@ const TechnologyBadge = memo(
             transition={{ duration: 0.2 }}
           />
         )}
-        {/* Border with enhanced hover state */}
+        {/* Border */}
         <div className="absolute inset-0 rounded-lg border border-primary/20 dark:border-primary/30 group-hover/tech:border-primary/50 dark:group-hover/tech:border-primary/60 transition-all duration-200" />
         {/* Text with icon indicator */}
         <span className="relative flex items-center gap-1.5 text-neutral-700 dark:text-neutral-300 group-hover/tech:text-primary dark:group-hover/tech:text-primary transition-colors duration-200">
@@ -248,11 +203,11 @@ const TechnologyBadge = memo(
       </motion.button>
     );
   },
-  (prevProps, nextProps) =>
-    prevProps.tech === nextProps.tech &&
-    prevProps.index === nextProps.index &&
-    prevProps.prefersReducedMotion === nextProps.prefersReducedMotion &&
-    prevProps.isInView === nextProps.isInView
+  (prev, next) =>
+    prev.tech === next.tech &&
+    prev.index === next.index &&
+    prev.prefersReducedMotion === next.prefersReducedMotion &&
+    prev.isInView === next.isInView
 );
 
 TechnologyBadge.displayName = "TechnologyBadge";
@@ -273,13 +228,13 @@ const CareerContent = memo(
       <div
         ref={contentRef}
         className="space-y-5"
-        style={{ contain: "layout style" }}
+        style={CONTAIN_LAYOUT_STYLE}
       >
-        {/* Header Section with enhanced styling */}
+        {/* Header Section */}
         <div className="space-y-2 pb-4 border-b border-neutral-200/60 dark:border-neutral-700/60">
           <motion.h4
             className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: -4 }}
+            initial={prefersReducedMotion ? undefined : { opacity: 0, y: -4 }}
             animate={
               isInView || prefersReducedMotion
                 ? { opacity: 1, y: 0 }
@@ -293,7 +248,7 @@ const CareerContent = memo(
             <motion.div
               className="h-1.5 w-1.5 rounded-full bg-primary/70 dark:bg-primary/80"
               aria-hidden="true"
-              initial={prefersReducedMotion ? {} : { scale: 0 }}
+              initial={prefersReducedMotion ? undefined : { scale: 0 }}
               animate={
                 isInView || prefersReducedMotion ? { scale: 1 } : { scale: 0 }
               }
@@ -301,7 +256,7 @@ const CareerContent = memo(
             />
             <motion.p
               className="text-sm md:text-base font-semibold text-primary dark:text-primary/90"
-              initial={prefersReducedMotion ? {} : { opacity: 0, x: -4 }}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, x: -4 }}
               animate={
                 isInView || prefersReducedMotion
                   ? { opacity: 1, x: 0 }
@@ -314,11 +269,11 @@ const CareerContent = memo(
           </div>
         </div>
 
-        {/* Description with fade-in */}
+        {/* Description */}
         {career.description && (
           <motion.p
             className="text-sm md:text-base leading-relaxed text-neutral-600 dark:text-neutral-400"
-            initial={prefersReducedMotion ? {} : { opacity: 0 }}
+            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={
               isInView || prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }
             }
@@ -332,7 +287,7 @@ const CareerContent = memo(
         {career.achievements && career.achievements.length > 0 && (
           <motion.div
             className="space-y-2.5 pt-1"
-            initial={prefersReducedMotion ? {} : { opacity: 0 }}
+            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={
               isInView || prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }
             }
@@ -369,7 +324,7 @@ const CareerContent = memo(
         {career.technologies && career.technologies.length > 0 && (
           <motion.div
             className="pt-1"
-            initial={prefersReducedMotion ? {} : { opacity: 0 }}
+            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={
               isInView || prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }
             }
@@ -404,9 +359,9 @@ const CareerContent = memo(
       </div>
     );
   },
-  (prevProps, nextProps) =>
-    prevProps.career === nextProps.career &&
-    prevProps.prefersReducedMotion === nextProps.prefersReducedMotion
+  (prev, next) =>
+    prev.career === next.career &&
+    prev.prefersReducedMotion === next.prefersReducedMotion
 );
 
 CareerContent.displayName = "CareerContent";
@@ -419,7 +374,8 @@ const CareerTimelineComponent = () => {
 
   useGSAP(
     () => {
-      if (!sectionRef.current) return;
+      const section = sectionRef.current;
+      if (!section) return;
 
       const mm = gsap.matchMedia();
 
@@ -431,7 +387,6 @@ const CareerTimelineComponent = () => {
         "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
         () => {
           const cleanups: (() => void)[] = [];
-          const section = sectionRef.current!;
 
           // ─── Icon spring entrance ─────────────────────────────────
           if (iconRef.current) {
@@ -467,13 +422,15 @@ const CareerTimelineComponent = () => {
               mask: "chars",
             });
 
-            headingSplit.chars.forEach((char: Element) => {
-              (char as HTMLElement).style.display = "inline-block";
-            });
+            const chars = headingSplit.chars;
+            const len = chars.length;
+            for (let i = 0; i < len; i++) {
+              (chars[i] as HTMLElement).style.display = "inline-block";
+            }
 
-            gsap.set(headingSplit.chars, { yPercent: 120, opacity: 0 });
+            gsap.set(chars, { yPercent: 120, opacity: 0 });
 
-            gsap.to(headingSplit.chars, {
+            gsap.to(chars, {
               yPercent: 0,
               opacity: 1,
               stagger: { each: 0.03, from: "start" },
@@ -508,6 +465,9 @@ const CareerTimelineComponent = () => {
                   start: "top 72%",
                   end: "top 48%",
                   scrub: 1,
+                },
+                onComplete: () => {
+                  gsap.set(subtitle, { clearProps: "filter" });
                 },
               }
             );
@@ -559,7 +519,6 @@ const CareerTimelineComponent = () => {
           }
 
           // ─── Scroll exit: Career → Projects transition ─────────
-          // Header recedes with blur as user scrolls past the section
           const exitScrollTriggers: ScrollTrigger[] = [];
           const header =
             section.querySelector<HTMLElement>(".career-header");
@@ -581,16 +540,16 @@ const CareerTimelineComponent = () => {
             }
           }
 
-          // ─── Tour event handlers: Disable exit animations during tour ─────
+          // ─── Tour event handlers ─────
           const handleTourStart = () => {
-            exitScrollTriggers.forEach((st) => st.disable());
+            for (let i = 0; i < exitScrollTriggers.length; i++) exitScrollTriggers[i].disable();
             if (header) {
               gsap.set(header, { yPercent: 0, opacity: 1, filter: "none", clearProps: "filter" });
             }
           };
 
           const handleTourEnd = () => {
-            exitScrollTriggers.forEach((st) => st.enable());
+            for (let i = 0; i < exitScrollTriggers.length; i++) exitScrollTriggers[i].enable();
           };
 
           window.addEventListener("tour-start", handleTourStart);
@@ -601,7 +560,9 @@ const CareerTimelineComponent = () => {
             window.removeEventListener("tour-end", handleTourEnd);
           });
 
-          return () => cleanups.forEach((fn) => fn());
+          return () => {
+            for (let i = 0; i < cleanups.length; i++) cleanups[i]();
+          };
         }
       );
 
@@ -611,8 +572,6 @@ const CareerTimelineComponent = () => {
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
-          const section = sectionRef.current!;
-
           // ─── Icon: Spin-in with spring ───
           if (iconRef.current) {
             gsap.fromTo(
@@ -640,7 +599,7 @@ const CareerTimelineComponent = () => {
             );
           }
 
-          // ─── Subtitle: Blur-to-focus (was missing on mobile) ───
+          // ─── Subtitle: Blur-to-focus ───
           const subtitle = section.querySelector<HTMLElement>(".career-subtitle");
           if (subtitle) {
             gsap.fromTo(
@@ -654,7 +613,7 @@ const CareerTimelineComponent = () => {
             );
           }
 
-          // ─── Decorative line: scaleX grow from center (was missing) ───
+          // ─── Decorative line: scaleX grow from center ───
           const decorLine = section.querySelector<HTMLElement>(".career-decor-line");
           if (decorLine) {
             gsap.fromTo(
@@ -687,12 +646,13 @@ const CareerTimelineComponent = () => {
       // REDUCED MOTION: Instant visibility
       // ═══════════════════════════════════════════════════════════════════
       mm.add("(prefers-reduced-motion: reduce)", () => {
-        const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
+        const allEls = section.querySelectorAll<HTMLElement>(
           ".career-header, .career-subtitle, .career-decor-line, .career-timeline-wrap"
         );
-        allEls.forEach((el) => {
-          gsap.set(el, { opacity: 1, clearProps: "transform,filter" });
-        });
+        const len = allEls.length;
+        for (let i = 0; i < len; i++) {
+          gsap.set(allEls[i], { opacity: 1, clearProps: "transform,filter" });
+        }
         if (iconRef.current) {
           gsap.set(iconRef.current, {
             opacity: 1,
@@ -704,7 +664,7 @@ const CareerTimelineComponent = () => {
     { scope: sectionRef }
   );
 
-  // Memoized timeline data to prevent unnecessary recalculations
+  // Memoized timeline data
   const timelineData = useMemo(() => {
     return portfolioData.career.map((career, idx) => ({
       title: career.period,
@@ -724,7 +684,7 @@ const CareerTimelineComponent = () => {
       id="career"
       className="min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8"
       aria-label="Career timeline"
-      style={{ contain: "layout style" }}
+      style={CONTAIN_LAYOUT_STYLE}
     >
       <div className="career-header text-center mb-6 sm:mb-8">
         <div className="flex items-baseline justify-center gap-4 mb-4">
@@ -746,7 +706,7 @@ const CareerTimelineComponent = () => {
       </div>
       <div
         className="career-timeline-wrap relative w-full overflow-clip"
-        style={{ contain: "layout style" }}
+        style={CONTAIN_LAYOUT_STYLE}
       >
         <Timeline data={timelineData} showHeader={false} />
       </div>

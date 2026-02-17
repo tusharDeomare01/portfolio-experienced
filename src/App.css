@@ -467,6 +467,41 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   TechSkillsMacbookScreen — Infinite scroll ticker
+   Extracted from inline <style> for better performance
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes scrollTechSkills {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-16.666%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [style*="scrollTechSkills"] {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Timeline dot pulse — CSS-only, replaces framer-motion infinite JS loop
+   Each dot gets staggered via animation-delay in the component
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes timelineDotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.animate-timeline-dot-pulse {
+  animation: timelineDotPulse 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-timeline-dot-pulse {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    Project Pages (MarketJD, LineLeader, Portfolio) — Shared keyframes
    Extracted from inline <style> tags for better performance
    ═══════════════════════════════════════════════════════════════ */

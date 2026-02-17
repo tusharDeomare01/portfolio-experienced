@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { memo, useState, useEffect, useCallback, useRef } from "react";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme } from "@/store/hooks";
 import {
@@ -18,10 +18,6 @@ interface SkillCategory {
   skills: string[];
   color: string;
   gradient: string;
-}
-
-interface TechSkillsPresentationProps {
-  className?: string;
 }
 
 const SKILL_CATEGORIES: SkillCategory[] = [
@@ -76,10 +72,11 @@ const SKILL_CATEGORIES: SkillCategory[] = [
   },
 ];
 
+const TOTAL_SLIDES = SKILL_CATEGORIES.length;
 const TRANSITION_DURATION = 150;
 const AUTO_ADVANCE_INTERVAL = 4000;
 
-// Memoize color classes - created once and reused
+// Memoize color classes — created once at module level, never re-allocated
 const COLOR_CLASSES = {
   dark: {
     blue: {
@@ -171,7 +168,7 @@ const COLOR_CLASSES = {
   },
 } as const;
 
-// Memoized background styles
+// Memoized background styles — hoisted to module scope
 const BACKGROUND_STYLES = {
   dark: {
     background: "radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 100%)",
@@ -181,27 +178,35 @@ const BACKGROUND_STYLES = {
   },
 } as const;
 
-// Memoized text shadow styles
+// Memoized text shadow styles — hoisted to module scope
 const TEXT_SHADOW_STYLES = {
-  dark: { textShadow: "0 2px 8px rgba(0,0,0,0.5)" },
-  light: { textShadow: "0 2px 4px rgba(0,0,0,0.1)" },
-} as const;
+  dark: { textShadow: "0 2px 8px rgba(0,0,0,0.5)" } as const,
+  light: { textShadow: "0 2px 4px rgba(0,0,0,0.1)" } as const,
+};
+
+// Scrollbar hide style — hoisted to module scope
+const SCROLLBAR_HIDE_STYLE = { scrollbarWidth: "none" as const };
+
+type ColorKey = keyof typeof COLOR_CLASSES.dark;
 
 const TechSkillsPresentation = memo(
-  ({ className = "" }: TechSkillsPresentationProps) => {
+  ({ className = "" }: { className?: string }) => {
     const theme = useAppSelector(selectTheme);
     const isDarkMode = theme === "dark";
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
+
+    // Use refs for timer IDs to avoid stale closures
     const intervalRef = useRef<number | null>(null);
     const transitionTimeoutRef = useRef<number | null>(null);
+    const isTransitioningRef = useRef(false);
+
+    // Keep ref in sync with state
+    isTransitioningRef.current = isTransitioning;
 
     // Get color classes based on theme
-    const colorClasses = useMemo(
-      () => (isDarkMode ? COLOR_CLASSES.dark : COLOR_CLASSES.light),
-      [isDarkMode]
-    );
+    const themeColors = isDarkMode ? COLOR_CLASSES.dark : COLOR_CLASSES.light;
 
     // Cleanup function for transitions
     const clearTransitionTimeout = useCallback(() => {
@@ -211,21 +216,23 @@ const TechSkillsPresentation = memo(
       }
     }, []);
 
-    // Optimized slide change with single timeout
+    // Unified slide change — uses functional updater to avoid stale currentSlide
     const changeSlide = useCallback(
       (newIndex: number) => {
-        if (newIndex === currentSlide || isTransitioning) return;
-        
+        if (isTransitioningRef.current) return;
+
         clearTransitionTimeout();
         setIsTransitioning(true);
-        
+        isTransitioningRef.current = true;
+
         transitionTimeoutRef.current = window.setTimeout(() => {
           setCurrentSlide(newIndex);
           setIsTransitioning(false);
+          isTransitioningRef.current = false;
           transitionTimeoutRef.current = null;
         }, TRANSITION_DURATION);
       },
-      [currentSlide, isTransitioning, clearTransitionTimeout]
+      [clearTransitionTimeout]
     );
 
     // Auto-advance slides
@@ -239,10 +246,15 @@ const TechSkillsPresentation = memo(
       }
 
       intervalRef.current = window.setInterval(() => {
+        if (isTransitioningRef.current) return;
+
         setIsTransitioning(true);
+        isTransitioningRef.current = true;
+
         transitionTimeoutRef.current = window.setTimeout(() => {
-          setCurrentSlide((prev) => (prev + 1) % SKILL_CATEGORIES.length);
+          setCurrentSlide((prev) => (prev + 1) % TOTAL_SLIDES);
           setIsTransitioning(false);
+          isTransitioningRef.current = false;
           transitionTimeoutRef.current = null;
         }, TRANSITION_DURATION);
       }, AUTO_ADVANCE_INTERVAL);
@@ -258,34 +270,31 @@ const TechSkillsPresentation = memo(
     // Cleanup on unmount
     useEffect(() => {
       return () => {
-        if (intervalRef.current !== null) {
-          clearInterval(intervalRef.current);
-        }
-        clearTransitionTimeout();
+        if (intervalRef.current !== null) clearInterval(intervalRef.current);
+        if (transitionTimeoutRef.current !== null) clearTimeout(transitionTimeoutRef.current);
       };
-    }, [clearTransitionTimeout]);
+    }, []);
 
     const nextSlide = useCallback(() => {
-      const newIndex = (currentSlide + 1) % SKILL_CATEGORIES.length;
-      changeSlide(newIndex);
+      changeSlide((currentSlide + 1) % TOTAL_SLIDES);
     }, [currentSlide, changeSlide]);
 
     const prevSlide = useCallback(() => {
-      const newIndex = (currentSlide - 1 + SKILL_CATEGORIES.length) % SKILL_CATEGORIES.length;
-      changeSlide(newIndex);
+      changeSlide((currentSlide - 1 + TOTAL_SLIDES) % TOTAL_SLIDES);
     }, [currentSlide, changeSlide]);
 
     const currentCategory = SKILL_CATEGORIES[currentSlide];
-    const Icon = currentCategory.icon;
-    const colors = colorClasses[currentCategory.color as keyof typeof colorClasses];
+    const colors = themeColors[currentCategory.color as ColorKey];
 
-    // Memoize handlers
-    const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-    const handleMouseLeave = useCallback(() => setIsHovered(false), []);
+    // Stable event handlers
+    const handleMouseEnter = useCallback(() => { setIsHovered(true); }, []);
+    const handleMouseLeave = useCallback(() => { setIsHovered(false); }, []);
 
-    // Get memoized styles
+    // Memoized styles — only recalculate when theme changes
     const backgroundStyle = isDarkMode ? BACKGROUND_STYLES.dark : BACKGROUND_STYLES.light;
     const textShadowStyle = isDarkMode ? TEXT_SHADOW_STYLES.dark : TEXT_SHADOW_STYLES.light;
+
+    const Icon = currentCategory.icon;
 
     return (
       <div
@@ -345,7 +354,7 @@ const TechSkillsPresentation = memo(
           {/* Skills Grid */}
           <div
             className="tech-skills-scrollbar flex flex-wrap justify-center items-center gap-2 md:gap-2.5 lg:gap-3 w-full px-2 md:px-3 overflow-y-auto flex-1 min-h-0 max-h-full pb-2 animate-skills-enter"
-            style={{ scrollbarWidth: "none" }}
+            style={SCROLLBAR_HIDE_STYLE}
           >
             {currentCategory.skills.map((skill, index) => (
               <SkillBadge
@@ -370,7 +379,7 @@ const TechSkillsPresentation = memo(
               {currentSlide + 1}
             </span>
             <span>/</span>
-            <span>{SKILL_CATEGORIES.length}</span>
+            <span>{TOTAL_SLIDES}</span>
           </div>
         </div>
 
@@ -391,15 +400,13 @@ const TechSkillsPresentation = memo(
         {/* Slide Indicators (Dots) */}
         <div className="mt-[1rem]">
           <SlideIndicators
-            totalSlides={SKILL_CATEGORIES.length}
+            totalSlides={TOTAL_SLIDES}
             currentSlide={currentSlide}
             onSlideClick={changeSlide}
             isDarkMode={isDarkMode}
             activeColors={colors}
           />
         </div>
-
-{/* Keyframe animations moved to App.css — avoids re-injecting <style> into DOM on every render */}
       </div>
     );
   }
@@ -451,6 +458,9 @@ const NavButton = memo(
 
 NavButton.displayName = "NavButton";
 
+// Color type for reuse
+type ColorSet = { bg: string; border: string; text: string; badge: string; iconBg: string };
+
 // Memoized Slide Indicators Component
 const SlideIndicators = memo(
   ({
@@ -464,34 +474,38 @@ const SlideIndicators = memo(
     currentSlide: number;
     onSlideClick: (index: number) => void;
     isDarkMode: boolean;
-    activeColors: { bg: string; border: string; text: string; badge: string; iconBg: string };
-  }) => {
-    return (
-      <div className="absolute bottom-2 md:bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2 z-20">
-        {Array.from({ length: totalSlides }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => onSlideClick(index)}
-            className={`transition-[width,height,background-color,transform,box-shadow] duration-300 rounded-full cursor-pointer ${
-              index === currentSlide
-                ? `w-8 h-2 md:w-10 md:h-2.5 ${activeColors.bg} ${activeColors.border} border-2 ${
-                    isDarkMode ? "shadow-lg" : "shadow-md"
-                  }`
-                : `w-2 h-2 md:w-2.5 md:h-2.5 ${
-                    isDarkMode
-                      ? "bg-white/30 hover:bg-white/60"
-                      : "bg-gray-400/60 hover:bg-gray-600"
-                  } hover:scale-125`
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
-    );
-  }
+    activeColors: ColorSet;
+  }) => (
+    <div className="absolute bottom-2 md:bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2 z-20">
+      {Array.from({ length: totalSlides }, (_, index) => (
+        <button
+          key={index}
+          onClick={() => onSlideClick(index)}
+          className={`transition-[width,height,background-color,transform,box-shadow] duration-300 rounded-full cursor-pointer ${
+            index === currentSlide
+              ? `w-8 h-2 md:w-10 md:h-2.5 ${activeColors.bg} ${activeColors.border} border-2 ${
+                  isDarkMode ? "shadow-lg" : "shadow-md"
+                }`
+              : `w-2 h-2 md:w-2.5 md:h-2.5 ${
+                  isDarkMode
+                    ? "bg-white/30 hover:bg-white/60"
+                    : "bg-gray-400/60 hover:bg-gray-600"
+                } hover:scale-125`
+          }`}
+          aria-label={`Go to slide ${index + 1}`}
+        />
+      ))}
+    </div>
+  )
 );
 
 SlideIndicators.displayName = "SlideIndicators";
+
+// Pre-computed badge delay styles — avoid creating objects on every render
+const BADGE_DELAY_STYLES: Record<number, React.CSSProperties> = {};
+for (let i = 0; i < 10; i++) {
+  BADGE_DELAY_STYLES[i] = { animationDelay: `${0.5 + i * 0.06}s` };
+}
 
 // Memoized Skill Badge Component
 const SkillBadge = memo(
@@ -503,13 +517,11 @@ const SkillBadge = memo(
   }: {
     skill: string;
     index: number;
-    colors: { bg: string; border: string; text: string; badge: string; iconBg: string };
+    colors: ColorSet;
     isDarkMode: boolean;
   }) => {
-    const badgeStyle = useMemo(
-      () => ({ animationDelay: `${0.5 + index * 0.06}s` }),
-      [index]
-    );
+    // Use pre-computed style or create on-demand for edge cases
+    const badgeStyle = BADGE_DELAY_STYLES[index] ?? { animationDelay: `${0.5 + index * 0.06}s` };
 
     return (
       <div

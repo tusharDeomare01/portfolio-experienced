@@ -1,7 +1,6 @@
 import { lazy, memo, useMemo, useRef } from "react";
 import { Badge } from "../lightswind/badge.tsx";
 import { MacbookScroll } from "../ui/macbook-scroll";
-// import TechSkillsPresentation from "./TechSkillsPresentation";
 const TechSkillsPresentation = lazy(() => import("./TechSkillsPresentation"));
 import { Users } from "lucide-react";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
@@ -15,6 +14,20 @@ const SOFT_SKILLS = [
   "Cross-Team Collaboration",
 ] as const;
 
+// Memoized badge to avoid re-renders when parent state changes
+const SoftSkillBadge = memo(({ skill }: { skill: string }) => (
+  <div title={skill} className="skills-badge">
+    <Badge
+      variant="default"
+      size="lg"
+      className="text-sm font-semibold bg-gradient-to-r from-pink-500/90 to-purple-500/90 text-white border-0 hover:from-pink-500 hover:to-purple-500 hover:scale-110 hover:shadow-lg transition-[transform,box-shadow] duration-300 cursor-default"
+    >
+      {skill}
+    </Badge>
+  </div>
+));
+SoftSkillBadge.displayName = "SoftSkillBadge";
+
 function ProfessionalProfileComponent() {
   const sectionRef = useRef<HTMLElement>(null);
   const techIconRef = useRef<HTMLDivElement>(null);
@@ -22,7 +35,8 @@ function ProfessionalProfileComponent() {
 
   useGSAP(
     () => {
-      if (!sectionRef.current) return;
+      const section = sectionRef.current;
+      if (!section) return;
 
       const mm = gsap.matchMedia();
 
@@ -34,7 +48,6 @@ function ProfessionalProfileComponent() {
         "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
         () => {
           const cleanups: (() => void)[] = [];
-          const section = sectionRef.current!;
 
           // ─── Soft Skills heading slide-in ──────────────────────────
           const softHeading =
@@ -86,7 +99,6 @@ function ProfessionalProfileComponent() {
           }
 
           // ─── Soft Skills badges: Wave from center outward ──────────
-          // Badges emanate from center with blur-to-focus + scale + 3D tilt
           const badges =
             section.querySelectorAll<HTMLElement>(".skills-badge");
 
@@ -121,6 +133,9 @@ function ProfessionalProfileComponent() {
                   start: "top 88%",
                   end: "top 55%",
                   scrub: 1,
+                },
+                onComplete: () => {
+                  gsap.set(badges, { clearProps: "filter,willChange" });
                 },
               }
             );
@@ -159,13 +174,15 @@ function ProfessionalProfileComponent() {
               mask: "chars",
             });
 
-            techSplit.chars.forEach((char: Element) => {
-              (char as HTMLElement).style.display = "inline-block";
-            });
+            const chars = techSplit.chars;
+            const len = chars.length;
+            for (let i = 0; i < len; i++) {
+              (chars[i] as HTMLElement).style.display = "inline-block";
+            }
 
-            gsap.set(techSplit.chars, { yPercent: 120, opacity: 0 });
+            gsap.set(chars, { yPercent: 120, opacity: 0 });
 
-            gsap.to(techSplit.chars, {
+            gsap.to(chars, {
               yPercent: 0,
               opacity: 1,
               stagger: { each: 0.03, from: "start" },
@@ -205,7 +222,10 @@ function ProfessionalProfileComponent() {
             );
           }
 
-          return () => cleanups.forEach((fn) => fn());
+          return () => {
+            const len = cleanups.length;
+            for (let i = 0; i < len; i++) cleanups[i]();
+          };
         }
       );
 
@@ -215,8 +235,6 @@ function ProfessionalProfileComponent() {
       mm.add(
         "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
         () => {
-          const section = sectionRef.current!;
-
           // ─── Soft heading: clipPath reveal from left ───
           const softHeading = section.querySelector<HTMLElement>(".skills-soft-heading");
           if (softHeading) {
@@ -231,7 +249,7 @@ function ProfessionalProfileComponent() {
             );
           }
 
-          // ─── Decorative line: scaleX grow (was missing on mobile) ───
+          // ─── Decorative line: scaleX grow ───
           const softLine = section.querySelector<HTMLElement>(".skills-soft-line");
           if (softLine) {
             gsap.fromTo(
@@ -305,12 +323,13 @@ function ProfessionalProfileComponent() {
       // REDUCED MOTION: Instant visibility
       // ═══════════════════════════════════════════════════════════════════
       mm.add("(prefers-reduced-motion: reduce)", () => {
-        const allEls = sectionRef.current!.querySelectorAll<HTMLElement>(
+        const allEls = section.querySelectorAll<HTMLElement>(
           ".skills-badge, .skills-soft-heading, .skills-soft-line, .skills-tech-heading-group, .skills-macbook-wrap"
         );
-        allEls.forEach((el) => {
-          gsap.set(el, { opacity: 1, clearProps: "transform,filter" });
-        });
+        const len = allEls.length;
+        for (let i = 0; i < len; i++) {
+          gsap.set(allEls[i], { opacity: 1, clearProps: "transform,filter" });
+        }
         if (techIconRef.current) {
           gsap.set(techIconRef.current, {
             opacity: 1,
@@ -345,15 +364,7 @@ function ProfessionalProfileComponent() {
 
         <div className="skills-badges-wrap flex flex-wrap gap-3">
           {SOFT_SKILLS.map((skill) => (
-            <div key={skill} title={skill} className="skills-badge">
-              <Badge
-                variant="default"
-                size="lg"
-                className="text-sm font-semibold bg-gradient-to-r from-pink-500/90 to-purple-500/90 text-white border-0 hover:from-pink-500 hover:to-purple-500 hover:scale-110 hover:shadow-lg transition-[transform,box-shadow] duration-300 cursor-default"
-              >
-                {skill}
-              </Badge>
-            </div>
+            <SoftSkillBadge key={skill} skill={skill} />
           ))}
         </div>
       </div>

@@ -51,23 +51,27 @@ export const MacbookScroll = memo(
       offset: ["start start", "45% start"],
     });
 
-    // Memoize transform configurations
-    const transforms = useMemo(
-      () => ({
-        scaleX: useTransform(scrollYProgress, [0, 0.5], [1.2, 2]),
-        scaleY: useTransform(scrollYProgress, [0, 0.5], [0.6, 2]),
-        translate: useTransform(scrollYProgress, [0, 0.8], [0, 800]),
-        rotate: useTransform(scrollYProgress, [0.1, 0.2, 0.5], [-28, -28, 0]),
-        textTransform: useTransform(scrollYProgress, [0, 0.5], [0, 100]),
-        textOpacity: useTransform(scrollYProgress, [0, 0.4], [1, 0]),
-      }),
-      [scrollYProgress]
+    // FIXED: useTransform must be called at top level (not inside useMemo)
+    // Hooks cannot be called inside callbacks — this was a Rules of Hooks violation
+    const scaleX = useTransform(scrollYProgress, [0, 0.5], [1.2, 2]);
+    const scaleY = useTransform(scrollYProgress, [0, 0.5], [0.6, 2]);
+    const translate = useTransform(scrollYProgress, [0, 0.8], [0, 800]);
+    const rotate = useTransform(
+      scrollYProgress,
+      [0.1, 0.2, 0.5],
+      [-28, -28, 0]
     );
+    const textTransform = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+    const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
     // Memoize title to prevent re-creation
-    const titleContent = useMemo(() => {
-      return title || <DefaultTitle />;
-    }, [title]);
+    const titleContent = useMemo(() => title || <DefaultTitle />, [title]);
+
+    // Memoize text style to avoid object allocation every render
+    const textStyle = useMemo(
+      () => ({ translateY: textTransform, opacity: textOpacity }),
+      [textTransform, textOpacity]
+    );
 
     return (
       <div
@@ -75,22 +79,20 @@ export const MacbookScroll = memo(
         className="flex min-h-[60vh] shrink-0 scale-[0.35] transform flex-col items-center justify-start py-0 [perspective:800px] sm:scale-50 md:scale-100 md:py-20"
       >
         <motion.h2
-          style={{
-            translateY: transforms.textTransform,
-            opacity: transforms.textOpacity,
-          }}
+          style={textStyle}
           className="mb-20 text-center text-3xl font-bold text-neutral-800 dark:text-white"
         >
           {titleContent}
         </motion.h2>
         <Lid
           src={src}
-          children={children}
-          scaleX={transforms.scaleX}
-          scaleY={transforms.scaleY}
-          rotate={transforms.rotate}
-          translate={transforms.translate}
-        />
+          scaleX={scaleX}
+          scaleY={scaleY}
+          rotate={rotate}
+          translate={translate}
+        >
+          {children}
+        </Lid>
         {/* Base area */}
         <div className="relative -z-10 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
           <div className="relative h-10 w-full">
@@ -110,7 +112,7 @@ export const MacbookScroll = memo(
           <Trackpad />
           <div className="absolute inset-x-0 bottom-0 mx-auto h-2 w-20 rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#272729] to-[#050505]" />
           {showGradient && (
-            <div className="absolute inset-x-0 bottom-0 z-50 h-40 w-full bg-gradient-to-t from-white via-white to-transparent dark:from-black dark:via-black"></div>
+            <div className="absolute inset-x-0 bottom-0 z-50 h-40 w-full bg-gradient-to-t from-white via-white to-transparent dark:from-black dark:via-black" />
           )}
           {badge && <div className="absolute bottom-4 left-4">{badge}</div>}
         </div>
@@ -121,14 +123,14 @@ export const MacbookScroll = memo(
 
 MacbookScroll.displayName = "MacbookScroll";
 
-// Memoized lid back styles
-const lidBackStyle = {
+// Memoized lid back styles — hoisted to module scope (allocated once)
+const lidBackStyle: React.CSSProperties = {
   transform: "perspective(800px) rotateX(-25deg) translateZ(0px)",
   transformOrigin: "bottom",
-  transformStyle: "preserve-3d" as const,
+  transformStyle: "preserve-3d",
 };
 
-const lidBackInsetStyle = {
+const lidBackInsetStyle: React.CSSProperties = {
   boxShadow: "0px 2px 0px 2px #171717 inset",
 };
 
@@ -198,25 +200,23 @@ export const Lid = memo(
 
 Lid.displayName = "Lid";
 
-// Memoized trackpad style
-const trackpadStyle = {
+// Memoized trackpad style — hoisted to module scope
+const trackpadStyle: React.CSSProperties = {
   boxShadow: "0px 0px 1px 1px #00000020 inset",
 };
 
-export const Trackpad = memo(() => {
-  return (
-    <div
-      className="mx-auto my-1 h-32 w-[40%] rounded-xl"
-      style={trackpadStyle}
-    ></div>
-  );
-});
-
+export const Trackpad = memo(() => (
+  <div
+    className="mx-auto my-1 h-32 w-[40%] rounded-xl"
+    style={trackpadStyle}
+  />
+));
 Trackpad.displayName = "Trackpad";
 
-// Memoize key button style
-const kBtnInnerStyle = {
-  boxShadow: "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
+// Memoize key button style — hoisted to module scope
+const kBtnInnerStyle: React.CSSProperties = {
+  boxShadow:
+    "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
 };
 
 export const KBtn = memo(
@@ -230,92 +230,87 @@ export const KBtn = memo(
     children?: React.ReactNode;
     childrenClassName?: string;
     backlit?: boolean;
-  }) => {
-    return (
+  }) => (
+    <div
+      className={cn(
+        "[transform:translateZ(0)] rounded-[4px] p-[0.5px]",
+        backlit && "bg-white/[0.2] shadow-xl shadow-white"
+      )}
+    >
       <div
         className={cn(
-          "[transform:translateZ(0)] rounded-[4px] p-[0.5px]",
-          backlit && "bg-white/[0.2] shadow-xl shadow-white"
+          "flex h-6 w-6 items-center justify-center rounded-[3.5px] bg-[#0A090D]",
+          className
         )}
+        style={kBtnInnerStyle}
       >
         <div
           className={cn(
-            "flex h-6 w-6 items-center justify-center rounded-[3.5px] bg-[#0A090D]",
-            className
+            "flex w-full flex-col items-center justify-center text-[5px] text-neutral-200",
+            childrenClassName,
+            backlit && "text-white"
           )}
-          style={kBtnInnerStyle}
         >
-          <div
-            className={cn(
-              "flex w-full flex-col items-center justify-center text-[5px] text-neutral-200",
-              childrenClassName,
-              backlit && "text-white"
-            )}
-          >
-            {children}
-          </div>
+          {children}
         </div>
       </div>
-    );
-  }
+    </div>
+  )
 );
-
 KBtn.displayName = "KBtn";
 
-// Memoized speaker grid style
-const speakerGridStyle = {
-  backgroundImage: "radial-gradient(circle, #08080A 0.5px, transparent 0.5px)",
+// Memoized speaker grid style — hoisted to module scope
+const speakerGridStyle: React.CSSProperties = {
+  backgroundImage:
+    "radial-gradient(circle, #08080A 0.5px, transparent 0.5px)",
   backgroundSize: "3px 3px",
 };
 
-export const SpeakerGrid = memo(() => {
-  return (
-    <div
-      className="mt-2 flex h-40 gap-[2px] px-[0.5px]"
-      style={speakerGridStyle}
-    ></div>
-  );
-});
-
+export const SpeakerGrid = memo(() => (
+  <div
+    className="mt-2 flex h-40 gap-[2px] px-[0.5px]"
+    style={speakerGridStyle}
+  />
+));
 SpeakerGrid.displayName = "SpeakerGrid";
 
-export const OptionKey = memo(({ className }: { className: string }) => {
-  return (
-    <svg
-      fill="none"
-      version="1.1"
-      id="icon"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      className={className}
-    >
-      <rect
-        stroke="currentColor"
-        strokeWidth={2}
-        x="18"
-        y="5"
-        width="10"
-        height="2"
-      />
-      <polygon
-        stroke="currentColor"
-        strokeWidth={2}
-        points="10.6,5 4,5 4,7 9.4,7 18.4,27 28,27 28,25 19.6,25 "
-      />
-      <rect
-        id="_Transparent_Rectangle_"
-        className="st0"
-        width="32"
-        height="32"
-        stroke="none"
-      />
-    </svg>
-  );
-});
-
+export const OptionKey = memo(({ className }: { className: string }) => (
+  <svg
+    fill="none"
+    version="1.1"
+    id="icon"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 32 32"
+    className={className}
+  >
+    <rect
+      stroke="currentColor"
+      strokeWidth={2}
+      x="18"
+      y="5"
+      width="10"
+      height="2"
+    />
+    <polygon
+      stroke="currentColor"
+      strokeWidth={2}
+      points="10.6,5 4,5 4,7 9.4,7 18.4,27 28,27 28,25 19.6,25 "
+    />
+    <rect
+      id="_Transparent_Rectangle_"
+      className="st0"
+      width="32"
+      height="32"
+      stroke="none"
+    />
+  </svg>
+));
 OptionKey.displayName = "OptionKey";
 
-// Extracted keyboard rows as separate memoized components for better performance
+// Shared icon className — avoids string allocation per key
+const ICON_SM = "h-[6px] w-[6px]";
+
+// Extracted keyboard rows as separate memoized components
 const FirstRow = memo(() => (
   <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
     <KBtn
@@ -325,51 +320,51 @@ const FirstRow = memo(() => (
       esc
     </KBtn>
     <KBtn>
-      <IconBrightnessDown className="h-[6px] w-[6px]" />
+      <IconBrightnessDown className={ICON_SM} />
       <span className="mt-1 inline-block">F1</span>
     </KBtn>
     <KBtn>
-      <IconBrightnessUp className="h-[6px] w-[6px]" />
+      <IconBrightnessUp className={ICON_SM} />
       <span className="mt-1 inline-block">F2</span>
     </KBtn>
     <KBtn>
-      <IconTable className="h-[6px] w-[6px]" />
+      <IconTable className={ICON_SM} />
       <span className="mt-1 inline-block">F3</span>
     </KBtn>
     <KBtn>
-      <IconSearch className="h-[6px] w-[6px]" />
+      <IconSearch className={ICON_SM} />
       <span className="mt-1 inline-block">F4</span>
     </KBtn>
     <KBtn>
-      <IconMicrophone className="h-[6px] w-[6px]" />
+      <IconMicrophone className={ICON_SM} />
       <span className="mt-1 inline-block">F5</span>
     </KBtn>
     <KBtn>
-      <IconMoon className="h-[6px] w-[6px]" />
+      <IconMoon className={ICON_SM} />
       <span className="mt-1 inline-block">F6</span>
     </KBtn>
     <KBtn>
-      <IconPlayerTrackPrev className="h-[6px] w-[6px]" />
+      <IconPlayerTrackPrev className={ICON_SM} />
       <span className="mt-1 inline-block">F7</span>
     </KBtn>
     <KBtn>
-      <IconPlayerSkipForward className="h-[6px] w-[6px]" />
+      <IconPlayerSkipForward className={ICON_SM} />
       <span className="mt-1 inline-block">F8</span>
     </KBtn>
     <KBtn>
-      <IconPlayerTrackNext className="h-[6px] w-[6px]" />
+      <IconPlayerTrackNext className={ICON_SM} />
       <span className="mt-1 inline-block">F9</span>
     </KBtn>
     <KBtn>
-      <IconVolume3 className="h-[6px] w-[6px]" />
+      <IconVolume3 className={ICON_SM} />
       <span className="mt-1 inline-block">F10</span>
     </KBtn>
     <KBtn>
-      <IconVolume2 className="h-[6px] w-[6px]" />
+      <IconVolume2 className={ICON_SM} />
       <span className="mt-1 inline-block">F11</span>
     </KBtn>
     <KBtn>
-      <IconVolume className="h-[6px] w-[6px]" />
+      <IconVolume className={ICON_SM} />
       <span className="mt-1 inline-block">F12</span>
     </KBtn>
     <KBtn>
@@ -453,36 +448,16 @@ const ThirdRow = memo(() => (
     >
       tab
     </KBtn>
-    <KBtn>
-      <span className="block">Q</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">W</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">E</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">R</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">T</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">Y</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">U</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">I</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">O</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">P</span>
-    </KBtn>
+    <KBtn><span className="block">Q</span></KBtn>
+    <KBtn><span className="block">W</span></KBtn>
+    <KBtn><span className="block">E</span></KBtn>
+    <KBtn><span className="block">R</span></KBtn>
+    <KBtn><span className="block">T</span></KBtn>
+    <KBtn><span className="block">Y</span></KBtn>
+    <KBtn><span className="block">U</span></KBtn>
+    <KBtn><span className="block">I</span></KBtn>
+    <KBtn><span className="block">O</span></KBtn>
+    <KBtn><span className="block">P</span></KBtn>
     <KBtn>
       <span className="block">{`{`}</span>
       <span className="block">{`[`}</span>
@@ -507,33 +482,15 @@ const FourthRow = memo(() => (
     >
       caps lock
     </KBtn>
-    <KBtn>
-      <span className="block">A</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">S</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">D</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">F</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">G</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">H</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">J</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">K</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">L</span>
-    </KBtn>
+    <KBtn><span className="block">A</span></KBtn>
+    <KBtn><span className="block">S</span></KBtn>
+    <KBtn><span className="block">D</span></KBtn>
+    <KBtn><span className="block">F</span></KBtn>
+    <KBtn><span className="block">G</span></KBtn>
+    <KBtn><span className="block">H</span></KBtn>
+    <KBtn><span className="block">J</span></KBtn>
+    <KBtn><span className="block">K</span></KBtn>
+    <KBtn><span className="block">L</span></KBtn>
     <KBtn>
       <span className="block">{`:`}</span>
       <span className="block">{`;`}</span>
@@ -560,27 +517,13 @@ const FifthRow = memo(() => (
     >
       shift
     </KBtn>
-    <KBtn>
-      <span className="block">Z</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">X</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">C</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">V</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">B</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">N</span>
-    </KBtn>
-    <KBtn>
-      <span className="block">M</span>
-    </KBtn>
+    <KBtn><span className="block">Z</span></KBtn>
+    <KBtn><span className="block">X</span></KBtn>
+    <KBtn><span className="block">C</span></KBtn>
+    <KBtn><span className="block">V</span></KBtn>
+    <KBtn><span className="block">B</span></KBtn>
+    <KBtn><span className="block">N</span></KBtn>
+    <KBtn><span className="block">M</span></KBtn>
     <KBtn>
       <span className="block">{`<`}</span>
       <span className="block">{`,`}</span>
@@ -610,12 +553,12 @@ const SixthRow = memo(() => (
         <span className="block">fn</span>
       </div>
       <div className="flex w-full justify-start pl-1">
-        <IconWorld className="h-[6px] w-[6px]" />
+        <IconWorld className={ICON_SM} />
       </div>
     </KBtn>
     <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
       <div className="flex w-full justify-end pr-1">
-        <IconChevronUp className="h-[6px] w-[6px]" />
+        <IconChevronUp className={ICON_SM} />
       </div>
       <div className="flex w-full justify-start pl-1">
         <span className="block">control</span>
@@ -623,24 +566,30 @@ const SixthRow = memo(() => (
     </KBtn>
     <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
       <div className="flex w-full justify-end pr-1">
-        <OptionKey className="h-[6px] w-[6px]" />
+        <OptionKey className={ICON_SM} />
       </div>
       <div className="flex w-full justify-start pl-1">
         <span className="block">option</span>
       </div>
     </KBtn>
-    <KBtn className="w-8" childrenClassName="h-full justify-between py-[4px]">
+    <KBtn
+      className="w-8"
+      childrenClassName="h-full justify-between py-[4px]"
+    >
       <div className="flex w-full justify-end pr-1">
-        <IconCommand className="h-[6px] w-[6px]" />
+        <IconCommand className={ICON_SM} />
       </div>
       <div className="flex w-full justify-start pl-1">
         <span className="block">command</span>
       </div>
     </KBtn>
-    <KBtn className="w-[8.2rem]"></KBtn>
-    <KBtn className="w-8" childrenClassName="h-full justify-between py-[4px]">
+    <KBtn className="w-[8.2rem]" />
+    <KBtn
+      className="w-8"
+      childrenClassName="h-full justify-between py-[4px]"
+    >
       <div className="flex w-full justify-start pl-1">
-        <IconCommand className="h-[6px] w-[6px]" />
+        <IconCommand className={ICON_SM} />
       </div>
       <div className="flex w-full justify-start pl-1">
         <span className="block">command</span>
@@ -648,7 +597,7 @@ const SixthRow = memo(() => (
     </KBtn>
     <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
       <div className="flex w-full justify-start pl-1">
-        <OptionKey className="h-[6px] w-[6px]" />
+        <OptionKey className={ICON_SM} />
       </div>
       <div className="flex w-full justify-start pl-1">
         <span className="block">option</span>
@@ -656,17 +605,17 @@ const SixthRow = memo(() => (
     </KBtn>
     <div className="mt-[2px] flex h-6 w-[4.9rem] flex-col items-center justify-end rounded-[4px] p-[0.5px]">
       <KBtn className="h-3 w-6">
-        <IconCaretUpFilled className="h-[6px] w-[6px]" />
+        <IconCaretUpFilled className={ICON_SM} />
       </KBtn>
       <div className="flex">
         <KBtn className="h-3 w-6">
-          <IconCaretLeftFilled className="h-[6px] w-[6px]" />
+          <IconCaretLeftFilled className={ICON_SM} />
         </KBtn>
         <KBtn className="h-3 w-6">
-          <IconCaretDownFilled className="h-[6px] w-[6px]" />
+          <IconCaretDownFilled className={ICON_SM} />
         </KBtn>
         <KBtn className="h-3 w-6">
-          <IconCaretRightFilled className="h-[6px] w-[6px]" />
+          <IconCaretRightFilled className={ICON_SM} />
         </KBtn>
       </div>
     </div>
@@ -674,17 +623,14 @@ const SixthRow = memo(() => (
 ));
 SixthRow.displayName = "SixthRow";
 
-export const Keypad = memo(() => {
-  return (
-    <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1">
-      <FirstRow />
-      <SecondRow />
-      <ThirdRow />
-      <FourthRow />
-      <FifthRow />
-      <SixthRow />
-    </div>
-  );
-});
-
+export const Keypad = memo(() => (
+  <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1">
+    <FirstRow />
+    <SecondRow />
+    <ThirdRow />
+    <FourthRow />
+    <FifthRow />
+    <SixthRow />
+  </div>
+));
 Keypad.displayName = "Keypad";

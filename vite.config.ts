@@ -25,7 +25,7 @@ const getBaseUrl = () => {
     url = "https://tushar-deomare-portfolio.vercel.app";
   }
   // Remove trailing slash to prevent double slashes
-  return url.replace(/\/+$/, '');
+  return url.replace(/\/+$/, "");
 };
 
 export default defineConfig(({ mode }) => ({
@@ -89,7 +89,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    exclude: ["lightswind"], // Exclude lightswind from optimization since we use local components
+    // exclude: ["lightswind"], // Exclude lightswind from optimization since we use local components
     // Enable parallel optimization with worker threads
     esbuildOptions: {
       // Use all available CPU cores for faster builds
@@ -103,6 +103,12 @@ export default defineConfig(({ mode }) => ({
       "@reduxjs/toolkit",
       "redux-persist",
       "reselect",
+      "framer-motion",
+      "lightswind",
+      "gsap",
+      "meshline",
+      "ogl",
+      "three",
     ],
   },
   build: {

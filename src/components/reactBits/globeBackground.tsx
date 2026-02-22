@@ -1,7 +1,8 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { Vector3, Group, Fog, MathUtils } from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Globe, type GlobeConfig } from "@/components/ui/globe";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
 
@@ -92,47 +93,23 @@ function SceneSetup() {
 }
 
 // ── Smoothing constants ──────────────────────────────────────────────
-// Exponential decay rate (per second). Higher = snappier.
-//
-//   Rate  | 95% settled in | Feel
-//   ------+----------------+---------------------------
-//     3   | ~1.0s          | Very floaty / cinematic
-//     6   | ~0.5s          | Smooth but responsive
-//    12   | ~0.25s         | Tight tracking
-//    20   | ~0.15s         | Near-instant
-//
-const SCROLL_SMOOTHING = 12;    // Tight tracking — globe follows scroll closely
-const VELOCITY_SMOOTHING = 2.5; // Slow decay — momentum lingers, soft overshoot
-const IDLE_SPEED = 0.06;        // Radians/sec idle drift (≈3.4°/s, subtle)
-const MOMENTUM_SCALE = 0.35;    // Strong momentum: fling-scroll visibly kicks the globe
-const SCROLL_TO_ROTATION = Math.PI * 3; // 540° across entire page (1.5 revolutions)
+const SCROLL_SMOOTHING = 12;
+const VELOCITY_SMOOTHING = 2.5;
+const IDLE_SPEED = 0.06;
+const MOMENTUM_SCALE = 0.35;
+const SCROLL_TO_ROTATION = Math.PI * 3;
 
-/**
- * Frame-rate independent exponential damping.
- * Returns the interpolation factor for a given decay rate and delta time.
- * At 60fps (dt=0.016): damp(4, 0.016) ≈ 0.062
- * At 144fps (dt=0.007): damp(4, 0.007) ≈ 0.028
- * The result is identical motion regardless of frame rate.
- */
 function damp(smoothing: number, dt: number): number {
   return 1 - Math.exp(-smoothing * dt);
 }
 
-/**
- * ScrollDrivenGlobe — the scroll-rotation core.
- *
- * Three layers of motion composited together:
- *
- * 1. SCROLL POSITION — maps page progress (0→1) to rotation (0→2π).
- *    Frame-rate independent exponential damping for silky tracking.
- *
- * 2. SCROLL MOMENTUM — scroll velocity adds extra rotational kick.
- *    Fling-scroll → globe overshoots slightly then settles. Physical feel.
- *    Decays exponentially so it never accumulates.
- *
- * 3. IDLE DRIFT — barely perceptible constant rotation when not scrolling.
- *    Keeps the globe alive. Blends out when actively scrolling.
- */
+// Pre-allocate light positions to avoid creating new Vector3 per render
+const LIGHT_LEFT_POS = new Vector3(-400, 100, 400);
+const LIGHT_TOP_POS = new Vector3(-200, 500, 200);
+
+// Desktop-only DPR cap (globe is hidden on mobile)
+const TARGET_DPR = Math.min(window.devicePixelRatio, 2);
+
 function ScrollDrivenGlobe() {
   const wrapperRef = useRef<Group>(null);
   const smoothRotation = useRef(0);
@@ -149,10 +126,8 @@ function ScrollDrivenGlobe() {
       scroll.current = window.scrollY;
       scroll.max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
 
-      // Velocity in px/ms — clamped, then EMA smoothed to kill jitter
       const rawVelocity = (scroll.current - scroll.lastY) / dt;
       const clamped = MathUtils.clamp(rawVelocity, -5, 5);
-      // Exponential moving average (0.3 = responsive but jitter-free)
       scroll.velocity = scroll.velocity * 0.7 + clamped * 0.3;
 
       scroll.lastY = scroll.current;
@@ -172,32 +147,29 @@ function ScrollDrivenGlobe() {
   useFrame((_state, delta) => {
     if (!wrapperRef.current) return;
 
-    // Clamp delta to avoid jumps after tab switch / debugger pause
     const dt = Math.min(delta, 0.1);
     const factor = damp(SCROLL_SMOOTHING, dt);
     const velFactor = damp(VELOCITY_SMOOTHING, dt);
 
-    // Decay source velocity to 0 when no scroll events are firing
     const msSinceScroll = performance.now() - lastScrollTime.current;
     if (msSinceScroll > 100) {
-      scroll.velocity *= 1 - damp(5, dt); // fast decay when idle
+      scroll.velocity *= 1 - damp(5, dt);
     }
 
-    // ── Layer 1: Scroll position → rotation ──
+    // Layer 1: Scroll position → rotation
     const progress = scroll.current / scroll.max;
     const targetRotation = progress * SCROLL_TO_ROTATION;
     smoothRotation.current += (targetRotation - smoothRotation.current) * factor;
 
-    // ── Layer 2: Momentum from scroll velocity ──
+    // Layer 2: Momentum from scroll velocity
     const targetMomentum = scroll.velocity * MOMENTUM_SCALE;
     smoothMomentum.current += (targetMomentum - smoothMomentum.current) * velFactor;
 
-    // ── Layer 3: Idle drift ──
-    // Fade in when not scrolling (over 1.5s), fade out instantly when scrolling
+    // Layer 3: Idle drift
     const idleBlend = MathUtils.clamp(msSinceScroll / 1500, 0, 1);
     idleOffset.current += IDLE_SPEED * dt * idleBlend;
 
-    // ── Composite ──
+    // Composite
     wrapperRef.current.rotation.y =
       smoothRotation.current + smoothMomentum.current + idleOffset.current;
   });
@@ -216,6 +188,7 @@ interface GlobeBackgroundProps {
 export default function GlobeBackground({ className }: GlobeBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
+  const mobile = useIsMobile();
 
   useEffect(() => {
     const handler = () => { setVisible(!document.hidden); };
@@ -223,30 +196,41 @@ export default function GlobeBackground({ className }: GlobeBackgroundProps) {
     return () => { document.removeEventListener("visibilitychange", handler); };
   }, []);
 
-  if (!visible) return <div ref={containerRef} className={className} />;
+  // Memoize GL config to prevent Canvas re-creation
+  const glConfig = useMemo(() => ({
+    alpha: true,
+    antialias: false,
+    powerPreference: "high-performance" as const,
+    stencil: false,
+    depth: true,
+  }), []);
+
+  // Skip rendering on mobile — globe is too large for narrow viewports
+  // and wastes GPU/CPU on a decorative background element
+  if (!visible || mobile) return <div ref={containerRef} className={className} />;
 
   return (
     <div ref={containerRef} className={className}>
       <Canvas
         camera={{ fov: 50, near: 180, far: 1800, position: [0, 0, 300] }}
         frameloop="always"
-        dpr={Math.min(window.devicePixelRatio, 2)}
-        gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
+        dpr={TARGET_DPR}
+        gl={glConfig}
         style={{ background: "transparent" }}
       >
         <SceneSetup />
         <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
         <directionalLight
           color={globeConfig.directionalLeftLight}
-          position={new Vector3(-400, 100, 400)}
+          position={LIGHT_LEFT_POS}
         />
         <directionalLight
           color={globeConfig.directionalTopLight}
-          position={new Vector3(-200, 500, 200)}
+          position={LIGHT_TOP_POS}
         />
         <pointLight
           color={globeConfig.pointLight}
-          position={new Vector3(-200, 500, 200)}
+          position={LIGHT_TOP_POS}
           intensity={0.8}
         />
         <ScrollDrivenGlobe />

@@ -89,7 +89,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    // exclude: ["lightswind"], // Exclude lightswind from optimization since we use local components
+    exclude: ["lightswind"], // Exclude lightswind — only lightswind/plugin is used (CSS), no JS entry
     // Enable parallel optimization with worker threads
     esbuildOptions: {
       // Use all available CPU cores for faster builds
@@ -104,11 +104,11 @@ export default defineConfig(({ mode }) => ({
       "redux-persist",
       "reselect",
       "framer-motion",
-      "lightswind",
       "gsap",
       "meshline",
       "ogl",
       "three",
+      "three-globe",
     ],
   },
   build: {

@@ -21,6 +21,9 @@ const ClickSpark = lazy(() => import("./components/reactBits/clickSpark.tsx"));
 const Particles = lazy(
   () => import("./components/reactBits/reactBitsParticles.tsx")
 );
+const GlobeBackground = lazy(
+  () => import("./components/reactBits/globeBackground.tsx")
+);
 // const FallBeamBackground = lazy(
 //   () => import("./components/lightswind/fall-beam-background")
 // );
@@ -94,6 +97,9 @@ createRoot(document.getElementById("root")!).render(
                 cameraDistance={1}
                 className="w-full h-full pointer-events-none"
               />
+            </div>
+            <div className="fixed inset-0 z-[1] w-full h-full pointer-events-none">
+              <GlobeBackground className="w-full h-full" />
             </div>
             <div
               className="relative z-[10] !bg-transparent transition-opacity duration-300 ease-out

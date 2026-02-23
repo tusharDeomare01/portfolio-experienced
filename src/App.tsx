@@ -35,7 +35,7 @@ function PageWithLightRays({ children }: { children: ReactNode }) {
   return (
     <>
       {!isMobile && (
-        <div className="fixed inset-0 z-0">
+        <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
           <LightRays
             raysOrigin="top-center"
             raysColor="#ffffff"

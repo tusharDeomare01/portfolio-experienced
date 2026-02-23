@@ -24,7 +24,7 @@ import * as THREE from "three";
 import cardGLB from "./card.glb";
 import lanyard from "./lanyard.png";
 // Public assets should be referenced as string paths, not imported
-const profilePhoto = "/Tushar_Deomare.jpg";
+const profilePhoto = "/Tushar_Deomare.webp";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 

@@ -27,42 +27,41 @@ import { ComponentLoader, SectionLoader } from "../Loading/LoadingComponents";
 // Googlebot needs to see the name "Tushar Deomare" immediately
 import Header from "../Header/Header";
 import { HeroSection } from "../HeroSection/HeroSection";
-// import { EducationSection } from "../EducationSection/EducationSection";
-const AboutSection = lazy(() =>
-  import("../AboutSection/AboutSection").then((module) => ({
-    default: module.AboutSection,
-  }))
-);
-const ProjectsSection = lazy(() =>
-  import("../ProjectsSection/ProjectsSection").then((module) => ({
-    default: module.ProjectsSection,
-  }))
-);
-const EducationSection = lazy(() =>
-  import("../EducationSection/EducationSection").then((module) => ({
-    default: module.EducationSection,
-  }))
-);
-const CareerTimeline = lazy(() =>
-  import("../CareerSection/CareerTimeline").then((module) => ({
-    default: module.CareerTimeline,
-  }))
-);
-const AchievementsSection = lazy(() =>
-  import("../AchievementsSection/AchievementsSection").then((module) => ({
-    default: module.AchievementsSection,
-  }))
-);
-const ContactSection = lazy(() =>
-  import("../ContactSection/ContactSection").then((module) => ({
-    default: module.ContactSection,
-  }))
-);
+const aboutImport = () => import("../AboutSection/AboutSection").then((m) => ({ default: m.AboutSection }));
+const educationImport = () => import("../EducationSection/EducationSection").then((m) => ({ default: m.EducationSection }));
+const careerImport = () => import("../CareerSection/CareerTimeline").then((m) => ({ default: m.CareerTimeline }));
+const projectsImport = () => import("../ProjectsSection/ProjectsSection").then((m) => ({ default: m.ProjectsSection }));
+const achievementsImport = () => import("../AchievementsSection/AchievementsSection").then((m) => ({ default: m.AchievementsSection }));
+const contactImport = () => import("../ContactSection/ContactSection").then((m) => ({ default: m.ContactSection }));
+
+const AboutSection = lazy(aboutImport);
+const ProjectsSection = lazy(projectsImport);
+const EducationSection = lazy(educationImport);
+const CareerTimeline = lazy(careerImport);
+const AchievementsSection = lazy(achievementsImport);
+const ContactSection = lazy(contactImport);
 
 const Tour = lazy(() =>
   import("../Tour/Tour").then((module) => ({ default: module.Tour }))
 );
 const Dock = lazy(() => import("../lightswind/dock"));
+
+// Prefetch below-fold sections during idle time for smoother scrolling
+if (typeof window !== "undefined") {
+  const prefetch = () => {
+    aboutImport();
+    educationImport();
+    careerImport();
+    projectsImport();
+    achievementsImport();
+    contactImport();
+  };
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(prefetch, { timeout: 3000 });
+  } else {
+    setTimeout(prefetch, 2000);
+  }
+}
 
 const HomePageSection = () => {
   const navigate = useNavigate();
@@ -203,7 +202,7 @@ const HomePageSection = () => {
         className="w-full bg-transparent max-w-5xl mx-auto px-4 py-8
           lg:rounded-3xl border-gray-100 dark:border-gray-900"
       >
-        <div className="relative z-[10]">
+        <div className="relative z-10">
           {/* SEO FIX: HeroSection loads immediately so Googlebot sees "Tushar Deomare" */}
           <HeroSection />
 
@@ -227,11 +226,11 @@ const HomePageSection = () => {
           className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-1rem)] px-2 sm:px-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             isDockVisible
               ? "translate-y-0 opacity-100 scale-100"
-              : "translate-y-[100px] opacity-0 scale-95"
+              : "translate-y-25 opacity-0 scale-95"
           } ${
             tour.isTourActive && tour.currentStep === 10
-              ? "z-[10001]"
-              : "z-[999]"
+              ? "z-10001"
+              : "z-999"
           }`}
           style={{ willChange: "transform, opacity" }}
         >

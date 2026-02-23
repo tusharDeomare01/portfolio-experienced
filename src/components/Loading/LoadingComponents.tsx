@@ -188,7 +188,7 @@ export const HomePageSkeleton = () => (
     <HeaderSkeleton />
 
     <div className="w-full bg-transparent max-w-5xl mx-auto px-4 py-8 lg:rounded-3xl">
-      <div className="relative z-[10] space-y-16 md:space-y-24">
+      <div className="relative z-10 space-y-16 md:space-y-24">
         {/* Hero Section Skeleton */}
         <div className="flex flex-col md:flex-row items-center justify-center min-h-screen gap-8 md:gap-12">
           {/* Left Section - Text Content */}
@@ -379,5 +379,4 @@ export const SectionLoader = SectionSkeleton;
 export const PageLoader = PageSkeleton;
 export const ComponentLoader = ComponentSkeleton;
 export const HeaderLoader = HeaderSkeleton;
-export const BackgroundLoader = BackgroundSkeleton;
 export const AIAssistantLoader = AIAssistantSkeleton;

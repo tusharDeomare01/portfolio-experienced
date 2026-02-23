@@ -46,22 +46,29 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  /* Ensure vertical scrolling works on mobile PWA */
-  height: 100%;
+  /* iOS Safari: use min-height instead of height:100% to allow content to expand
+     beyond viewport. height:100% + overflow-x:hidden can lock scrolling on iOS. */
+  min-height: 100%;
+  min-height: 100dvh; /* dynamic viewport height — adjusts for iOS address bar */
   -webkit-overflow-scrolling: touch;
+  /* Allow vertical touch scrolling explicitly for iOS */
+  touch-action: pan-y;
 }
 
 body {
   overflow-x: hidden;
-  /* Allow vertical scrolling - critical for mobile PWA */
+  /* Allow vertical scrolling - critical for mobile PWA / iOS */
   overflow-y: auto;
   overscroll-behavior-y: auto;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   /* Ensure body takes full height and allows scrolling */
   min-height: 100%;
+  min-height: 100dvh;
   height: auto;
   position: relative;
+  /* Explicit touch-action for iOS Safari — prevents scroll blocking */
+  touch-action: pan-y;
 }
 
 /* Ensure root element allows scrolling */
@@ -69,6 +76,7 @@ body {
   min-height: 100%;
   width: 100%;
   position: relative;
+  touch-action: pan-y;
 }
 
 /* Optimize rendering performance */

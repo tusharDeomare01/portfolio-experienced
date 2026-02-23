@@ -3,11 +3,10 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath } from "url";
-// Remove this if you don't need overlay
 import { vitePluginErrorOverlay } from "@hiogawa/vite-plugin-error-overlay";
 import { seoPlugin } from "./vite-plugin-seo";
-// import { varBindingsPlugin } from "./vite-plugin-var-bindings"; // Disabled - causing runtime issues
 import babel from "vite-plugin-babel";
+import { compression } from "vite-plugin-compression2";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -79,9 +78,13 @@ export default defineConfig(({ mode }) => ({
         { path: "/portfolio", priority: 0.8, changefreq: "monthly" },
       ],
     }),
-    // DISABLED: varBindingsPlugin causing runtime issues
-    // Keeping minification enabled without this plugin
-    // mode === 'production' ? varBindingsPlugin() : null,
+    // Pre-compress assets with gzip and brotli for faster delivery
+    mode === "production"
+      ? compression({
+          algorithms: ["gzip", "brotliCompress"],
+          threshold: 1024,
+        })
+      : null,
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -108,7 +111,6 @@ export default defineConfig(({ mode }) => ({
       "meshline",
       "ogl",
       "three",
-      "three-globe",
     ],
   },
   build: {
@@ -181,14 +183,14 @@ export default defineConfig(({ mode }) => ({
             if (id.includes("gsap") || id.includes("@gsap")) {
               return "gsap-vendor";
             }
-            // CRITICAL: Three.js MUST be first and isolated to avoid TDZ issues
-            // Three.js has internal circular dependencies and uses const/let in source code
-            // Isolating it ensures it initializes before any code that depends on it
-            // Also include packages that extend Three.js classes (like gainmap-js)
+            // OGL (used by Particles and LightRays on every page) - separate small chunk
+            if (id.includes("ogl")) {
+              return "ogl-vendor";
+            }
+            // Three.js MUST be isolated to avoid TDZ issues (lazy-loaded for /lanyard only)
             if (
               id.includes("three") ||
               id.includes("meshline") ||
-              id.includes("ogl") ||
               id.includes("gainmap") ||
               id.includes("@monogrid")
             ) {
@@ -233,17 +235,17 @@ export default defineConfig(({ mode }) => ({
             if (id.includes("framer-motion")) {
               return "animation-vendor";
             }
-            // OGL (used by Particles and LightRays) - separate chunk
-            if (id.includes("ogl")) {
-              return "ogl-vendor";
-            }
             // OpenAI - separate chunk
             if (id.includes("openai")) {
               return "ai-vendor";
             }
-            // UI libraries
-            if (id.includes("lucide-react")) {
+            // UI icon libraries
+            if (id.includes("lucide-react") || id.includes("@tabler/icons-react")) {
               return "ui-icons";
+            }
+            // Lightswind UI library (heavy - has its own deps)
+            if (id.includes("lightswind")) {
+              return "lightswind-vendor";
             }
             // Markdown
             if (

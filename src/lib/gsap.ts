@@ -46,6 +46,12 @@ gsap.config({
   nullTargetWarn: false,
 });
 
+// ScrollTrigger config — ignoreMobileResize prevents iOS Safari address bar
+// show/hide from triggering ScrollTrigger.refresh() which causes scroll jank
+ScrollTrigger.config({
+  ignoreMobileResize: true,
+});
+
 // ScrollTrigger defaults for consistent behavior
 ScrollTrigger.defaults({
   toggleActions: "play none none reverse",

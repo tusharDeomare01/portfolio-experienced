@@ -35,43 +35,38 @@ export function GSAPScrollProgress() {
 
   // Refresh ScrollTrigger on route changes and after DOM updates
   useEffect(() => {
-    // Wait for DOM to fully render
     const refreshScrollTrigger = () => {
-      // Force recalculation of document height
       ScrollTrigger.refresh();
     };
 
     // Initial refresh after DOM is ready
     const timeoutId = setTimeout(refreshScrollTrigger, 300);
-    
-    // Refresh on route changes
-    const routeTimeoutId = setTimeout(refreshScrollTrigger, 150);
 
-    // Refresh when window resizes (document height might change)
-    window.addEventListener("resize", refreshScrollTrigger);
-    
-    // Refresh when images/content finish loading (document height might increase)
-    window.addEventListener("load", refreshScrollTrigger);
-    
-    // Use MutationObserver to detect DOM changes that might affect document height
+    // Debounced resize handler
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(refreshScrollTrigger, 200);
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+
+    // MutationObserver with aggressive debounce to avoid excessive refreshes
     let observerTimeoutId: ReturnType<typeof setTimeout> | null = null;
     const observer = new MutationObserver(() => {
-      // Debounce refresh to avoid excessive calls
       if (observerTimeoutId) clearTimeout(observerTimeoutId);
-      observerTimeoutId = setTimeout(refreshScrollTrigger, 100);
+      observerTimeoutId = setTimeout(refreshScrollTrigger, 500);
     });
     observer.observe(document.body, {
       childList: true,
       subtree: true,
       attributes: false,
     });
-    
+
     return () => {
       clearTimeout(timeoutId);
-      clearTimeout(routeTimeoutId);
+      if (resizeTimer) clearTimeout(resizeTimer);
       if (observerTimeoutId) clearTimeout(observerTimeoutId);
-      window.removeEventListener("resize", refreshScrollTrigger);
-      window.removeEventListener("load", refreshScrollTrigger);
+      window.removeEventListener("resize", onResize);
       observer.disconnect();
     };
   }, [location.pathname]);
@@ -236,7 +231,7 @@ export function GSAPScrollProgress() {
       {/* Spark particle at the leading edge */}
       <div
         ref={sparkRef}
-        className="fixed z-[10001] pointer-events-none"
+        className="fixed z-10001 pointer-events-none"
         style={{
           top: 0,
           left: "0%",
@@ -261,7 +256,7 @@ export function GSAPScrollProgress() {
           ref={(el) => {
             tickRefs.current[i] = el;
           }}
-          className="fixed z-[10001] pointer-events-none"
+          className="fixed z-10001 pointer-events-none"
           style={{
             top: 0,
             left: `${pos}%`,

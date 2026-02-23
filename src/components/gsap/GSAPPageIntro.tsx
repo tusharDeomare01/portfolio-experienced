@@ -85,6 +85,8 @@ export function GSAPPageIntro() {
         const tl = gsap.timeline({
           onComplete: () => {
             document.body.style.overflow = "";
+            document.body.style.position = "";
+            document.documentElement.style.overflow = "";
             setShouldRender(false);
           },
         });
@@ -269,6 +271,8 @@ export function GSAPPageIntro() {
         const tl = gsap.timeline({
           onComplete: () => {
             document.body.style.overflow = "";
+            document.body.style.position = "";
+            document.documentElement.style.overflow = "";
             setShouldRender(false);
           },
         });
@@ -424,7 +428,13 @@ export function GSAPPageIntro() {
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-background"
-      style={{ clipPath: "inset(0 0 0 0)", willChange: "clip-path", contain: "layout style paint" }}
+      style={{
+        clipPath: "inset(0 0 0 0)",
+        willChange: "clip-path",
+        contain: "layout style paint",
+        touchAction: "none",
+        WebkitOverflowScrolling: "auto",
+      }}
     >
       {/* Professional counter — top right corner */}
       <div

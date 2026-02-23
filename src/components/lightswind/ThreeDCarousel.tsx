@@ -198,6 +198,8 @@ export default function ThreeDCarousel({
                   src={item.image}
                   alt={item.title || `Achievement ${index + 1}`}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src =
